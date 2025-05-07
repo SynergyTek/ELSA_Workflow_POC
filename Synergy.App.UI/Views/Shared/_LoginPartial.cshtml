@@ -1,0 +1,41 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Synergy.App.Data.Models
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<ul class="navbar-nav">
+	@if (SignInManager.IsSignedIn(User))
+	{
+		<li class="nav-item dropdown">
+			<button class="btn dropdown-toggle"
+			        data-bs-toggle="dropdown">@User.Identity?.Name</button>
+			<div class="dropdown-menu">
+				<a class="dropdown-item btn"
+				   asp-area="Identity"
+				   asp-page="/Account/Manage/Index"
+				   title="Manage">
+					<span class="btn btn-sm">
+						Profile
+					</span>
+				</a>
+
+				<form class="dropdown-item"
+				      asp-area="Identity"
+				      asp-page="/Account/Logout"
+				      asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+					<input type="submit"
+					       class="btn btn-sm"
+					       value="Logout" />
+				</form>
+			</div>
+		</li>
+	}
+	else
+	{
+		<li class="nav-item">
+			<a class="nav-link"
+			   asp-area="Identity"
+			   asp-page="/Account/Login">Login</a>
+		</li>
+	}
+</ul>

@@ -1,0 +1,54 @@
+﻿@model Synergy.App.Data.ViewModels.UserViewModel
+
+@{
+	ViewData["Title"] = "Manage User";
+}
+<div class="container">
+	<div class="row row-cols-md-2 px-2 py-3 rounded border">
+		<div class="col mb-md-4">
+			<div class=" input-group">
+				<label asp-for="Email"
+				       class="input-group-text"></label>
+				<input asp-for="Email"
+				       class="form-control" />
+			</div>
+		</div>
+		<div class="col mb-md-4">
+			<div class=" input-group">
+				<label asp-for="UserName"
+				       class="input-group-text"></label>
+				<input asp-for="UserName"
+				       class="form-control" />
+			</div>
+		</div>
+		<div class="col mb-md-4">
+			<div class=" input-group">
+				<label asp-for="PhoneNumber"
+				       class="input-group-text"></label>
+				<input asp-for="PhoneNumber"
+				       class="form-control" />
+			</div>
+		</div>
+
+	</div>
+	<div class="card">
+		<div class="card-header">
+			<h5 class="card-title">Roles</h5>
+		</div>
+		<div class="card-body">
+			<div class="row">
+				@foreach (var role in Model.Roles)
+				{
+					<div class="col mb-md-4">
+						<div class=" input-group">
+							<label asp-for="@role"
+							       class="input-group-text"></label>
+							<input asp-for="@role"
+							       class="form-control" />
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "ElsaStudio": {
+    "Default": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

@@ -9,18 +9,18 @@ namespace Synergy.App.Business.Implementation;
 
 public class WorkflowBusiness(
     IContextBase<WorkflowViewModel, Workflow> repo,
-    IUserContext userContext)
-    : BaseBusiness<WorkflowViewModel, Workflow>(repo), IWorkflowBusiness
+    IServiceProvider sp,
+    UserManager<User> userManager)
+    : BaseBusiness<WorkflowViewModel, Workflow>(repo, sp), IWorkflowBusiness
 {
-    public async Task<WorkflowViewModel?> AssignTaskToUser(string title, Guid userId)
+    public async Task<WorkflowViewModel> AssignTaskToUser(string title, Guid userId, Guid byUserId)
     {
-
         var reviewModel = new WorkflowViewModel
         {
-            CreatedBy = userContext.Id,
-            LastUpdatedBy = userContext.Id,
+            CreatedBy = byUserId,
+            LastUpdatedBy = byUserId,
             AssignedToUserId = userId,
-            AssignedByUserId = userContext.Id,
+            AssignedByUserId = byUserId,
             Title = title
         };
 
@@ -29,10 +29,24 @@ public class WorkflowBusiness(
         return model.Item;
     }
 
-    public async Task<bool> AssignTaskToRole(string groupId)
+    public async Task<WorkflowViewModel> AssignTaskToRole(string title, string roleCode, Guid byUserId)
     {
-        // Simulate assigning a task to a role
-        await Task.Delay(1000); // Simulate some delay
-        return true;
+        var user = userManager.GetUsersInRoleAsync(roleCode).Result.First();
+        if (user == null)
+        {
+            throw new Exception($"No user in given role {roleCode} found");
+        }
+        var reviewModel = new WorkflowViewModel
+        {
+            CreatedBy = byUserId,
+            LastUpdatedBy = byUserId,
+            AssignedToUserId = user.Id,
+            AssignedByUserId = byUserId,
+            Title = title
+        };
+
+        var model = await Create(reviewModel);
+
+        return model.Item;
     }
 }

@@ -13,6 +13,10 @@ namespace Synergy.App.Business.Implementation
     {
         public UserContext(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager)
         {
+            if (httpContextAccessor.HttpContext.User.Identity?.IsAuthenticated == false)
+            {
+                return;
+            }
             var userId = httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier)
                 .Value;
             if (string.IsNullOrEmpty(userId))

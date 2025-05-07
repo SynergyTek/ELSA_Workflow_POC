@@ -1,32 +1,25 @@
 using System.Linq.Expressions;
 using AutoMapper;
-using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Synergy.App.Business.Interface;
 using Synergy.App.Data;
 using Synergy.App.Data.Models;
 
 namespace Synergy.App.Business.Implementation
 {
-    public class ContextBase<TV, TD> : IContextBase<TV, TD> where TV : BaseModel where TD : BaseModel
+    public class ContextBase<TV, TD>(
+        DbContextOptions<ApplicationDbContext> dbOptions,
+        IUserContext userContext,
+        IMapper autoMapper)
+        : IContextBase<TV, TD>
+        where TV : BaseModel
+        where TD : BaseModel
     {
+        private DbContextOptions<ApplicationDbContext> DbOptions { get; set; } = dbOptions;
 
-        private readonly IMapper _autoMapper;
-        private ApplicationDbContext _dbContext;
-
-        public DbContextOptions<ApplicationDbContext> DbOptions { get; set; }
-
-        public ContextBase(DbContextOptions<ApplicationDbContext> dbOptions, IConfiguration configuration, IMapper autoMapper
-            , IServiceProvider sp, ApplicationDbContext dbContext)
-        {
-            _autoMapper = autoMapper;
-            _dbContext = dbContext;
-            DbOptions = dbOptions;
-        }
         public async Task<TV> Create(TV model, bool autoCommit = true)
         {
-
             return await Create<TV, TD>(model, autoCommit);
-
         }
 
 
@@ -55,13 +48,16 @@ namespace Synergy.App.Business.Implementation
             return await GetList<TV, TD>();
         }
 
-        public async Task<List<TV>> GetList(Expression<Func<TD, bool>> where, params Expression<Func<TD, object>>[] include)
+        public async Task<List<TV>> GetList(Expression<Func<TD, bool>> where,
+            params Expression<Func<TD, object>>[] include)
         {
             return await GetList<TV, TD>(where, include);
         }
-        private static Expression<Func<E, bool>> AndAlso<E>(Expression<Func<E, bool>> expr1, Expression<Func<E, bool>> expr2) where E : BaseModel
+
+        private static Expression<Func<TE, bool>> AndAlso<TE>(Expression<Func<TE, bool>> expr1,
+            Expression<Func<TE, bool>> expr2) where TE : BaseModel
         {
-            var parameter = Expression.Parameter(typeof(E));
+            var parameter = Expression.Parameter(typeof(TE));
 
             var leftVisitor = new ReplaceExpressionVisitor(expr1.Parameters[0], parameter);
             var left = leftVisitor.Visit(expr1.Body);
@@ -69,16 +65,18 @@ namespace Synergy.App.Business.Implementation
             var rightVisitor = new ReplaceExpressionVisitor(expr2.Parameters[0], parameter);
             var right = rightVisitor.Visit(expr2.Body);
 
-            return Expression.Lambda<Func<E, bool>>(
+            return Expression.Lambda<Func<TE, bool>>(
                 Expression.AndAlso(left, right), parameter);
         }
-        public static async Task CreateMaster<TDm>(ApplicationDbContext context, TDm baseModel) where TDm : BaseModel
+
+        private static async Task CreateMaster<TDm>(ApplicationDbContext context, TDm baseModel) where TDm : BaseModel
         {
             await context.Set<TDm>().AddAsync(baseModel);
         }
-        private async Task EditMaster<DM>(ApplicationDbContext context, DM existingItem) where DM : BaseModel
+
+        private static void EditMaster<TDm>(ApplicationDbContext context, TDm existingItem) where TDm : BaseModel
         {
-            context.Entry<DM>(existingItem).State = EntityState.Modified;
+            context.Entry(existingItem).State = EntityState.Modified;
         }
 
         public async Task<List<TVm>> GetList<TVm, TDm>() where TVm : BaseModel where TDm : BaseModel
@@ -86,48 +84,33 @@ namespace Synergy.App.Business.Implementation
             var context = GetDbContext();
             try
             {
-
                 var data = await context.Set<TDm>().AsNoTracking().Where(x => x.IsDeleted == false).ToListAsync();
-                return data.ToViewModelList<TVm, TDm>(_autoMapper);
-            }
-            catch (Exception e)
-            {
-
-                throw;
+                return data.ToViewModelList<TVm, TDm>(autoMapper);
             }
             finally
             {
                 await DisposeDbContext(context);
             }
-
         }
 
-        public async Task<List<TVm>> GetList<TVm, TDm>(Expression<Func<TDm, bool>> where, params Expression<Func<TDm, object>>[] include) where TVm : BaseModel where TDm : BaseModel
+        public async Task<List<TVm>> GetList<TVm, TDm>(Expression<Func<TDm, bool>> where,
+            params Expression<Func<TDm, object>>[] include) where TVm : BaseModel where TDm : BaseModel
         {
-
             var context = GetDbContext();
             try
             {
-                where = AndAlso<TDm>(x => x.IsDeleted == false, where);
-                if (include != null && include.Length > 0)
+                where = AndAlso(x => x.IsDeleted == false, where);
+                if (include.Length > 0)
                 {
-
                     var set = context.Set<TDm>().Include(include[0]);
-                    foreach (var item in include.Skip(1))
-                    {
-                        set = set.Include(item);
-                    }
+                    set = include.Skip(1).Aggregate(set, (current, item) => current.Include(item));
+
                     var data = await set.AsNoTracking().Where(where).ToListAsync();
-                    return data.ToViewModelList<TVm, TDm>(_autoMapper);
+                    return data.ToViewModelList<TVm, TDm>(autoMapper);
                 }
 
                 var data2 = await context.Set<TDm>().AsNoTracking().Where(where).ToListAsync();
-                return data2.ToViewModelList<TVm, TDm>(_autoMapper);
-            }
-            catch (Exception ex)
-            {
-
-                throw;
+                return data2.ToViewModelList<TVm, TDm>(autoMapper);
             }
             finally
             {
@@ -135,73 +118,62 @@ namespace Synergy.App.Business.Implementation
             }
         }
 
-        public async Task<TVm> GetSingle<TVm, TDm>(Expression<Func<TDm, bool>> where, params Expression<Func<TDm, object>>[] include) where TVm : BaseModel where TDm : BaseModel
+        public async Task<TVm> GetSingle<TVm, TDm>(Expression<Func<TDm, bool>> where,
+            params Expression<Func<TDm, object>>[] include) where TVm : BaseModel where TDm : BaseModel
         {
-            where = AndAlso<TDm>(x => x.IsDeleted == false, where);
+            where = AndAlso(x => x.IsDeleted == false, where);
             var context = GetDbContext();
             try
             {
-                if (include != null && include.Length > 0)
+                if (include.Length > 0)
                 {
                     var set = context.Set<TDm>().Include(include[0]);
-                    foreach (var item in include.Skip(1))
-                    {
-                        set = set.Include(item);
-                    }
-                    var data = await set.AsNoTracking().FirstOrDefaultAsync(where);
-                    return data.ToViewModel<TVm, TDm>(_autoMapper);
+                    set = include.Skip(1).Aggregate(set, (current, item) => current.Include(item));
+
+                    var data = await set.AsNoTracking().FirstAsync(where);
+                    return data.ToViewModel<TVm, TDm>(autoMapper);
                 }
-                var result2 = await context.Set<TDm>().AsNoTracking().FirstOrDefaultAsync(where);
-                return result2.ToViewModel<TVm, TDm>(_autoMapper);
-            }
-            catch (Exception ex)
-            {
 
-                throw;
+                var result2 = await context.Set<TDm>().AsNoTracking().FirstAsync(where);
+                return result2.ToViewModel<TVm, TDm>(autoMapper);
             }
             finally
             {
                 await DisposeDbContext(context);
             }
-
-
         }
 
-        public async Task<TVm> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include) where TVm : BaseModel where TDm : BaseModel
+        public async Task<TVm> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
+            where TVm : BaseModel where TDm : BaseModel
         {
             var context = GetDbContext();
             try
             {
-                if (include != null && include.Length > 0)
+                if (include.Length > 0)
                 {
                     var set = context.Set<TDm>().Include(include[0]);
-                    foreach (var item in include.Skip(1))
-                    {
-                        set = set.Include(item);
-                    }
-                    var data = await set.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-                    var result = data.ToViewModel<TVm, TDm>(_autoMapper);
+                    set = include.Skip(1).Aggregate(set, (current, item) => current.Include(item));
+                    var data = await set.AsNoTracking().FirstAsync(x => x.Id == id);
+
+                    var result = data.ToViewModel<TVm, TDm>(autoMapper);
                     return result;
                 }
-                var result2 = await context.Set<TDm>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-                return result2.ToViewModel<TVm, TDm>(_autoMapper);
-            }
-            catch (Exception ex)
-            {
-                throw;
+
+                var result2 = await context.Set<TDm>().AsNoTracking().FirstAsync(x => x.Id == id);
+                return result2.ToViewModel<TVm, TDm>(autoMapper);
             }
             finally
             {
                 await DisposeDbContext(context);
             }
-
         }
 
-        public async Task<TVm> Create<TVm, TDm>(TVm model, bool autoCommit = true) where TVm : BaseModel where TDm : BaseModel
+        public async Task<TVm> Create<TVm, TDm>(TVm model, bool autoCommit = true)
+            where TVm : BaseModel where TDm : BaseModel
         {
-            TDm baseModel = null;
-            baseModel = _autoMapper.Map<TVm, TDm>(model);
-
+            var baseModel = autoMapper.Map<TVm, TDm>(model);
+            baseModel.CreatedBy = userContext.Id;
+            baseModel.LastUpdatedBy = userContext.Id;
             var context = GetDbContext();
             try
             {
@@ -217,7 +189,6 @@ namespace Synergy.App.Business.Implementation
             {
                 await DisposeDbContext(context);
             }
-
         }
 
 
@@ -233,35 +204,28 @@ namespace Synergy.App.Business.Implementation
         }
 
 
-        public async Task<TVm> Edit<TVm, TDm>(TVm model, bool autoCommit = true) where TVm : BaseModel where TDm : BaseModel
+        public async Task<TVm> Edit<TVm, TDm>(TVm model, bool autoCommit = true)
+            where TVm : BaseModel where TDm : BaseModel
         {
             var existingItem = await GetSingleById<TDm, TDm>(model.Id);
-            if (existingItem != null)
-            {
-                model.CreatedDate = existingItem.CreatedDate;
-                model.CreatedBy = existingItem.CreatedBy;
-            }
+            model.CreatedDate = existingItem.CreatedDate;
+            model.CreatedBy = existingItem.CreatedBy;
+
 
             model.LastUpdatedDate = DateTime.UtcNow;
-            var baseModel = _autoMapper.Map<TVm, TDm>(model, existingItem);
+            model.LastUpdatedBy = userContext.Id;
+            var baseModel = autoMapper.Map(model, existingItem);
             var context = GetDbContext();
             try
             {
-
-               await EditMaster<TDm>(context, baseModel);
+                EditMaster(context, baseModel);
                 await context.SaveChangesAsync();
                 return model;
-            }
-            catch (Exception ex)
-            {
-
-                throw;
             }
             finally
             {
                 await DisposeDbContext(context);
             }
-
         }
 
         public async Task Delete<TVm, TDm>(Guid id, bool autoCommit = true) where TVm : BaseModel where TDm : BaseModel
@@ -271,25 +235,12 @@ namespace Synergy.App.Business.Implementation
             await Edit<TVm, TDm>(model);
         }
 
-        private class ReplaceExpressionVisitor
-            : ExpressionVisitor
+        private class ReplaceExpressionVisitor(Expression oldValue, Expression newValue) : ExpressionVisitor
         {
-            private readonly Expression _oldValue;
-            private readonly Expression _newValue;
-
-            public ReplaceExpressionVisitor(Expression oldValue, Expression newValue)
-            {
-                _oldValue = oldValue;
-                _newValue = newValue;
-            }
-
             public override Expression Visit(Expression node)
             {
-                if (node == _oldValue)
-                    return _newValue;
-                return base.Visit(node);
+                return node == oldValue ? newValue : base.Visit(node);
             }
         }
     }
-
 }

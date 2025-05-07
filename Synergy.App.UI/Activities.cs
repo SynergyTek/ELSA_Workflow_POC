@@ -19,21 +19,22 @@ public record CreateTaskStimulus(Guid TaskId);
 [Activity("Synergy", "Assign task to user")]
 public class AssignTaskToUser : Activity
 {
-    /// <summary>A list of expected outcomes to handle.</summary>
-    [Input(Description = "A list of expected outcomes to handle.", UIHint = "dynamic-outcomes", DefaultValue="Approved, Rejected, Cancelled" )]
-    public Input<IList<string>> Branches { get; set; } = null!;
+    // /// <summary>A list of expected outcomes to handle.</summary>
+    // [Input(Description = "A list of expected outcomes to handle.", UIHint = "dynamic-outcomes", DefaultValue="Approved, Rejected, Cancelled" )]
+    // public Input<IList<string>> Branches { get; set; } = null!;
+
+    [Input(Description = "Workflow title")]
+    public Input<string> Title { get; set; } = null!;
+    [Input(Description = "Assigned by user")]
+    public Input<Guid> ByUserId { get; set; } = null!;
 
     [Input(Description = "Assign task to user")]
-    public Input<string> Title { get; set; } = null!;
-
     public Input<Guid> AssignToUserId { get; set; } = null!;
 
     [Output(Description = "Task Id")] public Output<string> TaskId { get; set; } = null!;
 
     protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
     {
-        // var orDefault = Branches.GetOrDefault(context) ?? ["Done"];
-        // var strArray = orDefault.ToArray();
         var workflowBusiness = context.GetService<IWorkflowBusiness>();
         if (workflowBusiness is null)
         {
@@ -42,7 +43,8 @@ public class AssignTaskToUser : Activity
 
         var title = Title.Get(context);
         var userId = AssignToUserId.Get(context);
-        var workflow = await workflowBusiness.AssignTaskToUser(title, userId);
+        var byUserId = ByUserId.Get(context);
+        var workflow = await workflowBusiness.AssignTaskToUser(title, userId, byUserId);
         if (workflow == null)
         {
             throw new Exception("Workflow not found");
@@ -69,13 +71,47 @@ public class AssignTaskToUser : Activity
 
 [FlowNode("Approved", "Rejected", "Cancelled")]
 [Activity("Synergy", "Assign task to role")]
-public class AssignTaskToRole : CodeActivity
+public class AssignTaskToRole : Activity
 {
+    [Input(Description = "Workflow title")]
+    public Input<string> Title { get; set; } = null!;
+    [Input(Description = "Assigned by user")]
+    public Input<Guid> ByUserId { get; set; } = null!;
     [Input(Description = "Assign task to role")]
-    public string RoleCode { get; set; }
+    public Input<string> RoleCode { get; set; } = null!;
 
-    protected override void Execute(ActivityExecutionContext context)
+    protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
     {
+        var role = RoleCode.Get(context);
+        var byUserId = ByUserId.Get(context);
+        var title = Title.Get(context);
+        var workflowBusiness = context.GetService<IWorkflowBusiness>();
+        if (workflowBusiness is null)
+        {
+            throw new ApplicationException("Workflow business not found");
+        }
+        var workflow = await workflowBusiness.AssignTaskToRole(title,role, byUserId);
+        if (workflow == null)
+        {
+            throw new Exception("Workflow not found");
+        }
+        var stimulus = new CreateTaskStimulus(workflow.Id);
+        var options = new CreateBookmarkArgs
+        {
+            Stimulus = new EventStimulus(workflow.Id.ToString()),
+            IncludeActivityInstanceId = false,
+            Callback = OnResumeAsync
+        };
+        context.CreateBookmark(options);
+        Console.WriteLine($"Assigned task to user: {stimulus.TaskId}");
+
+
+    }
+    private async ValueTask OnResumeAsync(ActivityExecutionContext context)
+    {
+        var input = context.GetWorkflowInput<object?>();
+        context.SetResult(input);
+        await context.CompleteActivityAsync();
     }
 }
 

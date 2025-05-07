@@ -3,7 +3,7 @@ using Synergy.App.Data;
 using Synergy.App.Data.Models;
 using Task = System.Threading.Tasks.Task;
 
-namespace Synergy.App.Business
+namespace Synergy.App.Business.Interface
 {
     public interface IContextBase<TV, TD> where TV : BaseModel where TD : BaseModel
     {

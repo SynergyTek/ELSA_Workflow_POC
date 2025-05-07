@@ -2,6 +2,7 @@ using Elsa.Common.Models;
 using Elsa.Workflows;
 using Elsa.Workflows.Helpers;
 using Elsa.Workflows.Management;
+using Elsa.Workflows.Management.Filters;
 using Elsa.Workflows.Models;
 using Elsa.Workflows.Runtime;
 using Microsoft.AspNetCore.Authorization;
@@ -91,8 +92,6 @@ public class HomeController(
 
     public async Task<IActionResult> ApplyLeave()
     {
-        // eventPublisher.PublishAsync("LeaveApplication").Wait();
-
         var request = new StartWorkflowRequest
         {
             WorkflowDefinitionHandle = new WorkflowDefinitionHandle()

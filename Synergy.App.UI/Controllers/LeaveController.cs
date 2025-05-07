@@ -7,7 +7,7 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.UI.Controllers
 {
-    public class LeaveController(ApplicationDbContext context, ILeaveBusiness leaveBusiness)
+    public class LeaveController(ApplicationDbContext context, ILeaveBusiness leaveBusiness, IUserContext userContext)
         : Controller
     {
         // GET: Application
@@ -37,7 +37,11 @@ namespace Synergy.App.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(LeaveViewModel leaveViewModel)
         {
-            if (!ModelState.IsValid) return View(leaveViewModel);
+            //if (!ModelState.IsValid) return View(leaveViewModel);
+            leaveViewModel.StartDate = DateTime.SpecifyKind(leaveViewModel.StartDate, DateTimeKind.Utc);
+            leaveViewModel.EndDate = DateTime.SpecifyKind(leaveViewModel.EndDate, DateTimeKind.Utc);
+            leaveViewModel.AppliedById = userContext.Id;
+
             await leaveBusiness.Create(leaveViewModel);
             return RedirectToAction(nameof(Index));
         }

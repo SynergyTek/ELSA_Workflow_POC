@@ -12,8 +12,8 @@ using Synergy.App.Data;
 namespace Synergy.App.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250429134804_LeaveTable")]
-    partial class LeaveTable
+    [Migration("20250508123701_TableMetadata")]
+    partial class TableMetadata
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,6 +134,9 @@ namespace Synergy.App.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AppliedById")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
 
@@ -164,6 +167,8 @@ namespace Synergy.App.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppliedById");
 
                     b.ToTable("Leave");
                 });
@@ -231,6 +236,59 @@ namespace Synergy.App.Data.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Synergy.App.Data.Models.TableMetadata", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("CreateTable")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("LastUpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("LastUpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Query")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Schema")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TableMetadata");
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.User", b =>
@@ -391,6 +449,17 @@ namespace Synergy.App.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Synergy.App.Data.Models.Leave", b =>
+                {
+                    b.HasOne("Synergy.App.Data.Models.User", "AppliedBy")
+                        .WithMany()
+                        .HasForeignKey("AppliedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppliedBy");
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.Notification", b =>

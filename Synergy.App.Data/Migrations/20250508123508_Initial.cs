@@ -52,26 +52,6 @@ namespace Synergy.App.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Leave",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    LeaveType = table.Column<string>(type: "text", nullable: false),
-                    Reason = table.Column<string>(type: "text", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: false),
-                    LastUpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastUpdatedBy = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Leave", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -178,6 +158,33 @@ namespace Synergy.App.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Leave",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    AppliedById = table.Column<Guid>(type: "uuid", nullable: false),
+                    LeaveType = table.Column<string>(type: "text", nullable: false),
+                    Reason = table.Column<string>(type: "text", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: false),
+                    LastUpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastUpdatedBy = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Leave", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Leave_AspNetUsers_AppliedById",
+                        column: x => x.AppliedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notification",
                 columns: table => new
                 {
@@ -270,6 +277,11 @@ namespace Synergy.App.Data.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Leave_AppliedById",
+                table: "Leave",
+                column: "AppliedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notification_UserId",

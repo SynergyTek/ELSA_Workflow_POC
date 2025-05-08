@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 using Microsoft.EntityFrameworkCore;
 using Synergy.App.Data.Models;
 
@@ -12,6 +13,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Workflow> Workflow { get; set; }
     public DbSet<Notification> Notification { get; set; }
     public DbSet<Leave> Leave { get; set; }
+    public DbSet<TableMetadata> TableMetadata { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -14,6 +14,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Notification> Notification { get; set; }
     public DbSet<Leave> Leave { get; set; }
     public DbSet<TableMetadata> TableMetadata { get; set; }
+    public DbSet<ColumnMetadata> ColumnMetadata { get; set; }
+    public DbSet<TemplateCategory> TemplateCategory { get; set; }
+    public DbSet<Template> Template { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

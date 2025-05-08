@@ -12,7 +12,7 @@ using Synergy.App.Data;
 namespace Synergy.App.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250508103342_TableMetadata")]
+    [Migration("20250508120958_TableMetadata")]
     partial class TableMetadata
     {
         /// <inheritdoc />

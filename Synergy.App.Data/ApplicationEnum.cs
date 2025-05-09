@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Synergy.App.Data;
 
@@ -88,3 +89,58 @@ public enum UdfUITypeEnum
     button = 24,
 
 }
+//public enum NtsActiveUserTypeEnum
+//{
+//    Requester = 1,
+//    Owner = 2,
+//    Assignee = 3,
+//    SharedWith = 4,
+//    SharedBy = 5,
+//    None = 6,
+//    OwnerOrRequester = 7,
+//    All = 8,
+//    PermittedUser = 9,
+//    Custom = 10
+//}
+//public enum NtsViewTypeEnum : int
+//{
+//    Default = 1,
+//    Book = 2,
+//    Classic = 3,
+//    Email = 4
+//}
+public enum LayoutModeEnum : int
+{
+    Main = 0,
+    Iframe = 1,
+    Popup = 2,
+    Tab = 3,
+    Card = 4,
+    None = 5,
+    Div = 6
+}
+public enum OrderByEnum : int
+{
+    Ascending = 1,
+    Descending = 2
+}
+public enum DataActionEnum
+{
+    Create = 1,
+    Edit = 2,
+    Delete = 3,
+    Read = 4,
+    None = 5,
+    View = 6
+}
+public enum StatusEnum
+{
+    // Null = 0,
+    [Description("Active")]
+    [Display(Name = "Active")]
+    Active = 1,
+    [Display(Name = "Inactive")]
+    [Description("Inactive")]
+    Inactive = 2
+}
+

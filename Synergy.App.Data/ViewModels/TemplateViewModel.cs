@@ -29,5 +29,7 @@ namespace Synergy.App.Data.ViewModels
         public bool Select { get; set; }
         public bool IsChildTable { get; set; }
         public string ClassName { get; set; } = string.Empty;
+        public DataActionEnum DataAction { get; set; }
+        public long? SequenceOrder { get; set; }
     }
 }

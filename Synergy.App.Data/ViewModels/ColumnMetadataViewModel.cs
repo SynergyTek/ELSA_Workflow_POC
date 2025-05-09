@@ -20,13 +20,17 @@ namespace Synergy.App.ViewModels
         public new Guid ForeignKeyColumnId { get; set; }
         public new string ForeignKeyColumnName { get; set; }
 
+        [UIHint("ForeignKeyDisplayColumn")]
+        public string ForeignKeyDisplayColumnId { get; set; }
+        public string ForeignKeyDisplayColumnName { get; set; }
+
         [UIHint("DataColumnType")]
         public string DataTypeString { get; set; } // use a separate string for UI binding to avoid shadowing
 
         public object Value { get; set; }
 
 
-       // public NtsActiveUserTypeEnum? ActiveUserType { get; set; }
+        // public NtsActiveUserTypeEnum? ActiveUserType { get; set; }
         public string NtsStatusCode { get; set; }
         public bool IsChecked { get; set; }
 
@@ -35,41 +39,50 @@ namespace Synergy.App.ViewModels
         public string TemplateName { get; set; }
 
         public string ForeignKeyBaseColumnName { get; set; }
-
+        public string DataTypestr { get; set; }
+        
+        public bool IsForeignKeyTableColumn { get; set; }
+        public string TableName { get; set; }
+       // public TemplateTypeEnum TemplateType { get; set; }
+        public string TableSchemaName { get; set; }
+        public string TableAliasName { get; set; }
+        public string TableMetadataName { get; set; }
+        public DataActionEnum DataAction { get; set; }
+        public long? SequenceOrder { get; set; }
         // Permission-based visibility and editability
-//        public bool IsVisible
-//        {
-//            get
-//            {
-//                return
-//                (
-//                    ViewableBy != null && ActiveUserType.HasValue
-//                    && ViewableBy.Any(x => x == "All" || x == ActiveUserType.ToString())
-//                )
-//                &&
-//                (
-//                    ViewableContext != null && !string.IsNullOrWhiteSpace(NtsStatusCode)
-//                    && ViewableContext.Any(x => x.EndsWith("_ALL") || x == NtsStatusCode)
-//                );
-//            }
-//        }
+        //        public bool IsVisible
+        //        {
+        //            get
+        //            {
+        //                return
+        //                (
+        //                    ViewableBy != null && ActiveUserType.HasValue
+        //                    && ViewableBy.Any(x => x == "All" || x == ActiveUserType.ToString())
+        //                )
+        //                &&
+        //                (
+        //                    ViewableContext != null && !string.IsNullOrWhiteSpace(NtsStatusCode)
+        //                    && ViewableContext.Any(x => x.EndsWith("_ALL") || x == NtsStatusCode)
+        //                );
+        //            }
+        //        }
 
-//        public bool IsEditable
-//        {
-//            get
-//            {
-//                return
-//                (
-//                    EditableBy != null && ActiveUserType.HasValue
-//                    && EditableBy.Any(x => x == "All" || x == ActiveUserType.ToString())
-//                )
-//                &&
-//                (
-//                    EditableContext != null && !string.IsNullOrWhiteSpace(NtsStatusCode)
-//                    && EditableContext.Any(x => x.EndsWith("_ALL") || x == NtsStatusCode)
-//                );
-//            }
-//        }
-   }
+        //        public bool IsEditable
+        //        {
+        //            get
+        //            {
+        //                return
+        //                (
+        //                    EditableBy != null && ActiveUserType.HasValue
+        //                    && EditableBy.Any(x => x == "All" || x == ActiveUserType.ToString())
+        //                )
+        //                &&
+        //                (
+        //                    EditableContext != null && !string.IsNullOrWhiteSpace(NtsStatusCode)
+        //                    && EditableContext.Any(x => x.EndsWith("_ALL") || x == NtsStatusCode)
+        //                );
+        //            }
+        //        }
+    }
 }
 

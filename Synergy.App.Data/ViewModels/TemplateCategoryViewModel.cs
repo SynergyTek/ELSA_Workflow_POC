@@ -22,6 +22,8 @@ namespace Synergy.App.Data.ViewModels
         public bool CopyInService { get; set; }
         public bool CopyInCustom { get; set; }
         public int ModuleOrder { get; set; }
+        public DataActionEnum DataAction { get; set; }
+        public long? SequenceOrder { get; set; }
     }
 
 }

@@ -1,5 +1,5 @@
 ﻿using Synergy.App.Data.Models;
-using Synergy.App.ViewModels;
+//using Synergy.App.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

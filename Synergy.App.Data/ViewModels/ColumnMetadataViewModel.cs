@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Synergy.App.ViewModels
+namespace Synergy.App.Data.ViewModels
 {
     public class ColumnMetadataViewModel : ColumnMetadata
     {

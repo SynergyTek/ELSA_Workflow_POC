@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Synergy.App.Business.Interface;
 using Synergy.App.Data;
 using Synergy.App.Data.Models;
+using Synergy.App.Repository;
 
 namespace Synergy.App.Business.Implementation
 {

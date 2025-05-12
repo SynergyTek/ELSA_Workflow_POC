@@ -15,4 +15,5 @@ public class BaseModel
 
     public Guid LastUpdatedBy { get; set; }
     public bool IsDeleted { get; set; } = false;
+    public StatusEnum Status { get; set; }
 }

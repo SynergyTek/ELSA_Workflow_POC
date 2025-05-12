@@ -54,14 +54,16 @@
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Views\Elsa\Index.cshtml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Views\Leave\Create.cshtml" />
-      <AdditionalFiles Include="Views\Leave\Delete.cshtml" />
-      <AdditionalFiles Include="Views\Leave\Details.cshtml" />
-      <AdditionalFiles Include="Views\Leave\Edit.cshtml" />
-      <AdditionalFiles Include="Views\Leave\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Leave\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Leave\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Leave\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Leave\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Leave\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Notification\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Notification\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Notification\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Notification\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Notification\Index.cshtml" />
     </ItemGroup>
 
 </Project>

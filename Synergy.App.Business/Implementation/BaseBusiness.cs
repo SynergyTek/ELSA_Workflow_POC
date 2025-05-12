@@ -75,7 +75,7 @@ namespace Synergy.App.Business.Implementation
             return await repo.GetSingle<TVm, TDm>(where, include);
         }
 
-        public virtual async Task<TVm> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
+        public virtual async Task<TVm?> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
             where TVm : BaseModel
             where TDm : BaseModel
         {
@@ -94,9 +94,10 @@ namespace Synergy.App.Business.Implementation
                 throw new Exception("Workflow services not registered");
             }
 
+            var workflowName = typeof(TDm).Name.ToUpper();
+
             #region Pre Submission Logic
 
-            var workflowName = model.GetType().Name.Replace("ViewModel", string.Empty).ToUpper();
             var preWorkflow = await workflowDefinitionService.FindWorkflowDefinitionAsync(new WorkflowDefinitionFilter
             {
                 Name = "PRE_" + workflowName
@@ -139,7 +140,6 @@ namespace Synergy.App.Business.Implementation
                     {
                         { "Model", model },
                         { "ByUserId", userContext.Id },
-
                     }
                 };
                 await workflowStarter.StartWorkflowAsync(request);

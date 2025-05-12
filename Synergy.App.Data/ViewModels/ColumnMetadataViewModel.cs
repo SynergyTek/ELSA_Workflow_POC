@@ -21,7 +21,7 @@ namespace Synergy.App.Data.ViewModels
         public new string ForeignKeyColumnName { get; set; }
 
         [UIHint("ForeignKeyDisplayColumn")]
-        public string ForeignKeyDisplayColumnId { get; set; }
+        public Guid ForeignKeyDisplayColumnId { get; set; }
         public string ForeignKeyDisplayColumnName { get; set; }
 
         [UIHint("DataColumnType")]

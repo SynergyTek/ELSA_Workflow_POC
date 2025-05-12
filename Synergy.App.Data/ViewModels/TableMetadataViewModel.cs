@@ -29,7 +29,7 @@ namespace Synergy.App.Data.ViewModels
         public string OldSchema { get; set; }
 
         public bool IgnorePermission { get; set; }
-        public string TemplateId { get; set; }
+        public Guid TemplateId { get; set; }
         public string Json { get; set; }
 
         public List<TableMetadataViewModel> ChildTable { get; set; }

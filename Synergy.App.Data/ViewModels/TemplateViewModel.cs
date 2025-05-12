@@ -20,7 +20,8 @@ namespace Synergy.App.Data.ViewModels
         public string ?UdfTemplateName { get; set; } 
 
        
-        public string? UdfTableMetadataName { get; set; } 
+        public string? UdfTableMetadataName { get; set; }
+        public List<ColumnMetadataViewModel> ColumnList { get; set; }
 
         // Extra ViewModel-only properties (optional, based on your use case)
         public string CategoryCode { get; set; } = string.Empty;

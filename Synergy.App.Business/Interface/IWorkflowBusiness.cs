@@ -3,8 +3,7 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Interface;
 
-public interface IWorkflowBusiness : IBaseBusiness<WorkflowViewModel, Workflow>
+public interface IWorkflowBusiness
 {
-    Task<WorkflowViewModel> AssignTaskToUser(string title, Guid userId, Guid byUserId);
-    Task<WorkflowViewModel> AssignTaskToRole(string title, string roleCode, Guid byUserId);
+
 }

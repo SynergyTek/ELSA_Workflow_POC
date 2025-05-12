@@ -31,9 +31,9 @@ public class HomeController(
     [Authorize]
     public IActionResult Index()
     {
-        var tasks = workflowBusiness
-            .GetList(x => x.AssignedToUserId == userContext.Id || x.AssignedByUserId == userContext.Id).Result;
-        return View(tasks);
+        // var tasks = workflowBusiness
+        //     .GetList(x => x.AssignedToUserId == userContext.Id || x.AssignedByUserId == userContext.Id).Result;
+        return View();
     }
 
     private async Task ResumeBookmarkAsync(Guid id, CancellationToken c = default)
@@ -60,10 +60,10 @@ public class HomeController(
 
     public async Task<IActionResult> CompleteTask(Guid taskId, CancellationToken cancellationToken)
     {
-        var task = await workflowBusiness.GetSingleById(taskId);
-        await ResumeBookmarkAsync(taskId, cancellationToken);
-        task.Status = WorkflowStatus.Completed;
-        await workflowBusiness.Edit(task);
+        // var task = await workflowBusiness.GetSingleById(taskId);
+        // await ResumeBookmarkAsync(taskId, cancellationToken);
+        // task.Status = WorkflowStatus.Completed;
+        // await workflowBusiness.Edit(task);
         return RedirectToAction("Index");
     }
 

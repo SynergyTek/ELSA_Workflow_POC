@@ -7,6 +7,7 @@ namespace Synergy.App.Business.Interface
 {
     public interface IContextBase<TV, TD> where TV : BaseModel where TD : BaseModel
     {
+        IUserContext UserContext { get; set; }
         ApplicationDbContext GetDbContext();
         Task DisposeDbContext(ApplicationDbContext context);
 
@@ -27,7 +28,7 @@ namespace Synergy.App.Business.Interface
             where TVm : BaseModel where TDm : BaseModel;
 
 
-        Task<TVm> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
+        Task<TVm?> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
             where TVm : BaseModel where TDm : BaseModel;
 
         Task<TVm> Create<TVm, TDm>(TVm model, bool autoCommit = true) where TVm : BaseModel where TDm : BaseModel;

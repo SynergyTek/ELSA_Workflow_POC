@@ -35,8 +35,8 @@ public class AssignTaskToUser : Activity
 
     protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
     {
-        var workflowBusiness = context.GetService<IWorkflowBusiness>();
-        if (workflowBusiness is null)
+        var activitiesBusiness = context.GetService<IActivitiesBusiness>();
+        if (activitiesBusiness is null)
         {
             throw new ApplicationException("Workflow business not found");
         }
@@ -44,7 +44,7 @@ public class AssignTaskToUser : Activity
         var title = Title.Get(context);
         var userId = AssignToUserId.Get(context);
         var byUserId = ByUserId.Get(context);
-        var workflow = await workflowBusiness.AssignTaskToUser(title, userId, byUserId);
+        var workflow = await activitiesBusiness.AssignTaskToUser(title, userId, byUserId);
         if (workflow == null)
         {
             throw new Exception("Workflow not found");
@@ -85,12 +85,12 @@ public class AssignTaskToRole : Activity
         var role = RoleCode.Get(context);
         var byUserId = ByUserId.Get(context);
         var title = Title.Get(context);
-        var workflowBusiness = context.GetService<IWorkflowBusiness>();
-        if (workflowBusiness is null)
+        var activitiesBusiness = context.GetService<IActivitiesBusiness>();
+        if (activitiesBusiness is null)
         {
             throw new ApplicationException("Workflow business not found");
         }
-        var workflow = await workflowBusiness.AssignTaskToRole(title,role, byUserId);
+        var workflow = await activitiesBusiness.AssignTaskToRole(title,role, byUserId);
         if (workflow == null)
         {
             throw new Exception("Workflow not found");

@@ -1,33 +1,24 @@
-﻿//using Synergy.App.Common;
-////using Synergy.App.DataModel;
-////using MongoDB.Driver;
-//using Npgsql;
-//using System;
-//using System.Collections.Generic;
-//using System.Data;
-//using System.Dynamic;
-//using System.Linq.Expressions;
-//using System.Threading.Tasks;
+﻿using System.Data;
 
-//namespace Synergy.App.Business.Interface
-//{
-//    public interface IRepositoryQueryBase<V> where V : class, new()
-//    {
-//        Task<V> ExecuteQuerySingle(string query, object prms);
-//        Task<List<V>> ExecuteQueryList(string query, object prms);
-//        Task<DataTable> ExecuteQueryDataTable(string query, object prms);
-//        Task<dynamic> ExecuteQuerySingleDynamicObject(string query, object prms);
-//        Task ExecuteCommand(string query, object prms);
+namespace Synergy.App.Business.Interface
+{
+    public interface IRepositoryQueryBase<TV> where TV : class, new()
+    {
+        Task<TV> ExecuteQuerySingle(string query, object parameters);
+        Task<List<TV>> ExecuteQueryList(string query, object parameters);
+        Task<DataTable> ExecuteQueryDataTable(string query, object? parameters);
+        Task<dynamic> ExecuteQuerySingleDynamicObject(string query, object parameters);
+        Task ExecuteCommand(string query, object? parameters);
 
-//        Task<VM> ExecuteQuerySingle<VM>(string query, object prms) where VM : class, new();
-//        Task<List<VM>> ExecuteQueryList<VM>(string query, object prms) where VM : class, new();
+        Task<TVm> ExecuteQuerySingle<TVm>(string query, object parameters) where TVm : class, new();
+        Task<List<TVm>> ExecuteQueryList<TVm>(string query, object parameters) where TVm : class, new();
 
 
-//        Task<VM> ExecuteScalar<VM>(string query, object prms);
-//        Task<List<VM>> ExecuteScalarList<VM>(string query, object prms);
-//        Task<DataRow> ExecuteQueryDataRow(string query, object prms);
+        Task<TVm> ExecuteScalar<TVm>(string query, object? parameters);
+        Task<List<TVm>> ExecuteScalarList<TVm>(string query, object parameters);
+        Task<DataRow> ExecuteQueryDataRow(string query, object parameters);
 
 
 
-//    }
-//}
+    }
+}

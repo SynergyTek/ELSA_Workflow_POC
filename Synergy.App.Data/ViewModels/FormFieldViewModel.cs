@@ -20,7 +20,7 @@ namespace Synergy.App.Data.ViewModels
         public bool unique { get; set; }
         public bool disableOnInvalid { get; set; }
         public string id { get; set; }
-        public string columnMetadataId { get; set; }
+        public Guid columnMetadataId { get; set; }
         public decimal? SequenceNo { get; set; }
         public string[] EditableBy { get; set; }
         public string[] ViewableBy { get; set; }

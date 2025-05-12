@@ -24,7 +24,7 @@ namespace Synergy.App.Business.Interface
         Task<TVm> GetSingle<TVm, TDm>(Expression<Func<TDm, bool>> where, params Expression<Func<TDm, object>>[] include)
             where TVm : BaseModel where TDm : BaseModel;
 
-        Task<TVm> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
+        Task<TVm?> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
             where TVm : BaseModel where TDm : BaseModel;
 
         Task<CommandResult<TVm>> Create<TVm, TDm>(TVm model, bool autoCommit = true)

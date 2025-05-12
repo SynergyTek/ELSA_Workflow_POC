@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Synergy.App.Business.Interface;
 using Synergy.App.Data;
 using Synergy.App.Data.Models;
-using Synergy.App.Repository;
 
 namespace Synergy.App.Business.Implementation
 {
@@ -16,6 +15,7 @@ namespace Synergy.App.Business.Implementation
         where TV : BaseModel
         where TD : BaseModel
     {
+        public IUserContext UserContext { get; set; }
         private DbContextOptions<ApplicationDbContext> DbOptions { get; set; } = dbOptions;
 
         public async Task<TV> Create(TV model, bool autoCommit = true)
@@ -144,7 +144,7 @@ namespace Synergy.App.Business.Implementation
             }
         }
 
-        public async Task<TVm> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
+        public async Task<TVm?> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
             where TVm : BaseModel where TDm : BaseModel
         {
             var context = GetDbContext();

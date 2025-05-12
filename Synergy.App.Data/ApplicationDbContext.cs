@@ -10,9 +10,7 @@ namespace Synergy.App.Data;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<User, Role, Guid>(options)
 {
-    public DbSet<Workflow> Workflow { get; set; }
-    public DbSet<Notification> Notification { get; set; }
-    public DbSet<Leave> Leave { get; set; }
+
     public DbSet<TableMetadata> TableMetadata { get; set; }
     public DbSet<ColumnMetadata> ColumnMetadata { get; set; }
     public DbSet<TemplateCategory> TemplateCategory { get; set; }

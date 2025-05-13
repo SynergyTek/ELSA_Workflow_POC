@@ -1,15 +1,12 @@
-using System.Collections.Immutable;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Elsa.Extensions;
 using Elsa.Workflows;
 using Elsa.Workflows.Activities.Flowchart.Attributes;
 using Elsa.Workflows.Attributes;
 using Elsa.Workflows.Models;
 using Elsa.Workflows.Runtime.Stimuli;
-using Elsa.Workflows.Signals;
 using Synergy.App.Business.Interface;
-using WorkflowStatus = Synergy.App.Data.WorkflowStatus;
+using Synergy.App.Data.ViewModels;
+using Workflow = Elsa.Workflows.Activities.Workflow;
 
 namespace Synergy.App.UI;
 
@@ -19,48 +16,36 @@ public record CreateTaskStimulus(Guid TaskId);
 [Activity("Synergy", "Assign task to user")]
 public class AssignTaskToUser : Activity
 {
-    // /// <summary>A list of expected outcomes to handle.</summary>
-    // [Input(Description = "A list of expected outcomes to handle.", UIHint = "dynamic-outcomes", DefaultValue="Approved, Rejected, Cancelled" )]
-    // public Input<IList<string>> Branches { get; set; } = null!;
 
-    [Input(Description = "Workflow title")]
-    public Input<string> Title { get; set; } = null!;
-    [Input(Description = "Assigned by user")]
-    public Input<Guid> ByUserId { get; set; } = null!;
+    [Input(Description = "The email of the user to assign the task to")]
+    public Input<string> Email { get; set; } = null!;
 
-    [Input(Description = "Assign task to user")]
-    public Input<Guid> AssignToUserId { get; set; } = null!;
-
-    [Output(Description = "Task Id")] public Output<string> TaskId { get; set; } = null!;
 
     protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
     {
-        var activitiesBusiness = context.GetService<IActivitiesBusiness>();
-        if (activitiesBusiness is null)
+        var elsaBusiness = context.GetService<IElsaBusiness>();
+        if (elsaBusiness is null)
         {
             throw new ApplicationException("Workflow business not found");
         }
 
-        var title = Title.Get(context);
-        var userId = AssignToUserId.Get(context);
-        var byUserId = ByUserId.Get(context);
-        var workflow = await activitiesBusiness.AssignTaskToUser(title, userId, byUserId);
-        if (workflow == null)
-        {
-            throw new Exception("Workflow not found");
-        }
+        var workflowMetaActivity = (Workflow)context.WorkflowExecutionContext.Activity;
+        var title = workflowMetaActivity.WorkflowMetadata.Name ?? "Workflow";
+        var email = Email.Get(context);
+        var user = context.WorkflowInput.TryGetValue("User", out var value)
+            ? (UserViewModel)value
+            : throw new ApplicationException("User not found");
 
-        var stimulus = new CreateTaskStimulus(workflow.Id);
+
+
         var options = new CreateBookmarkArgs
         {
-            Stimulus = new EventStimulus(workflow.Id.ToString()),
-            IncludeActivityInstanceId = false,
+            IncludeActivityInstanceId = true,
             Callback = OnResumeAsync
         };
         context.CreateBookmark(options);
-        Console.WriteLine($"Assigned task to user: {stimulus.TaskId}");
-        TaskId.Set(context, workflow.Id.ToString());
     }
+
     private async ValueTask OnResumeAsync(ActivityExecutionContext context)
     {
         var input = context.GetWorkflowInput<object?>();
@@ -73,28 +58,30 @@ public class AssignTaskToUser : Activity
 [Activity("Synergy", "Assign task to role")]
 public class AssignTaskToRole : Activity
 {
-    [Input(Description = "Workflow title")]
-    public Input<string> Title { get; set; } = null!;
-    [Input(Description = "Assigned by user")]
-    public Input<Guid> ByUserId { get; set; } = null!;
     [Input(Description = "Assign task to role")]
     public Input<string> RoleCode { get; set; } = null!;
 
     protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
     {
         var role = RoleCode.Get(context);
-        var byUserId = ByUserId.Get(context);
-        var title = Title.Get(context);
-        var activitiesBusiness = context.GetService<IActivitiesBusiness>();
-        if (activitiesBusiness is null)
+        var user = context.WorkflowInput.TryGetValue("User", out var value)
+            ? (UserViewModel)value
+            : throw new ApplicationException("User not found");
+
+        var workflowMetaActivity = (Workflow)context.WorkflowExecutionContext.Activity;
+        var title = workflowMetaActivity.WorkflowMetadata.Name ?? "Workflow";
+        var elsaBusiness = context.GetService<IElsaBusiness>();
+        if (elsaBusiness is null)
         {
             throw new ApplicationException("Workflow business not found");
         }
-        var workflow = await activitiesBusiness.AssignTaskToRole(title,role, byUserId);
+
+        var workflow = await elsaBusiness.AssignTaskToRole(title, role, user.Id);
         if (workflow == null)
         {
             throw new Exception("Workflow not found");
         }
+
         var stimulus = new CreateTaskStimulus(workflow.Id);
         var options = new CreateBookmarkArgs
         {
@@ -104,9 +91,8 @@ public class AssignTaskToRole : Activity
         };
         context.CreateBookmark(options);
         Console.WriteLine($"Assigned task to user: {stimulus.TaskId}");
-
-
     }
+
     private async ValueTask OnResumeAsync(ActivityExecutionContext context)
     {
         var input = context.GetWorkflowInput<object?>();

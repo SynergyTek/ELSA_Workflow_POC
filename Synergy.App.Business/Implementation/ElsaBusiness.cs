@@ -7,20 +7,25 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Implementation;
 
-public class ActivitiesBusiness(
+public class ElsaBusiness(
     IContextBase<WorkflowViewModel, Workflow> repo,
     IServiceProvider sp,
     UserManager<User> userManager)
-    : BaseBusiness<WorkflowViewModel, Workflow>(repo, sp), IActivitiesBusiness
+    : BaseBusiness<WorkflowViewModel, Workflow>(repo, sp), IElsaBusiness
 {
 
-    public async Task<WorkflowViewModel> AssignTaskToUser(string title, Guid userId, Guid byUserId)
+    public async Task<WorkflowViewModel> AssignTaskToUser(string title, string email, Guid byUserId)
     {
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            throw new Exception($"No user with given email {email} found");
+        }
         var reviewModel = new WorkflowViewModel
         {
             CreatedBy = byUserId,
             LastUpdatedBy = byUserId,
-            AssignedToUserId = userId,
+            AssignedToUserId = user.Id,
             AssignedByUserId = byUserId,
             Title = title
         };

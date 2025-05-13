@@ -86,37 +86,20 @@ namespace Synergy.App.Business.Implementation
             where TVm : BaseModel
             where TDm : BaseModel
         {
-            var workflowDefinitionService = sp.GetService<IWorkflowDefinitionService>();
-            var workflowStarter = sp.GetService<IWorkflowStarter>();
+            var workflowBusiness = sp.GetService<IWorkflowBusiness>();
             var userContext = sp.GetService<IUserContext>();
-            if (workflowDefinitionService == null || workflowStarter == null)
-            {
-                throw new Exception("Workflow services not registered");
-            }
 
+            if (workflowBusiness == null || userContext == null)
+                throw new Exception("WorkflowBusiness or UserContext is not registered in the service provider.");
             var workflowName = typeof(TDm).Name.ToUpper();
 
             #region Pre Submission Logic
 
-            var preWorkflow = await workflowDefinitionService.FindWorkflowDefinitionAsync(new WorkflowDefinitionFilter
+            await workflowBusiness.StartWorkflow("PRE_" + workflowName, new()
             {
-                Name = "PRE_" + workflowName
+                { "Model", model },
+                { "User", userContext },
             });
-            if (preWorkflow != null)
-            {
-                var request = new StartWorkflowRequest
-                {
-                    WorkflowDefinitionHandle = new WorkflowDefinitionHandle
-                    {
-                        DefinitionId = preWorkflow.DefinitionId
-                    },
-                    Input = new Dictionary<string, object>
-                    {
-                        { "Model", model }
-                    }
-                };
-                await workflowStarter.StartWorkflowAsync(request);
-            }
 
             #endregion
 
@@ -124,26 +107,11 @@ namespace Synergy.App.Business.Implementation
 
             #region Post Submission Logic
 
-            var postWorkflow = await workflowDefinitionService.FindWorkflowDefinitionAsync(new WorkflowDefinitionFilter
+            await workflowBusiness.StartWorkflow("POST_" + workflowName, new()
             {
-                Name = "POST_" + workflowName
+                { "Model", model },
+                { "User", userContext },
             });
-            if (postWorkflow == null) return CommandResult<TVm>.Instance(result);
-            {
-                var request = new StartWorkflowRequest
-                {
-                    WorkflowDefinitionHandle = new WorkflowDefinitionHandle
-                    {
-                        DefinitionId = postWorkflow.DefinitionId
-                    },
-                    Input = new Dictionary<string, object>
-                    {
-                        { "Model", model },
-                        { "ByUserId", userContext.Id },
-                    }
-                };
-                await workflowStarter.StartWorkflowAsync(request);
-            }
 
             #endregion
 

@@ -1,7 +1,6 @@
 using Elsa.Common.Models;
 using Elsa.Workflows;
 using Elsa.Workflows.Helpers;
-using Elsa.Workflows.Management;
 using Elsa.Workflows.Management.Filters;
 using Elsa.Workflows.Models;
 using Elsa.Workflows.Runtime;
@@ -14,26 +13,34 @@ using WorkflowStatus = Synergy.App.Data.WorkflowStatus;
 
 namespace Synergy.App.UI.Controllers;
 
-public class HomeController(
-    ILogger<HomeController> logger,
-    IUserContext userContext,
-    IWorkflowBusiness workflowBusiness,
-    IBookmarkQueue bookmarkQueue,
-    IStimulusHasher stimulusHasher,
-    IEventPublisher eventPublisher,
-    IWorkflowStarter workflowStarter,
-    IWorkflowDefinitionImporter workflowDefinitionImporter,
-    IWorkflowDefinitionManager workflowDefinitionManager,
-    IWorkflowDefinitionStore workflowDefinitionStore,
-    IWorkflowDefinitionService workflowDefinitionService
-) : Controller
+public class HomeController : Controller
 {
+    private readonly IUserContext _userContext;
+    private readonly IWorkflowBusiness _workflowBusiness;
+    private readonly IBookmarkQueue _bookmarkQueue;
+    private readonly IStimulusHasher _stimulusHasher;
+    private readonly IWorkflowStarter _workflowStarter;
+
+    public HomeController(IUserContext userContext,
+        IWorkflowBusiness workflowBusiness,
+        IBookmarkQueue bookmarkQueue,
+        IStimulusHasher stimulusHasher,
+        IWorkflowStarter workflowStarter)
+    {
+        _userContext = userContext;
+        _workflowBusiness = workflowBusiness;
+        _bookmarkQueue = bookmarkQueue;
+        _stimulusHasher = stimulusHasher;
+        _workflowStarter = workflowStarter;
+    }
+
     [Authorize]
     public IActionResult Index()
     {
         // var tasks = workflowBusiness
         //     .GetList(x => x.AssignedToUserId == userContext.Id || x.AssignedByUserId == userContext.Id).Result;
-        return View();
+        var tasks = new List<WorkflowViewModel>();
+        return View(tasks);
     }
 
     private async Task ResumeBookmarkAsync(Guid id, CancellationToken c = default)
@@ -45,9 +52,9 @@ public class HomeController(
         var bookmarkQueueItem = new NewBookmarkQueueItem
         {
             ActivityTypeName = activityTypeName,
-            StimulusHash = stimulusHasher.Hash(activityTypeName, stimulus),
+            StimulusHash = _stimulusHasher.Hash(activityTypeName, stimulus),
         };
-        await bookmarkQueue.EnqueueAsync(bookmarkQueueItem, c);
+        await _bookmarkQueue.EnqueueAsync(bookmarkQueueItem, c);
     }
 
 
@@ -60,10 +67,18 @@ public class HomeController(
 
     public async Task<IActionResult> CompleteTask(Guid taskId, CancellationToken cancellationToken)
     {
-        // var task = await workflowBusiness.GetSingleById(taskId);
-        // await ResumeBookmarkAsync(taskId, cancellationToken);
-        // task.Status = WorkflowStatus.Completed;
-        // await workflowBusiness.Edit(task);
+        var user = new UserViewModel()
+        {
+            Id = _userContext.Id,
+            UserName = _userContext.UserName,
+            Email = _userContext.Email
+        };
+        await _workflowBusiness.StartWorkflow("POST_LEAVE", new Dictionary<string, object>
+        {
+            {
+                "User", user
+            }
+        });
         return RedirectToAction("Index");
     }
 
@@ -103,7 +118,7 @@ public class HomeController(
                 { "Title", "Leave Application" }
             }
         };
-        await workflowStarter.StartWorkflowAsync(request);
+        await _workflowStarter.StartWorkflowAsync(request);
         return Json(new { Success = true });
     }
 

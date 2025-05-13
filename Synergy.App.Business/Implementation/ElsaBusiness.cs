@@ -11,7 +11,7 @@ public class ElsaBusiness(
     IContextBase<WorkflowViewModel, Workflow> repo,
     IServiceProvider sp,
     UserManager<User> userManager)
-    : BaseBusiness<WorkflowViewModel, Workflow>(repo, sp), IElsaBusiness
+    : BusinessBase<WorkflowViewModel, Workflow>(repo, sp), IElsaBusiness
 {
 
     public async Task<WorkflowViewModel> AssignTaskToUser(string title, string email, Guid byUserId)

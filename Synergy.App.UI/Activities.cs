@@ -16,7 +16,6 @@ public record CreateTaskStimulus(Guid TaskId);
 [Activity("Synergy", "Assign task to user")]
 public class AssignTaskToUser : Activity
 {
-
     [Input(Description = "The email of the user to assign the task to")]
     public Input<string> Email { get; set; } = null!;
 
@@ -37,7 +36,6 @@ public class AssignTaskToUser : Activity
             : throw new ApplicationException("User not found");
 
 
-
         var options = new CreateBookmarkArgs
         {
             IncludeActivityInstanceId = true,
@@ -48,9 +46,8 @@ public class AssignTaskToUser : Activity
 
     private async ValueTask OnResumeAsync(ActivityExecutionContext context)
     {
-        var input = context.GetWorkflowInput<object?>();
-        context.SetResult(input);
-        await context.CompleteActivityAsync();
+        context.WorkflowInput.TryGetValue("Status", out string value);
+        await context.CompleteActivityWithOutcomesAsync(value);
     }
 }
 
@@ -95,9 +92,8 @@ public class AssignTaskToRole : Activity
 
     private async ValueTask OnResumeAsync(ActivityExecutionContext context)
     {
-        var input = context.GetWorkflowInput<object?>();
-        context.SetResult(input);
-        await context.CompleteActivityAsync();
+        context.WorkflowInput.TryGetValue("Status", out string value);
+        await context.CompleteActivityWithOutcomesAsync(value);
     }
 }
 

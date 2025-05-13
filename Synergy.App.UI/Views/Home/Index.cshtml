@@ -4,8 +4,6 @@
 
 @{
 	ViewData["Title"] = "Home Page";
-	var assignedTo = Model.Where(x => x.AssignedToUserId == UserContext.Id).ToArray();
-	var assignedBy = Model.Where(x => x.AssignedByUserId == UserContext.Id).ToArray();
 }
 
 <div class="container vstack gap-4 align-items-center justify-content-center">
@@ -52,99 +50,109 @@
 	@* 		</div> *@
 	@* 	</div> *@
 	@* </section> *@
+	@* <section class="card w-100"> *@
+	@* 	<div class="card-header"> *@
+	@* 		<span class="card-title fw-semibold py-2 text-muted">Your Tasks</span> *@
+	@* 	</div> *@
+	@* 	<div class="card-body"> *@
+	@* 		@if (assignedTo.Any()) *@
+	@* 		{ *@
+	@* 			<table class="rounded table w-100"> *@
+	@* 				<thead> *@
+	@* 				<tr> *@
+	@* 					<th>Created Date</th> *@
+	@* 					<th>Assigned By</th> *@
+	@* 					<th>Title</th> *@
+	@* 					<th>Status</th> *@
+	@* 					<th>Actions</th> *@
+	@* 				</tr> *@
+	@* 				</thead> *@
+	@* 				<tbody> *@
+	@* 				@foreach (var task in assignedTo) *@
+	@* 				{ *@
+	@* 					<tr> *@
+	@* 						<td>@task.CreatedDate</td> *@
+	@* 						<td>@task.AssignedByUserId</td> *@
+	@* 						<td>@task.Title</td> *@
+	@* 						<td>@task.Status</td> *@
+	@* 						<td> *@
+	@* 							<a asp-action="CompleteTask" *@
+	@* 							   asp-controller="Home" *@
+	@* 							   class="btn btn-sm btn-success" *@
+	@* 							   title="Complete Task"> *@
+	@* 								<i class="bi bi-check-circle"></i> *@
+	@* 							</a> *@
+	@* 							<a asp-action="RejectTask" *@
+	@* 							   asp-controller="Home" *@
+	@* 							   class="btn btn-sm btn-danger" *@
+	@* 							   title="Reject Task"> *@
+	@* 								<i class="bi bi-x-circle"></i> *@
+	@* 							</a> *@
+	@* 							<a asp-action="CancelTask" *@
+	@* 							   asp-controller="Home" *@
+	@* 							   class="btn btn-sm btn-secondary" *@
+	@* 							   title="Cancel Task"> *@
+	@* 								<i class="bi bi-slash-circle"></i> *@
+	@* 							</a> *@
+	@* 						</td> *@
+	@* 					</tr> *@
+	@* 				} *@
+	@* 				</tbody> *@
+	@* 			</table> *@
+	@* 		} *@
+	@* 		else *@
+	@* 		{ *@
+	@* 			<p>No tasks assigned to you</p> *@
+	@* 		} *@
+	@* 	</div> *@
+	@* </section> *@
 	<section class="card w-100">
 		<div class="card-header">
-			<span class="card-title fw-semibold py-2 text-muted">Your Tasks</span>
+			<span class="card-title fw-semibold py-2 text-muted">Tasks</span>
 		</div>
 		<div class="card-body">
-			@if (assignedTo.Any())
+			@if (Model.Any())
 			{
 				<table class="rounded table w-100">
 					<thead>
 					<tr>
 						<th>Created Date</th>
-						<th>Assigned By</th>
-						<th>Title</th>
 						<th>Status</th>
+						<th>Substatus</th>
+						<th>Id</th>
 						<th>Actions</th>
 					</tr>
 					</thead>
 					<tbody>
-					@foreach (var task in assignedTo)
+					@foreach (var task in Model)
 					{
 						<tr>
 							<td>@task.CreatedDate</td>
-							<td>@task.AssignedByUserId</td>
-							<td>@task.Title</td>
-							<td>@task.Status</td>
+							<td>@task.WorkflowStatus</td>
+							<td>@task.InstanceStatus</td>
+							<td>@task.BookmarkId</td>
 							<td>
+
 								<a asp-action="CompleteTask"
 								   asp-controller="Home"
+								   asp-route-taskId="@task.BookmarkId"
 								   class="btn btn-sm btn-success"
 								   title="Complete Task">
 									<i class="bi bi-check-circle"></i>
 								</a>
 								<a asp-action="RejectTask"
 								   asp-controller="Home"
+								   asp-route-taskId="@task.BookmarkId"
 								   class="btn btn-sm btn-danger"
 								   title="Reject Task">
 									<i class="bi bi-x-circle"></i>
 								</a>
 								<a asp-action="CancelTask"
 								   asp-controller="Home"
+								   asp-route-taskId="@task.BookmarkId"
 								   class="btn btn-sm btn-secondary"
 								   title="Cancel Task">
 									<i class="bi bi-slash-circle"></i>
-								</a>
-							</td>
-						</tr>
-					}
-					</tbody>
-				</table>
-			}
-			else
-			{
-				<p>No tasks assigned to you</p>
-			}
-		</div>
-	</section>
-	<section class="card w-100">
-		<div class="card-header">
-			<span class="card-title fw-semibold py-2 text-muted">Your Assignments</span>
-		</div>
-		<div class="card-body">
-			@if (assignedBy.Any())
-			{
-				<table class="rounded table w-100">
-					<thead>
-					<tr>
-						<th>Created Date</th>
-						<th>Assigned To</th>
-						<th>Title</th>
-						<th>Status</th>
-						<th>Actions</th>
-					</tr>
-					</thead>
-					<tbody>
-					@foreach (var task in assignedBy)
-					{
-						<tr>
-							<td>@task.CreatedDate</td>
-							<td>@task.AssignedToUserId</td>
-							<td>@task.Title</td>
-							<td>@task.Status</td>
-							<td>
-								<a asp-action="SendReminder"
-								   asp-controller="Home"
-								   class="btn btn-sm btn-primary"
-								   title="Send Reminder">
-									<i class="bi bi-arrow-clockwise"></i>
-								</a>
-								<a asp-action="DeleteTask"
-								   asp-controller="Home"
-								   class="btn btn-sm btn-danger"
-								   title="Delete Task">
-									<i class="bi bi-trash"></i>
 								</a>
 							</td>
 						</tr>

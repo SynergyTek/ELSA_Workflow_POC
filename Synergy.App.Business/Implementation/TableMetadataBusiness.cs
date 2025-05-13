@@ -11,18 +11,18 @@ using Synergy.App.Data.ViewModels;
 namespace Synergy.App.Business.Implementation
 {
     public class TableMetadataBusiness(
-        IContextBase<TableMetadataViewModel, TableMetadata> repo,
+        IContextBase<TableMetadataViewModel, Data.Models.TableMetadata> repo,
         IMapper autoMapper,
         IColumnMetadataBusiness columnMetadataBusiness,
         ICmsBusiness cmsBusiness,
-        IRepositoryQueryBase<TableMetadataViewModel> queryRepo,
+        IQueryBase<TableMetadataViewModel> queryRepo,
         ICmsQueryBusiness cmsQueryBusiness,
           IUserContext userContext,
         IServiceProvider serviceProvider)
-        : BaseBusiness<TableMetadataViewModel, TableMetadata>(repo, serviceProvider), ITableMetadataBusiness
+        : BusinessBase<TableMetadataViewModel, Data.Models.TableMetadata>(repo, serviceProvider), ITableMetadataBusiness
     {
         private readonly IServiceProvider _serviceProvider = serviceProvider;
-        private readonly IContextBase<TableMetadataViewModel, TableMetadata> _repo = repo;
+        private readonly IContextBase<TableMetadataViewModel, Data.Models.TableMetadata> _repo = repo;
 
         public override async Task<CommandResult<TableMetadataViewModel>> Create(TableMetadataViewModel model,
             bool autoCommit = true)
@@ -105,7 +105,7 @@ namespace Synergy.App.Business.Implementation
         }
 
         public List<ColumnMetadataViewModel> AddBaseColumns(TableMetadataViewModel table,
-            IContextBase<TableMetadataViewModel, TableMetadata> repo, DataActionEnum dataAction)
+            IContextBase<TableMetadataViewModel, Data.Models.TableMetadata> repo, DataActionEnum dataAction)
         {
             var list = new List<ColumnMetadataViewModel>();
             if (table.ColumnMetadatas.IsNotNull())
@@ -265,7 +265,7 @@ namespace Synergy.App.Business.Implementation
 
 
         private ColumnMetadataViewModel AddColumn(ColumnMetadataViewModel col, TableMetadataViewModel table,
-            DataActionEnum dataAction, IContextBase<TableMetadataViewModel, TableMetadata> repo)
+            DataActionEnum dataAction, IContextBase<TableMetadataViewModel, Data.Models.TableMetadata> repo)
         {
             col.Id = Guid.NewGuid();
             col.CreatedBy = userContext.UserId;
@@ -442,7 +442,7 @@ namespace Synergy.App.Business.Implementation
         {
             var table = new TableMetadataViewModel();
             table.IsChildTable = model.IsChildTable;
-            var temp = await _repo.GetSingleById<TemplateViewModel, Template>(model.Id);
+            var temp = await _repo.GetSingleById<TemplateViewModel, Data.Models.Template>(model.Id);
             if (temp != null)
             {
                 table.ColumnMetadatas = new List<ColumnMetadataViewModel>();
@@ -465,7 +465,7 @@ namespace Synergy.App.Business.Implementation
                 if (res.IsSuccess)
                 {
                     temp.TableMetadataId = res.Item.Id;
-                    await _repo.Edit<TemplateViewModel, Template>(temp);
+                    await _repo.Edit<TemplateViewModel, Data.Models.Template>(temp);
                 }
 
                 return res;
@@ -487,7 +487,7 @@ namespace Synergy.App.Business.Implementation
 
                 var result = JObject.Parse(model.Json);
                 JArray rows = (JArray)result.SelectToken("components");
-                var temp = await _repo.GetSingleById<TemplateViewModel, Template>(model.Id);
+                var temp = await _repo.GetSingleById<TemplateViewModel, Data.Models.Template>(model.Id);
                 var table = await GetSingleById(temp.TableMetadataId);
                 table.IsChildTable = model.IsChildTable;
                 if (table != null)
@@ -511,7 +511,7 @@ namespace Synergy.App.Business.Implementation
                             temp.Json = obj.ToString();
                         }
 
-                        await _repo.Edit<TemplateViewModel, Template>(temp);
+                        await _repo.Edit<TemplateViewModel, Data.Models.Template>(temp);
                         var formbusi = _serviceProvider.GetService<ITemplateBusiness>();
                         foreach (var child in table.ChildTable)
                         {
@@ -986,9 +986,9 @@ namespace Synergy.App.Business.Implementation
 
         public async Task<List<ColumnMetadataViewModel>> GetTableData(Guid tableMetadataId, string recordId)
         {
-            var list = await _repo.GetList<ColumnMetadataViewModel, ColumnMetadata>(x =>
+            var list = await _repo.GetList<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
                 x.TableMetadataId == tableMetadataId);
-            var table = await _repo.GetSingleById<TableMetadataViewModel, TableMetadata>(tableMetadataId);
+            var table = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableMetadataId);
             if (table != null)
             {
                 var name = table.Name;
@@ -1011,13 +1011,13 @@ namespace Synergy.App.Business.Implementation
             string udfValue)
         {
             var template =
-                await _repo.GetSingle<TemplateViewModel, Template>(x => x.Code == templateCode || x.Id == templateId);
+                await _repo.GetSingle<TemplateViewModel, Data.Models.Template>(x => x.Code == templateCode || x.Id == templateId);
             if (template != null)
             {
                 var tableId = template.UdfTableMetadataId == Guid.Empty
                     ? template.TableMetadataId
                     : template.UdfTableMetadataId;
-                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, TableMetadata>(tableId);
+                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableId);
                 if (tableMetadata != null)
                 {
                     var name = tableMetadata.Name;
@@ -1035,7 +1035,7 @@ namespace Synergy.App.Business.Implementation
 
         public async Task<DataRow> GetTableDataByHeaderId(Guid templateId, string headerId)
         {
-            var template = await _repo.GetSingleById<TemplateViewModel, Template>(templateId);
+            var template = await _repo.GetSingleById<TemplateViewModel, Data.Models.Template>(templateId);
             if (template != null)
             {
                 var fieldName = "";
@@ -1043,7 +1043,7 @@ namespace Synergy.App.Business.Implementation
                 var tableId = template.UdfTableMetadataId == Guid.Empty
                     ? template.TableMetadataId
                     : template.UdfTableMetadataId;
-                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, TableMetadata>(tableId);
+                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableId);
                 if (tableMetadata != null)
                 {
                     var schema = tableMetadata.Schema;
@@ -1063,7 +1063,7 @@ namespace Synergy.App.Business.Implementation
         public async Task<DataRow> DeleteTableDataByHeaderId(string templateCode, Guid templateId, string headerId)
         {
             var template =
-                await _repo.GetSingle<TemplateViewModel, Template>(x => x.Code == templateCode || x.Id == templateId);
+                await _repo.GetSingle<TemplateViewModel, Data.Models.Template>(x => x.Code == templateCode || x.Id == templateId);
             if (template != null)
             {
                 var fieldName = "";
@@ -1071,7 +1071,7 @@ namespace Synergy.App.Business.Implementation
                 var tableId = template.UdfTableMetadataId == Guid.Empty
                     ? template.TableMetadataId
                     : template.UdfTableMetadataId;
-                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, TableMetadata>(tableId);
+                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableId);
                 if (tableMetadata != null)
                 {
                     var schema = tableMetadata.Schema;
@@ -1092,7 +1092,7 @@ namespace Synergy.App.Business.Implementation
             Dictionary<string, object> columnsToUpdate)
         {
             var template =
-                await _repo.GetSingle<TemplateViewModel, Template>(x => x.Code == templateCode || x.Id == templateId);
+                await _repo.GetSingle<TemplateViewModel, Data.Models.Template>(x => x.Code == templateCode || x.Id == templateId);
             if (template != null)
             {
                 var fieldName = "";
@@ -1100,7 +1100,7 @@ namespace Synergy.App.Business.Implementation
                 var tableId = template.UdfTableMetadataId == Guid.Empty
                     ? template.TableMetadataId
                     : template.UdfTableMetadataId;
-                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, TableMetadata>(tableId);
+                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableId);
                 if (tableMetadata != null)
                 {
                     var columnKeys = new List<string>();

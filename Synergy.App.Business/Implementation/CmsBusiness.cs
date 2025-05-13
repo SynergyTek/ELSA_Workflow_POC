@@ -14,21 +14,21 @@ using Synergy.App.Data.ViewModels;
 namespace Synergy.App.Business.Implementation
 {
     public class CmsBusiness(
-        IContextBase<TemplateViewModel, Template> repo,
+        IContextBase<TemplateViewModel, Data.Models.Template> repo,
         IMapper autoMapper,
-        IRepositoryQueryBase<TemplateViewModel> queryRepo,
+        IQueryBase<TemplateViewModel> queryRepo,
         IUserContext userContext,
         ICmsQueryBusiness cmsQueryBusiness,
         IServiceProvider serviceProvider)
-        : BaseBusiness<TemplateViewModel, Template>(repo, serviceProvider), ICmsBusiness
+        : BusinessBase<TemplateViewModel, Data.Models.Template>(repo, serviceProvider), ICmsBusiness
     {
         private readonly IServiceProvider _serviceProvider = serviceProvider;
-        private readonly IContextBase<TemplateViewModel, Template> _repo = repo;
+        private readonly IContextBase<TemplateViewModel, Data.Models.Template> _repo = repo;
 
         public async Task ManageTable(TableMetadataViewModel tableMetadata)
         {
             var existingTableMetadata =
-                await _repo.GetSingleById<TableMetadataViewModel, TableMetadata>(tableMetadata.Id);
+                await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableMetadata.Id);
             if (existingTableMetadata != null)
             {
                 existingTableMetadata.OldName = tableMetadata.OldName;
@@ -72,7 +72,7 @@ namespace Synergy.App.Business.Implementation
                 tableColumnList.Add(data);
             }
 
-            var existingMetadaColumnList = await _repo.GetList<ColumnMetadata, ColumnMetadata>
+            var existingMetadaColumnList = await _repo.GetList<Data.Models.ColumnMetadata, Data.Models.ColumnMetadata>
                 (x => x.TableMetadataId == tableMetadata.Id && x.IsVirtualColumn == false);
             var query = new StringBuilder(
                 $"ALTER TABLE {ApplicationConstant.Database.Schema.Cms}.\"{tableMetadata.Name}\"");
@@ -143,7 +143,7 @@ namespace Synergy.App.Business.Implementation
             var tableVarWithSchema = "<<table-schema>>";
             var tableVar = "<<table>>";
 
-            var columns = await _repo.GetList<ColumnMetadata, ColumnMetadata>(x =>
+            var columns = await _repo.GetList<Data.Models.ColumnMetadata, Data.Models.ColumnMetadata>(x =>
                 x.TableMetadataId == tableMetadata.Id && x.IsVirtualColumn == false);
             var query = new StringBuilder();
             if (dropTable)
@@ -211,7 +211,7 @@ namespace Synergy.App.Business.Implementation
         }
 
 
-        private string ConvertToPostgreType(ColumnMetadata column)
+        private string ConvertToPostgreType(Data.Models.ColumnMetadata column)
         {
             if (column.IsSystemColumn)
             {
@@ -247,7 +247,7 @@ namespace Synergy.App.Business.Implementation
         // }
 
 
-        private void ManageForeignKey(List<string> alterColumnScriptList, ColumnMetadata column, DataTable constraints)
+        private void ManageForeignKey(List<string> alterColumnScriptList, Data.Models.ColumnMetadata column, DataTable constraints)
         {
             if (column.IsForeignKey && column.IsVirtualForeignKey == false &&
                 column.ForeignKeyConstraintName.IsNotNullAndNotEmpty())

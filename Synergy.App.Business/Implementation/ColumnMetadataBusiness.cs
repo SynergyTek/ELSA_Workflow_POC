@@ -8,15 +8,15 @@ using Synergy.App.Data.ViewModels;
 namespace Synergy.App.Business.Implementation
 {
     public class ColumnMetadataBusiness(
-        IContextBase<ColumnMetadataViewModel, ColumnMetadata> repo,
+        IContextBase<ColumnMetadataViewModel, Data.Models.ColumnMetadata> repo,
         IMapper autoMapper,
-        IRepositoryQueryBase<ColumnMetadataViewModel> repoQuery,
+        IQueryBase<ColumnMetadataViewModel> repoQuery,
         IServiceProvider serviceProvider,
         ICmsQueryBusiness cmsQueryBusiness)
-        : BaseBusiness<ColumnMetadataViewModel, ColumnMetadata>(repo, serviceProvider),
+        : BusinessBase<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(repo, serviceProvider),
             IColumnMetadataBusiness
     {
-        private readonly IContextBase<ColumnMetadataViewModel, ColumnMetadata> _repo = repo;
+        private readonly IContextBase<ColumnMetadataViewModel, Data.Models.ColumnMetadata> _repo = repo;
 
 
         public override async Task<CommandResult<ColumnMetadataViewModel>> Create(ColumnMetadataViewModel model,
@@ -24,14 +24,14 @@ namespace Synergy.App.Business.Implementation
         {
             if (model.IsForeignKey)
             {
-                var fkTable = await _repo.GetSingle<TableMetadataViewModel, TableMetadata>(x =>
+                var fkTable = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadata>(x =>
                     x.Name == model.ForeignKeyTableName && x.Schema == model.ForeignKeyTableSchemaName);
                 if (fkTable != null)
                 {
                     model.ForeignKeyTableId = fkTable.Id;
                     if (model.ForeignKeyColumnName.IsNotNullAndNotEmpty())
                     {
-                        var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, ColumnMetadata>(x =>
+                        var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
                             x.TableMetadataId == fkTable.Id &&
                             x.Name == model.ForeignKeyColumnName);
                         if (fkColumn != null)
@@ -42,7 +42,7 @@ namespace Synergy.App.Business.Implementation
 
                     if (model.ForeignKeyDisplayColumnName.IsNotNullAndNotEmpty())
                     {
-                        var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, ColumnMetadata>(x =>
+                        var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
                             x.TableMetadataId == fkTable.Id &&
                             x.Name == model.ForeignKeyDisplayColumnName);
                         if (fkColumnDisplay != null)
@@ -53,7 +53,7 @@ namespace Synergy.App.Business.Implementation
 
                     if (model.ForeignKeyConstraintName.IsNullOrEmpty())
                     {
-                        var table = await _repo.GetSingle<TableMetadataViewModel, TableMetadata>(x =>
+                        var table = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadata>(x =>
                             x.Id == model.TableMetadataId);
                         if (table != null)
                         {
@@ -97,14 +97,14 @@ namespace Synergy.App.Business.Implementation
             var ViewableContextS = model.ViewableContext;
             if (model.IsForeignKey)
             {
-                var fkTable = await _repo.GetSingle<TableMetadataViewModel, TableMetadata>(x =>
+                var fkTable = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadata>(x =>
                     x.Name == model.ForeignKeyTableName && x.Schema == model.ForeignKeyTableSchemaName);
                 if (fkTable != null)
                 {
                     model.ForeignKeyTableId = fkTable.Id;
                     if (model.ForeignKeyColumnName.IsNotNullAndNotEmpty())
                     {
-                        var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, ColumnMetadata>(x =>
+                        var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
                             x.TableMetadataId == fkTable.Id &&
                             x.Name == model.ForeignKeyColumnName);
                         if (fkColumn != null)
@@ -115,7 +115,7 @@ namespace Synergy.App.Business.Implementation
 
                     if (model.ForeignKeyDisplayColumnName.IsNotNullAndNotEmpty())
                     {
-                        var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, ColumnMetadata>(x =>
+                        var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
                             x.TableMetadataId == fkTable.Id &&
                             x.Name == model.ForeignKeyDisplayColumnName);
                         if (fkColumnDisplay != null)
@@ -126,7 +126,7 @@ namespace Synergy.App.Business.Implementation
 
                     if (model.ForeignKeyConstraintName.IsNullOrEmpty())
                     {
-                        var table = await _repo.GetSingle<TableMetadataViewModel, TableMetadata>(x =>
+                        var table = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadata>(x =>
                             x.Id == model.TableMetadataId);
                         if (table != null)
                         {
@@ -139,7 +139,7 @@ namespace Synergy.App.Business.Implementation
 
             if (model.IgnorePermission)
             {
-                var exist = await _repo.GetSingle<ColumnMetadataViewModel, ColumnMetadata>(x => x.Id == model.Id);
+                var exist = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x => x.Id == model.Id);
 
                 if (exist != null)
                 {

@@ -5,7 +5,7 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Interface
 {
-    public interface ICmsBusiness : IBaseBusiness<TemplateViewModel, Template>
+    public interface ICmsBusiness : IBusinessBase<TemplateViewModel, Template>
     {
         Task ManageTable(TableMetadataViewModel tableMetadata);
         //

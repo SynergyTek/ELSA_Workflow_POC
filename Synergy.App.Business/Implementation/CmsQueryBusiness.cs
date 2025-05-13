@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Text;
-using AutoMapper;
 using Synergy.App.Business.Interface;
 using Synergy.App.Common;
 using Synergy.App.Data;
@@ -9,22 +8,12 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Implementation
 {
-    public class CmsQueryPostgreBusiness(
+    public class CmsQueryBusiness(
         IContextBase<TemplateViewModel, Template> repo,
-        IMapper autoMapper,
-        IUserContext userContext,
-        IRepositoryQueryBase<TemplateViewModel> queryRepo,
+        IQueryBase<TemplateViewModel> queryRepo,
         IServiceProvider serviceProvider)
-        : BaseBusiness<TemplateViewModel, Template>(repo, serviceProvider), ICmsQueryBusiness
+        : BusinessBase<TemplateViewModel, Template>(repo, serviceProvider), ICmsQueryBusiness
     {
-        private readonly IUserContext _userContext = userContext;
-        private readonly IRepositoryQueryBase<TemplateViewModel> _queryRepo = queryRepo;
-        private readonly IServiceProvider _serviceProvider = serviceProvider;
-
-        //private readonly IHangfireScheduler _hangfireScheduler;
-
-        //_hangfireScheduler = hangfireScheduler;
-
         public async Task<bool> ManageTableExists(TableMetadataViewModel existingTableMetadata)
         {
             var query = @$"select exists (
@@ -33,7 +22,7 @@ namespace Synergy.App.Business.Implementation
 	                        where table_schema = '{existingTableMetadata.Schema}'
 	                        and table_name = '{existingTableMetadata.Name}'
                         ) ";
-            var exist = await _queryRepo.ExecuteScalar<bool>(query, null);
+            var exist = await queryRepo.ExecuteScalar<bool>(query, null);
             return exist;
         }
 
@@ -42,7 +31,7 @@ namespace Synergy.App.Business.Implementation
             var query = @$"select true from  
                         {existingTableMetadata.Schema}.""{existingTableMetadata.Name}"" limit 1 ";
 
-            var recordExists = await _queryRepo.ExecuteScalar<bool?>(query, null);
+            var recordExists = await queryRepo.ExecuteScalar<bool?>(query, null);
             return recordExists;
         }
 
@@ -59,7 +48,7 @@ namespace Synergy.App.Business.Implementation
             var table = $"{tableMetadata.Name}";
             var tableQuery = query.ToString().Replace("<<table-schema>>", tableWithSchema).Replace("<<table>>", table);
 
-            await _queryRepo.ExecuteCommand(tableQuery, null);
+            await queryRepo.ExecuteCommand(tableQuery, null);
         }
 
         public async Task CreateTableSchema(TableMetadataViewModel tableMetadata, bool dropTable)
@@ -78,17 +67,17 @@ namespace Synergy.App.Business.Implementation
             var table = $"{tableMetadata.Name}";
             var tableQuery = query.ToString().Replace("<<table-schema>>", tableWithSchema).Replace("<<table>>", table);
 
-            await _queryRepo.ExecuteCommand(tableQuery, null);
+            await queryRepo.ExecuteCommand(tableQuery, null);
         }
 
         public async Task TableQueryExecute(string tableQuery)
         {
-            await _queryRepo.ExecuteCommand(tableQuery, null);
+            await queryRepo.ExecuteCommand(tableQuery, null);
         }
 
         public async Task<DataTable> GetQueryDataTable(string selectQuery)
         {
-            var dt = await _queryRepo.ExecuteQueryDataTable(selectQuery, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(selectQuery, null);
             return dt;
         }
 
@@ -98,7 +87,7 @@ namespace Synergy.App.Business.Implementation
             from information_schema.columns where table_schema = '{tableMetadata.Schema}'
 	        and table_name = '{tableMetadata.Name}'";
 
-            var dt = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(query, null);
             return dt;
         }
 
@@ -110,7 +99,7 @@ namespace Synergy.App.Business.Implementation
             INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace
             WHERE nsp.nspname = '{tableMetadata.Schema}' AND rel.relname = '{tableMetadata.Name}' ";
 
-            var dt = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(query, null);
             return dt;
         }
 
@@ -120,7 +109,7 @@ namespace Synergy.App.Business.Implementation
             from information_schema.columns where table_schema = '{tableMetadata.Schema}'
 	        and table_name = '{tableMetadata.Name}'";
 
-            var dt = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(query, null);
             return dt;
         }
 
@@ -132,7 +121,7 @@ namespace Synergy.App.Business.Implementation
             INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace
             WHERE nsp.nspname = '{tableMetadata.Schema}' AND rel.relname = '{tableMetadata.Name}';";
 
-            var dt = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(query, null);
             return dt;
         }
 
@@ -142,7 +131,7 @@ namespace Synergy.App.Business.Implementation
             from information_schema.columns where table_schema = '{tableMetadata.Schema}'
 	        and table_name = '{tableMetadata.Name}'";
 
-            var dt = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(query, null);
             return dt;
         }
 
@@ -154,7 +143,7 @@ namespace Synergy.App.Business.Implementation
             INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace
             WHERE nsp.nspname = '{tableMetadata.Schema}' AND rel.relname = '{tableMetadata.Name}';";
 
-            var dt = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(query, null);
             return dt;
         }
 
@@ -163,7 +152,7 @@ namespace Synergy.App.Business.Implementation
             var query = @$" select column_name,data_type,is_nullable	   
             from information_schema.columns where table_schema = '{tableMetadata.Schema}'
 	        and table_name = '{tableMetadata.Name}' ";
-            var dt = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(query, null);
             return dt;
         }
 
@@ -175,7 +164,7 @@ namespace Synergy.App.Business.Implementation
             INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace
             WHERE nsp.nspname = '{tableMetadata.Schema}' AND rel.relname = '{tableMetadata.Name}';";
 
-            var dt = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(query, null);
             return dt;
         }
 
@@ -191,7 +180,7 @@ namespace Synergy.App.Business.Implementation
                 where c.""TableMetadataId""='{tableMetaData.Id}'
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false";
 
-            var result = await _queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+            var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
             return result;
         }
 
@@ -206,7 +195,7 @@ namespace Synergy.App.Business.Implementation
             }
 
             selectQuery = @$"{selectQuery} limit 1";
-            var dt = await _queryRepo.ExecuteQueryDataTable(selectQuery, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(selectQuery, null);
             return dt;
         }
 
@@ -217,36 +206,36 @@ namespace Synergy.App.Business.Implementation
             selectQuery.Append(Environment.NewLine);
             selectQuery.Append(@$"""IsDeleted""=true,{Environment.NewLine}");
             selectQuery.Append(@$"""LastUpdatedDate""='{DateTime.Now.ToDatabaseDateFormat()}',{Environment.NewLine}");
-            selectQuery.Append(@$"""LastUpdatedBy""='{_userContext.UserId}'{Environment.NewLine}");
+            selectQuery.Append(@$"""LastUpdatedBy""='{repo.UserContext.Id}'{Environment.NewLine}");
             selectQuery.Append(@$"where ""Id""='{model.RecordId}'");
             var queryText = selectQuery.ToString();
 
-            await _queryRepo.ExecuteCommand(queryText, null);
+            await queryRepo.ExecuteCommand(queryText, null);
         }
 
-        public async Task<string> GetLatestMigrationScript()
+        public async Task<string?> GetLatestMigrationScript()
         {
-            var query = $@"select ""MigrationId"" from public.""__EFMigrationsHistory"" 
+            var query = @"select ""MigrationId"" from public.""__EFMigrationsHistory"" 
                         order by left(""MigrationId"", strpos(""MigrationId"", '_') - 1) desc limit 1 ";
-            var queryData = await _queryRepo.ExecuteScalar<string>(query, null);
+            var queryData = await queryRepo.ExecuteScalar<string>(query, null);
             return queryData;
         }
 
         public async Task<List<string>> GetAllMigrationsList()
         {
-            var query = $@"select ""MigrationId"" from public.""__EFMigrationsHistory"" 
+            var query = @"select ""MigrationId"" from public.""__EFMigrationsHistory"" 
                         order by left(""MigrationId"", strpos(""MigrationId"", '_') - 1) ";
-            var queryData = await _queryRepo.ExecuteScalarList<string>(query, null);
+            var queryData = await queryRepo.ExecuteScalarList<string>(query, null);
             return queryData;
         }
 
 
-        public async Task<TableMetadataViewModel> GetViewableColumnMetadataListData(string schemaName, string tableName)
+        public async Task<TableMetadataViewModel?> GetViewableColumnMetadataListData(string schemaName, string tableName)
         {
             var query = @$"select ta.""Id"",t.""TemplateType"" from public.""TableMetadata"" ta 
             left join public.""Template"" t on ta.""Id""=coalesce(t.""UdfTableMetadataId"",t.""TableMetadataId"") and t.""IsDeleted""=false
             where ta.""Schema""='{schemaName}' and ta.""Name""='{tableName}' and ta.""IsDeleted""=false";
-            var tableMetadata = await _queryRepo.ExecuteQuerySingle<TableMetadataViewModel>(query, null);
+            var tableMetadata = await queryRepo.ExecuteQuerySingle<TableMetadataViewModel>(query, null);
             return tableMetadata;
         }
 
@@ -261,7 +250,7 @@ namespace Synergy.App.Business.Implementation
                 join public.""ColumnMetadata"" fc on ft.""Id""=fc.""TableMetadataId"" and fc.""IsDeleted""=false
                 where c.""TableMetadataId""='{tableMetadataId}' and fc.""IsHiddenColumn"" = false  and c.""HideForeignKeyTableColumns""=false  
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false  ";
-            var result = await _queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+            var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
             return result;
         }
 
@@ -275,7 +264,7 @@ namespace Synergy.App.Business.Implementation
                 join public.""ColumnMetadata"" fc on ft.""Id""=fc.""TableMetadataId"" and fc.""IsDeleted""=false
                 where c.""TableMetadataId""='{tableMetadataId}' and fc.""IsHiddenColumn"" = false and c.""HideForeignKeyTableColumns""=false 
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false  ";
-            var result = await _queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+            var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
             return result;
         }
 
@@ -289,7 +278,7 @@ namespace Synergy.App.Business.Implementation
                 join public.""ColumnMetadata"" fc on ft.""Id""=fc.""TableMetadataId"" and fc.""IsDeleted""=false
                 where c.""TableMetadataId""='{tableMetadataId}' and fc.""IsHiddenColumn"" = false and c.""HideForeignKeyTableColumns""=false  
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false  ";
-            var result = await _queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+            var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
             return result;
         }
 
@@ -318,7 +307,7 @@ namespace Synergy.App.Business.Implementation
             where t.""Name""='User' and  c.""IsHiddenColumn"" = false and c.""IsDeleted""=false  
             and c.""Name"" in ({Helper.GetViewableUserColumns})
             ";
-            var result1 = await _queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query1, null);
+            var result1 = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query1, null);
             return result1;
         }
 
@@ -332,7 +321,7 @@ namespace Synergy.App.Business.Implementation
                 join public.""ColumnMetadata"" fc on ft.""Id""=fc.""TableMetadataId"" and fc.""IsDeleted""=false
                 where c.""TableMetadataId""='{tableMetadataId}' and fc.""IsHiddenColumn"" = false and c.""HideForeignKeyTableColumns""=false  
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false  ";
-            var result = await _queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+            var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
             return result;
         }
 
@@ -362,7 +351,7 @@ namespace Synergy.App.Business.Implementation
             where t.""Name""='User' and  c.""IsHiddenColumn"" = false and c.""IsDeleted""=false 
             and c.""Name"" in ({Helper.GetViewableUserColumns})
             ";
-            var result1 = await _queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query1, null);
+            var result1 = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query1, null);
             return result1;
         }
 
@@ -370,7 +359,7 @@ namespace Synergy.App.Business.Implementation
         public async Task<DataTable> GetTableData(Guid tableMetadataId, string recordId, string name, string schema)
         {
             var query = $@"select * from {schema}.""{name}"" where ""Id""='{recordId}' limit 1";
-            var dt = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(query, null);
             return dt;
         }
 
@@ -379,7 +368,7 @@ namespace Synergy.App.Business.Implementation
         {
             var selectQuery =
                 @$"select * from {schema}.""{name}"" where  ""IsDeleted""=false and ""{udfName}""='{udfValue}' limit 1";
-            var dt = await _queryRepo.ExecuteQueryDataTable(selectQuery, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(selectQuery, null);
             return dt;
         }
 
@@ -388,7 +377,7 @@ namespace Synergy.App.Business.Implementation
         {
             var selectQuery =
                 @$"select * from {schema}.""{name}"" where  ""IsDeleted""=false and ""{fieldName}""='{headerId}' limit 1";
-            var dt = await _queryRepo.ExecuteQueryDataTable(selectQuery, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(selectQuery, null);
             return dt;
         }
 
@@ -397,7 +386,7 @@ namespace Synergy.App.Business.Implementation
         {
             var selectQuery =
                 @$"update {schema}.""{name}"" set  ""IsDeleted""=true where ""{fieldName}""='{headerId}' ";
-            var dt = await _queryRepo.ExecuteQueryDataTable(selectQuery, null);
+            var dt = await queryRepo.ExecuteQueryDataTable(selectQuery, null);
             return dt;
         }
 
@@ -406,23 +395,23 @@ namespace Synergy.App.Business.Implementation
         {
             var selectQuery =
                 @$"update {schema}.""{name}"" set {string.Join(",", columnKeys)} where ""{fieldName}""='{headerId}' ";
-            await _queryRepo.ExecuteCommand(selectQuery, null);
+            await queryRepo.ExecuteCommand(selectQuery, null);
         }
 
         public async Task<DataTable> GetViewColumnByTableNameData(string schema, string tableName)
         {
             var query =
                 $@"select * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{tableName}' and TABLE_SCHEMA='{schema}'";
-            var columns = await _queryRepo.ExecuteQueryDataTable(query, null);
+            var columns = await queryRepo.ExecuteQueryDataTable(query, null);
             return columns;
         }
 
 
-        public async Task<string> GetForeignKeyId(ColumnMetadataViewModel col, string val)
+        public async Task<string?> GetForeignKeyId(ColumnMetadataViewModel col, string val)
         {
             string query =
                 $@"Select ""Id"" from ""{col.ForeignKeyTableSchemaName}"".""{col.ForeignKeyTableName}"" where ""{col.ForeignKeyDisplayColumnName}""='{val}' ";
-            var res = await _queryRepo.ExecuteScalar<string>(query, null);
+            var res = await queryRepo.ExecuteScalar<string>(query, null);
             return res;
         }
     }

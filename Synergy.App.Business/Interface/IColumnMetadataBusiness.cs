@@ -3,7 +3,7 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Interface
 {
-    public interface IColumnMetadataBusiness : IBaseBusiness<ColumnMetadataViewModel, ColumnMetadata>
+    public interface IColumnMetadataBusiness : IBusinessBase<ColumnMetadataViewModel, ColumnMetadata>
     {
         Task<List<ColumnMetadataViewModel>> GetViewableColumnMetadataList(Guid tableMetadataId,
             bool includeForeignKeyTableColumns = true);

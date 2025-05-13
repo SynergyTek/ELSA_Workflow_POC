@@ -4,7 +4,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Synergy.App.Business.Interface
 {
-    public interface IBaseBusiness<TV, TD> where TV : BaseModel where TD : BaseModel
+    public interface IBusinessBase<TV, TD> where TV : BaseModel where TD : BaseModel
     {
         Task<List<TV>> GetList();
         Task<List<TV>> GetList(Expression<Func<TD, bool>> where, params Expression<Func<TD, object>>[] include);

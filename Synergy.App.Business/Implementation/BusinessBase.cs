@@ -10,7 +10,7 @@ using Workflow = Elsa.Workflows.Activities.Workflow;
 
 namespace Synergy.App.Business.Implementation
 {
-    public class BaseBusiness<TV, TD>(IContextBase<TV, TD> repo, IServiceProvider sp) : IBaseBusiness<TV, TD>
+    public class BusinessBase<TV, TD>(IContextBase<TV, TD> repo, IServiceProvider sp) : IBusinessBase<TV, TD>
         where TV : BaseModel
         where TD : BaseModel
     {

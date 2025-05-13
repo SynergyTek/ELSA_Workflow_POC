@@ -15,11 +15,13 @@ public static class BusinessHelper
         services.AddScoped<IWorkflowBusiness, WorkflowBusiness>();
         services.AddScoped<IElsaBusiness, ElsaBusiness>();
         services.Add(new ServiceDescriptor(typeof(IContextBase<,>), typeof(ContextBase<,>), ServiceLifetime.Scoped));
-        services.Add(new ServiceDescriptor(typeof(IBaseBusiness<,>), typeof(BaseBusiness<,>), ServiceLifetime.Scoped));
-		//services.Add(new ServiceDescriptor(typeof(IRepositoryQueryBase<>), typeof(BaseBusiness<,>), ServiceLifetime.Scoped));
+        services.Add(new ServiceDescriptor(typeof(IBusinessBase<,>), typeof(BusinessBase<,>), ServiceLifetime.Scoped));
+        services.Add(new ServiceDescriptor(typeof(IQueryBase<>), typeof(QueryBase<>), ServiceLifetime.Scoped));
 		services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IUserContext, UserContext>();
-		services.AddScoped<ITemplateBusiness, TemplateBusiness>();
+        services.AddScoped<ICmsBusiness, CmsBusiness>();
+        services.AddScoped<ICmsQueryBusiness, CmsQueryBusiness>();
+		services.AddScoped<ITemplateBusiness, TemplateBusinessBusiness>();
 		services.AddScoped<ITableMetadataBusiness, TableMetadataBusiness>();
 		services.AddScoped<IColumnMetadataBusiness, ColumnMetadataBusiness>();
 

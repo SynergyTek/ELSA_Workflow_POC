@@ -4,11 +4,11 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Implementation;
 
-public class TemplateBusiness(
-    IContextBase<TemplateViewModel, Template> repo,
+public class TemplateBusinessBusiness(
+    IContextBase<TemplateViewModel, Data.Models.Template> repo,
        ITableMetadataBusiness _tableMetadataBusiness,
     IServiceProvider sp)
-    : BaseBusiness<TemplateViewModel, Template>(repo, sp), ITemplateBusiness
+    : BusinessBase<TemplateViewModel, Data.Models.Template>(repo, sp), ITemplateBusiness
 {
     public async override Task<CommandResult<TemplateViewModel>> Create(TemplateViewModel model, bool autoCommit = true)
     {

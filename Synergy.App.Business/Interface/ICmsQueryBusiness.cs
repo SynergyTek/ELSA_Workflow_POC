@@ -4,7 +4,7 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Interface
 {
-    public interface ICmsQueryBusiness : IBaseBusiness<TemplateViewModel, Template>
+    public interface ICmsQueryBusiness : IBusinessBase<TemplateViewModel, Template>
     {
         #region CmsBusiness
         Task<bool> ManageTableExists(TableMetadataViewModel existingTableMetadata);
@@ -19,7 +19,7 @@ namespace Synergy.App.Business.Interface
         Task<List<ColumnMetadataViewModel>> GetForeignKeyColumnByTableMetadata(TableMetadataViewModel tableMetaData);
         Task<DataTable> GetDataByColumn(ColumnMetadataViewModel column, object columnValue, TableMetadataViewModel tableMetaData, Guid excludeId);
 
-        Task<string> GetLatestMigrationScript();
+        Task<string?> GetLatestMigrationScript();
       //  Task<TemplateViewModel> ExecuteMigrationScript(string script);
         Task<List<string>> GetAllMigrationsList();
       //  Task<List<TemplateViewModel>> GetTemplateListByTemplateType(int i);
@@ -30,7 +30,7 @@ namespace Synergy.App.Business.Interface
 
 
 
-        Task<TableMetadataViewModel> GetViewableColumnMetadataListData(string schemaName, string tableName);
+        Task<TableMetadataViewModel?> GetViewableColumnMetadataListData(string schemaName, string tableName);
         Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForFormData(Guid tableMetadataId);
         Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForNoteData(Guid tableMetadataId);
         Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForTaskData(Guid tableMetadataId);

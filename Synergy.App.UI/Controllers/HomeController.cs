@@ -37,9 +37,7 @@ public class HomeController : Controller
     [Authorize]
     public IActionResult Index()
     {
-        // var tasks = workflowBusiness
-        //     .GetList(x => x.AssignedToUserId == userContext.Id || x.AssignedByUserId == userContext.Id).Result;
-        var tasks = new List<WorkflowViewModel>();
+        var tasks = _workflowBusiness.GetInstances().Result.Item;
         return View(tasks);
     }
 
@@ -65,31 +63,31 @@ public class HomeController : Controller
     }
 
 
-    public async Task<IActionResult> CompleteTask(Guid taskId, CancellationToken cancellationToken)
+    public async Task<IActionResult> CompleteTask(string taskId)
     {
-        var user = new UserViewModel()
+        var a = await _workflowBusiness.ResumeWorkflow(taskId, new()
         {
-            Id = _userContext.Id,
-            UserName = _userContext.UserName,
-            Email = _userContext.Email
-        };
-        await _workflowBusiness.StartWorkflow("POST_LEAVE", new Dictionary<string, object>
-        {
-            {
-                "User", user
-            }
+            { "Status", "Approved" }
         });
         return RedirectToAction("Index");
     }
 
-    public IActionResult RejectTask()
+    public async Task<IActionResult> RejectTask(string taskId)
     {
-        return Json(new { Success = true });
+        var a = await _workflowBusiness.ResumeWorkflow(taskId, new()
+        {
+            { "Status", "Rejected" }
+        });
+        return RedirectToAction("Index");
     }
 
-    public IActionResult CancelTask()
+    public async Task<IActionResult> CancelTask(string taskId)
     {
-        return Json(new { Success = true });
+        var a = await _workflowBusiness.ResumeWorkflow(taskId, new()
+        {
+            { "Status", "Cancelled" }
+        });
+        return RedirectToAction("Index");
     }
 
     public IActionResult DeleteTask()
@@ -107,18 +105,18 @@ public class HomeController : Controller
 
     public async Task<IActionResult> ApplyLeave()
     {
-        var request = new StartWorkflowRequest
+        var user = new UserViewModel()
         {
-            WorkflowDefinitionHandle = new WorkflowDefinitionHandle()
-            {
-                DefinitionId = "77c066a255cc46ea"
-            },
-            Input = new Dictionary<string, object>
-            {
-                { "Title", "Leave Application" }
-            }
+            Id = _userContext.Id,
+            UserName = _userContext.UserName,
+            Email = _userContext.Email
         };
-        await _workflowStarter.StartWorkflowAsync(request);
+        var a = await _workflowBusiness.StartWorkflow("POST_LEAVE", new Dictionary<string, object>
+        {
+            {
+                "User", user
+            }
+        });
         return Json(new { Success = true });
     }
 

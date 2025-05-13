@@ -16,10 +16,14 @@ public static class BusinessHelper
         services.AddScoped<IElsaBusiness, ElsaBusiness>();
         services.Add(new ServiceDescriptor(typeof(IContextBase<,>), typeof(ContextBase<,>), ServiceLifetime.Scoped));
         services.Add(new ServiceDescriptor(typeof(IBaseBusiness<,>), typeof(BaseBusiness<,>), ServiceLifetime.Scoped));
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+		//services.Add(new ServiceDescriptor(typeof(IRepositoryQueryBase<>), typeof(BaseBusiness<,>), ServiceLifetime.Scoped));
+		services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IUserContext, UserContext>();
+		services.AddScoped<ITemplateBusiness, TemplateBusiness>();
+		services.AddScoped<ITableMetadataBusiness, TableMetadataBusiness>();
+		services.AddScoped<IColumnMetadataBusiness, ColumnMetadataBusiness>();
 
-    }
+	}
     public static object ConvertToDbValue(object s, bool isSystemColumn, DataColumnTypeEnum dataType)
         {
 

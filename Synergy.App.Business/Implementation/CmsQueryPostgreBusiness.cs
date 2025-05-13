@@ -217,7 +217,7 @@ namespace Synergy.App.Business.Implementation
             selectQuery.Append(Environment.NewLine);
             selectQuery.Append(@$"""IsDeleted""=true,{Environment.NewLine}");
             selectQuery.Append(@$"""LastUpdatedDate""='{DateTime.Now.ToDatabaseDateFormat()}',{Environment.NewLine}");
-            selectQuery.Append(@$"""LastUpdatedBy""='{repo.UserContext.UserId}'{Environment.NewLine}");
+            selectQuery.Append(@$"""LastUpdatedBy""='{_userContext.UserId}'{Environment.NewLine}");
             selectQuery.Append(@$"where ""Id""='{model.RecordId}'");
             var queryText = selectQuery.ToString();
 

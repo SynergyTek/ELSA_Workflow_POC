@@ -1,0 +1,150 @@
+﻿@using Synergy.App.Data;
+@model Synergy.App.Data.ViewModels.TemplateViewModel
+
+@{
+    ViewData["Title"] = "Template";
+    Layout = null;
+}
+
+
+<script>
+    var status = '@Html.Raw(Extension.EnumToJson(typeof(StatusEnum)))';
+    var statusObj = JSON.parse(status);
+
+    var columnDefs = [
+        {
+            field: "Name",
+        },
+        //{ field: "ShortName" },
+        //{ field: "Prefix" },
+        {
+            field: "Status",
+            cellRenderer: params => {
+                return statusObj[params.value]; //only for enum
+            }
+        },
+        {
+            headerName: "Actions",
+            field: "Id",
+            cellRenderer: params => {
+                return "<div class='btn-group grid-menu' id='tree-menuBinTemplate' data-idvalue='" + params.value + "' data-status=\"0\"  ><i class='fas fa-ellipsis-v'></i></div>"
+            }
+        }
+    ];
+
+    $(function () {
+
+        getDataTemplate();
+
+        //$.contextMenu('update');
+        //$('.context-menu-list').trigger('contextmenu:refresh');
+
+        $.contextMenu({
+            selector: '#tree-menuBinTemplate',
+            trigger: 'left',
+            build: function ($trigger, e) {
+
+
+                var id = $trigger.data('idvalue');
+
+                //var portalName = $trigger.data('portal-name');
+
+                switch (0) {
+                    case 0:
+                        return {
+                            callback: function (key, options) {
+                                switch (key) {
+                                    case 'edit':
+                                        onEdit(id);
+                                        break;
+
+                                    case 'delete':
+                                        OnDelete(id);
+                                        break;
+
+                                    default:
+                                }
+                            },
+                            items: {
+                                "edit": { name: "Edit", icon: "fas fa-edit" },
+                                "delete": { name: "Delete", icon: "fas fa-trash" },
+
+
+                            }
+                        };
+
+
+                }
+            }
+        });
+
+
+    });
+
+    function onEdit(id) {
+        var win = GetMainWindow();
+        win.iframeOpenUrl = '@Url.Action("Edit", "Template")?Id=' + id;
+        win.OpenWindow({ Title: 'Manage Template', Width: 600, Height: 600 });
+        return false;
+    }
+
+    function OnDelete(id) {
+        var flag = confirm('Do you really want to delete the Template?');
+
+        if (flag) {
+            $.ajax({
+                url: '@Url.Action("Delete", "Template")?Id=' + id,
+                type: 'POST',
+                data: {},
+                dataType: 'json',
+                success: function (result) {
+
+                    if (result.success) {
+                        getDataTemplate();
+                        kendo.alert("Template Deleted Successfully.");
+                    } else {
+                        getDataTemplate();
+                        var err = result.errors.BinderCountError.errors[0];
+                        kendo.alert(err);
+                    }
+                },
+                error: function (ert) {
+                    getDataTemplate();
+                }
+            });
+            return false;
+        }
+    }
+
+    function getDataTemplate() {
+        document.getElementById("myGridTemplate").innerHTML = "";
+        gridConfig(
+            "myGridTemplate",
+            "/Template/ReadData",
+            columnDefs,
+            false,
+            true,
+            true,
+            true,
+            1,
+            true,
+            10);
+    }
+
+</script>
+
+<div>
+    <h4>@ViewBag.Title</h4>
+
+    <hr />
+
+
+    <div class="row">
+        <div class="col-12">
+            <button type='button' class='btn btn-primary' onclick='OnCreateTemplate();'><i class='fa fas fa-plus'></i>&nbsp;Create Template</button>
+            <br /><br />
+            <div id="myGridTemplate" style="width: 100%;height:550px" class="ag-theme-alpine"></div>
+        </div>
+    </div>
+</div>
+

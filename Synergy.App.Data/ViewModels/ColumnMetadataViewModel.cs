@@ -49,6 +49,7 @@ namespace Synergy.App.Data.ViewModels
         public string TableMetadataName { get; set; }
         public DataActionEnum DataAction { get; set; }
         public long? SequenceOrder { get; set; }
+        public StatusEnum Status { get; set; }
         // Permission-based visibility and editability
         //        public bool IsVisible
         //        {

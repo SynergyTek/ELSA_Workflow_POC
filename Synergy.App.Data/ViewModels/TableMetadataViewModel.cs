@@ -37,5 +37,6 @@ namespace Synergy.App.Data.ViewModels
         public string TemplateCode { get; set; }
         public DataActionEnum DataAction { get; set; }
         public long? SequenceOrder { get; set; }
+        public StatusEnum Status { get; set; }
     }
 }

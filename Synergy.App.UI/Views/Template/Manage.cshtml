@@ -1,0 +1,106 @@
+﻿@using Synergy.App.Data;
+@model Synergy.App.Data.ViewModels.TemplateViewModel
+
+@{
+    ViewData["Title"] = "Manage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<style>
+
+    .required {
+        color: red;
+    }
+</style>
+
+<div class="row" style="margin-left:15px;">
+
+    <form asp-controller="UserSet" asp-action="Manage" method="post" class="form-horizontal" id="myForm">
+        <div class="text-danger" style="width:300px;" asp-validation-summary="All"></div>
+
+        <div class="row" style="padding:10px;margin-right:15px;">
+
+            <div class="col-12 pad-15">
+                <div class="form-label-group">
+                    <input asp-for="Name" type="text" class="form-control" placeholder="Enter Name" required="required" autocomplete="off" />
+                    <label for="Name">Name <span class="required">*</span></label>
+                </div>
+            </div>
+            <div class="col-12 pad-15">
+                <div class="form-label-group">
+                    <input asp-for="Code" type="text" class="form-control" placeholder="Enter Code" autocomplete="off" />
+                    <label for="Code">Code</label>
+                </div>
+            </div>
+
+            <div class="col-12 pad-10">
+                <div class="form-label-group">
+
+                    <input asp-for="Description" type="text" class="form-control" placeholder="Description" autocomplete="off" />
+                    <label for="Description">Description</label>
+                </div>
+            </div>
+
+            <div class="col-12 pad-10">Status <span class="required">*</span></div>
+
+            <div class="col-12 pad-10">
+              
+
+                <input asp-for="Status" id="Status" class="form-control" />
+            </div>
+           
+         
+
+
+
+            <div class="cms-slidebar-footer">
+                <button type="button" class="btn btn-light" onclick="closeNavMemberGroup();">Close</button>
+                <input type="submit" class="btn btn-primary" value="Save" id="submitBtn" onclick="OnSave(event);" />
+            </div>
+
+        </div>
+        @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.DataAction)
+    </form>
+</div>
+
+
+<script type="text/javascript">
+   
+    $(document).ready(function () {
+
+
+        $("#Status").kendoDropDownList({
+            dataTextField: "Name",
+            dataValueField: "Id",
+            optionLabel: "--Select--",
+            value: '@Model.Status.ToString()',
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "/Home/GetEnumIdNameList?enumType=StatusEnum",
+                    }
+                }
+            }
+        });
+
+       
+      
+
+
+    });
+    function OnSave(evt) {
+
+        
+    }
+
+    function closeNavMemberGroup() {
+
+        var win = GetMainWindow();
+        win.CloseWindow();
+        return false;
+    }
+
+</script>

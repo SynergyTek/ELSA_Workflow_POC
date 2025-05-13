@@ -32,5 +32,8 @@ namespace Synergy.App.Data.ViewModels
         public string ClassName { get; set; } = string.Empty;
         public DataActionEnum DataAction { get; set; }
         public long? SequenceOrder { get; set; }
+        public string? RecordId { get; set; }
+        public Guid ParentId { get; set; }
+        public StatusEnum Status { get; set; }
     }
 }

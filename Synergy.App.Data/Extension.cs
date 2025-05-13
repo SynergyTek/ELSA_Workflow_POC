@@ -1134,7 +1134,22 @@ public static class Extension
         }
 
     }
+    public static string EnumToJson(Type enumType)
+    {
+        if (enumType.IsEnum)
+        {
 
+            var dict = Enum.GetNames(enumType).Select(e => new KeyValuePair<string, string>(
+                  Convert.ToString((int)Enum.Parse(enumType, e)),
+                 e
+                  )).ToDictionary(x => x.Key, y => y.Value);
+            var json = JsonConvert.SerializeObject(dict);
+            return json;
+        }
+
+        return null;
+
+    }
     private class ColorPercentage
     {
         public double Percentage { get; set; }

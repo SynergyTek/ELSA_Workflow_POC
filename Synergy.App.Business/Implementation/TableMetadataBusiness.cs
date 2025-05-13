@@ -17,6 +17,7 @@ namespace Synergy.App.Business.Implementation
         ICmsBusiness cmsBusiness,
         IRepositoryQueryBase<TableMetadataViewModel> queryRepo,
         ICmsQueryBusiness cmsQueryBusiness,
+          IUserContext userContext,
         IServiceProvider serviceProvider)
         : BaseBusiness<TableMetadataViewModel, TableMetadata>(repo, serviceProvider), ITableMetadataBusiness
     {
@@ -267,9 +268,9 @@ namespace Synergy.App.Business.Implementation
             DataActionEnum dataAction, IContextBase<TableMetadataViewModel, TableMetadata> repo)
         {
             col.Id = Guid.NewGuid();
-            col.CreatedBy = repo.UserContext.UserId;
+            col.CreatedBy = userContext.UserId;
             col.CreatedDate = DateTime.Now;
-            col.LastUpdatedBy = repo.UserContext.UserId;
+            col.LastUpdatedBy = userContext.UserId;
             col.LastUpdatedDate = DateTime.Now;
             col.IsDeleted = false;
             col.TableMetadataId = table.Id;
@@ -892,7 +893,7 @@ namespace Synergy.App.Business.Implementation
                     tableExist.Alias = table.Name;
                     tableExist.DisplayName = table.Name;
                     tableExist.DataAction = DataActionEnum.Edit;
-                    tableExist.LastUpdatedBy = _repo.UserContext.UserId;
+                    tableExist.LastUpdatedBy = userContext.UserId;
                     tableExist.LastUpdatedDate = DateTime.Now;
                     tableExist.CreateTable = false;
                     var props = table.GetProperties().Where(p => p.DeclaringType != typeof(BaseModel)).ToList();
@@ -938,9 +939,9 @@ namespace Synergy.App.Business.Implementation
                     tableExist.Alias = table.Name;
                     tableExist.DisplayName = table.Name;
                     tableExist.DataAction = DataActionEnum.Create;
-                    tableExist.LastUpdatedBy = _repo.UserContext.UserId;
+                    tableExist.LastUpdatedBy = userContext.UserId;
                     tableExist.LastUpdatedDate = DateTime.Now;
-                    tableExist.CreatedBy = _repo.UserContext.UserId;
+                    tableExist.CreatedBy = userContext.UserId;
                     tableExist.CreatedDate = DateTime.Now;
                     tableExist.CreateTable = false;
                     tableExist.Status = StatusEnum.Active;
@@ -1109,7 +1110,7 @@ namespace Synergy.App.Business.Implementation
                             @$"""{col.Key}"" = {BusinessHelper.ConvertToDbValue(col.Value, false, DataColumnTypeEnum.Text)}");
                     }
 
-                    columnKeys.Add(@$"""LastUpdatedBy"" = '{_repo.UserContext.UserId}'");
+                    columnKeys.Add(@$"""LastUpdatedBy"" = '{userContext.UserId}'");
                     columnKeys.Add(@$"""LastUpdatedDate"" = '{DateTime.Now.ToDatabaseDateFormat()}'");
                     var schema = tableMetadata.Schema;
                     var name = tableMetadata.Name;

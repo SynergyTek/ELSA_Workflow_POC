@@ -21,7 +21,7 @@ public static class BusinessHelper
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<ICmsBusiness, CmsBusiness>();
         services.AddScoped<ICmsQueryBusiness, CmsQueryBusiness>();
-		services.AddScoped<ITemplateBusiness, TemplateBusinessBusiness>();
+		services.AddScoped<ITemplateBusiness, TemplateBusiness>();
 		services.AddScoped<ITableMetadataBusiness, TableMetadataBusiness>();
 		services.AddScoped<IColumnMetadataBusiness, ColumnMetadataBusiness>();
 

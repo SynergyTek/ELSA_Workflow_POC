@@ -1,34 +1,30 @@
 ﻿using System.Data;
 using System.Text;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Synergy.App.Business.Interface;
 using Synergy.App.Common;
 using Synergy.App.Data;
-using Synergy.App.Data.Models;
 using Synergy.App.Data.ViewModels;
 
 
 namespace Synergy.App.Business.Implementation
 {
     public class CmsBusiness(
-        IContextBase<TemplateViewModel, Data.Models.Template> repo,
+        IContextBase<TemplateViewModel, Data.Models.TemplateModel> repo,
         IMapper autoMapper,
         IQueryBase<TemplateViewModel> queryRepo,
         IUserContext userContext,
         ICmsQueryBusiness cmsQueryBusiness,
         IServiceProvider serviceProvider)
-        : BusinessBase<TemplateViewModel, Data.Models.Template>(repo, serviceProvider), ICmsBusiness
+        : BusinessBase<TemplateViewModel, Data.Models.TemplateModel>(repo, serviceProvider), ICmsBusiness
     {
         private readonly IServiceProvider _serviceProvider = serviceProvider;
-        private readonly IContextBase<TemplateViewModel, Data.Models.Template> _repo = repo;
+        private readonly IContextBase<TemplateViewModel, Data.Models.TemplateModel> _repo = repo;
 
         public async Task ManageTable(TableMetadataViewModel tableMetadata)
         {
             var existingTableMetadata =
-                await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableMetadata.Id);
+                await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadataModel>(tableMetadata.Id);
             if (existingTableMetadata != null)
             {
                 existingTableMetadata.OldName = tableMetadata.OldName;
@@ -68,11 +64,11 @@ namespace Synergy.App.Business.Implementation
                 var data = new ColumnMetadataViewModel();
                 data.Name = row["column_name"].ToString();
                 data.DataTypestr = row["data_type"].ToString();
-                data.IsNullable = Convert.ToString(row["is_nullable"]) == "YES" ? true : false;
+                data.IsNullable = Convert.ToString(row["is_nullable"]) == "YES";
                 tableColumnList.Add(data);
             }
 
-            var existingMetadaColumnList = await _repo.GetList<Data.Models.ColumnMetadata, Data.Models.ColumnMetadata>
+            var existingMetadaColumnList = await _repo.GetList<Data.Models.ColumnMetadataModel, Data.Models.ColumnMetadataModel>
                 (x => x.TableMetadataId == tableMetadata.Id && x.IsVirtualColumn == false);
             var query = new StringBuilder(
                 $"ALTER TABLE {ApplicationConstant.Database.Schema.Cms}.\"{tableMetadata.Name}\"");
@@ -143,7 +139,7 @@ namespace Synergy.App.Business.Implementation
             var tableVarWithSchema = "<<table-schema>>";
             var tableVar = "<<table>>";
 
-            var columns = await _repo.GetList<Data.Models.ColumnMetadata, Data.Models.ColumnMetadata>(x =>
+            var columns = await _repo.GetList<Data.Models.ColumnMetadataModel, Data.Models.ColumnMetadataModel>(x =>
                 x.TableMetadataId == tableMetadata.Id && x.IsVirtualColumn == false);
             var query = new StringBuilder();
             if (dropTable)
@@ -211,7 +207,7 @@ namespace Synergy.App.Business.Implementation
         }
 
 
-        private string ConvertToPostgreType(Data.Models.ColumnMetadata column)
+        private string ConvertToPostgreType(Data.Models.ColumnMetadataModel column)
         {
             if (column.IsSystemColumn)
             {
@@ -247,7 +243,7 @@ namespace Synergy.App.Business.Implementation
         // }
 
 
-        private void ManageForeignKey(List<string> alterColumnScriptList, Data.Models.ColumnMetadata column, DataTable constraints)
+        private void ManageForeignKey(List<string> alterColumnScriptList, Data.Models.ColumnMetadataModel column, DataTable constraints)
         {
             if (column.IsForeignKey && column.IsVirtualForeignKey == false &&
                 column.ForeignKeyConstraintName.IsNotNullAndNotEmpty())

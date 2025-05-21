@@ -1,6 +1,7 @@
 ﻿using Synergy.App.Data.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,22 +9,19 @@ using System.Threading.Tasks;
 namespace Synergy.App.Data.ViewModels
 
 {
-    public class TemplateViewModel:Template
+    public class TemplateViewModel : TemplateModel
     {
-      
-        public string? TemplateCategoryName { get; set; }
+        public string TemplateCategoryName { get; set; }
 
-      
-        public string ?TableMetadataName { get; set; } 
 
-       
-        public string ?UdfTemplateName { get; set; } 
+        public string TableMetadataName { get; set; }
 
-       
-        public string? UdfTableMetadataName { get; set; }
+
+        public string UdfTemplateName { get; set; }
+
+        [Display(AutoGenerateField = false)] public string? UdfTableMetadataName { get; set; }
         public List<ColumnMetadataViewModel> ColumnList { get; set; }
 
-        // Extra ViewModel-only properties (optional, based on your use case)
         public string CategoryCode { get; set; } = string.Empty;
         public string TemplateColor { get; set; } = string.Empty;
         public string ModuleCodes { get; set; } = string.Empty;
@@ -34,6 +32,5 @@ namespace Synergy.App.Data.ViewModels
         public long? SequenceOrder { get; set; }
         public string? RecordId { get; set; }
         public Guid ParentId { get; set; }
-        public StatusEnum Status { get; set; }
     }
 }

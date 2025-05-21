@@ -17,8 +17,8 @@ using Synergy.App.Data;
 using Synergy.App.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
 var services = builder.Services;
+var configuration = builder.Configuration;
 var connectionString = configuration.GetConnectionString("PostgreConnection") ??
                        throw new InvalidOperationException("Connection string 'PostgreConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

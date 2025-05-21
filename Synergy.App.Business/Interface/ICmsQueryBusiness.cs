@@ -4,7 +4,7 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Interface
 {
-    public interface ICmsQueryBusiness : IBusinessBase<TemplateViewModel, Template>
+    public interface ICmsQueryBusiness : IBusinessBase<TemplateViewModel, TemplateModel>
     {
         #region CmsBusiness
         Task<bool> ManageTableExists(TableMetadataViewModel existingTableMetadata);

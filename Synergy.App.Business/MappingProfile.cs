@@ -12,19 +12,13 @@ namespace Synergy.App.Business
         }
 
 
-
         private void MapModel()
         {
-           CreateMap<Notification,NotificationViewModel>().ReverseMap();
-           CreateMap<Workflow,WorkflowViewModel>().ReverseMap();
-           CreateMap<Leave,LeaveViewModel>().ReverseMap();
-           CreateMap<User, UserViewModel>().ReverseMap();
-			CreateMap<Template, TemplateViewModel>().ReverseMap();
-			CreateMap<TableMetadata, TableMetadataViewModel>().ReverseMap();
-			CreateMap<ColumnMetadata, ColumnMetadataViewModel>().ReverseMap();
-		}
-
+            CreateMap<WorkflowModel, WorkflowViewModel>().ReverseMap();
+            CreateMap<User, UserViewModel>().ReverseMap();
+            CreateMap<TemplateModel, TemplateViewModel>().ReverseMap();
+            CreateMap<TableMetadataModel, TableMetadataViewModel>().ReverseMap();
+            CreateMap<ColumnMetadataModel, ColumnMetadataViewModel>().ReverseMap();
+        }
     }
 }
-
-

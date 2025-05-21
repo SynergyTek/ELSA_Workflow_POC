@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Synergy.App.Data.Models
+namespace Synergy.App.Data.Models;
+
+public class ColumnMetadataModel:BaseModel
 {
-    public class ColumnMetadata : BaseModel
-    {
-        public string Name { get; set; }
+     public string Name { get; set; }
         public bool IsDefaultDisplayColumn { get; set; }
         public string LabelName { get; set; }
         public string Alias { get; set; }
@@ -26,7 +26,7 @@ namespace Synergy.App.Data.Models
 
         [ForeignKey("ForeignKeyTable")]
         public Guid ForeignKeyTableId { get; set; }
-        public TableMetadata ForeignKeyTable { get; set; }
+        public TableMetadataModel ForeignKeyTable { get; set; }
         public string ForeignKeyTableName { get; set; }
         public string ForeignKeyTableAliasName { get; set; }
         public string ForeignKeyTableSchemaName { get; set; }
@@ -34,20 +34,19 @@ namespace Synergy.App.Data.Models
         [ForeignKey("ForeignKeyColumn")]
         public Guid ForeignKeyColumnId { get; set; }
         public string ForeignKeyColumnName { get; set; }
-        public ColumnMetadata ForeignKeyColumn { get; set; }
+        public ColumnMetadataModel ForeignKeyColumn { get; set; }
         public string ForeignKeyDisplayColumnLabelName { get; set; }
         public string ForeignKeyDisplayColumnAlias { get; set; }
         public DataColumnTypeEnum ForeignKeyDisplayColumnDataType { get; set; }
         public string ForeignKeyConstraintName { get; set; }
 
-        [ForeignKey("TableMetadata")]
+        [ForeignKey("TableMetadataModel")]
         public Guid TableMetadataId { get; set; }
-        public TableMetadata TableMetadata { get; set; }
+        public TableMetadataModel TableMetadata { get; set; }
 
         public string[] EditableBy { get; set; }
         public string[] ViewableBy { get; set; }
         public string[] EditableContext { get; set; }
         public string[] ViewableContext { get; set; }
 
-    }
 }

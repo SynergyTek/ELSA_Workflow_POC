@@ -1,11 +1,8 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data;
 using Synergy.App.Data.Models;
-using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Implementation
 {

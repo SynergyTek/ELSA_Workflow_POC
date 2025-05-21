@@ -2,7 +2,7 @@ using Synergy.App.Data.Models;
 
 namespace Synergy.App.Data.ViewModels;
 
-public class WorkflowViewModel : Workflow
+public class WorkflowViewModel : WorkflowModel
 {
     public string InstanceStatus { get; set; } = string.Empty;
     public string WorkflowName { get; set; } = string.Empty;

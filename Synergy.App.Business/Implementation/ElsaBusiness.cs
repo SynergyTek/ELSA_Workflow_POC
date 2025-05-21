@@ -1,17 +1,15 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data;
 using Synergy.App.Data.Models;
 using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Implementation;
 
 public class ElsaBusiness(
-    IContextBase<WorkflowViewModel, Workflow> repo,
+    IContextBase<WorkflowViewModel, WorkflowModel> repo,
     IServiceProvider sp,
     UserManager<User> userManager)
-    : BusinessBase<WorkflowViewModel, Workflow>(repo, sp), IElsaBusiness
+    : BusinessBase<WorkflowViewModel, WorkflowModel>(repo, sp), IElsaBusiness
 {
 
     public async Task<WorkflowViewModel> AssignTaskToUser(string title, string email, Guid byUserId)

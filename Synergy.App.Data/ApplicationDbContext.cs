@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Synergy.App.Data.Models;
 
@@ -8,32 +8,35 @@ namespace Synergy.App.Data;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<User, Role, Guid>(options)
 {
-
-    public DbSet<Workflow> Workflow { get; set; }
-    public DbSet<TableMetadata> TableMetadata { get; set; }
-    public DbSet<ColumnMetadata> ColumnMetadata { get; set; }
-    public DbSet<TemplateCategory> TemplateCategory { get; set; }
-    public DbSet<Template> Template { get; set; }
+    public DbSet<WorkflowModel> Workflow { get; set; }
+    public DbSet<TemplateModel> Template { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Workflow>()
+        modelBuilder.Entity<User>(entity => { entity.ToTable("User"); });
+        modelBuilder.Entity<Role>(entity => { entity.ToTable("Role"); });
+        modelBuilder.Entity<IdentityRoleClaim<Guid>>(entity => { entity.ToTable("RoleClaim"); });
+        modelBuilder.Entity<IdentityUserClaim<Guid>>(entity => { entity.ToTable("UserClaim"); });
+        modelBuilder.Entity<IdentityUserLogin<Guid>>(entity => { entity.ToTable("UserLogin"); });
+        modelBuilder.Entity<IdentityUserToken<Guid>>(entity => { entity.ToTable("UserToken"); });
+        modelBuilder.Entity<IdentityUserRole<Guid>>(entity => { entity.ToTable("UserRole"); });
+
+
+
+        modelBuilder.Entity<WorkflowModel>()
             .HasOne(w => w.AssignedToUser)
             .WithMany()
             .HasForeignKey(w => w.AssignedToUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Workflow>()
+        modelBuilder.Entity<WorkflowModel>()
             .HasOne(w => w.AssignedByUser)
             .WithMany()
             .HasForeignKey(w => w.AssignedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
-        modelBuilder.Entity<Workflow>()
+        modelBuilder.Entity<WorkflowModel>()
             .Property(r => r.Status)
-            .HasConversion<string>();
-        modelBuilder.Entity<Leave>()
-            .Property(r => r.LeaveType)
             .HasConversion<string>();
     }
 }

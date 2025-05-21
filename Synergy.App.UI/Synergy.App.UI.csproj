@@ -43,7 +43,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
     </ItemGroup>
 
@@ -64,6 +64,20 @@
       <_ContentIncludedByDefault Remove="Views\Notification\Details.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Notification\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Notification\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Template\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Template\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Template\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Template\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Template\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Template\Manage.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\Template\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Template\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Template\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Template\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Template\Index.cshtml" />
     </ItemGroup>
 
 </Project>

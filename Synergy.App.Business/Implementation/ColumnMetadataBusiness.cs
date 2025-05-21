@@ -1,168 +1,166 @@
 ﻿using AutoMapper;
 using Synergy.App.Business.Interface;
-using Synergy.App.Common;
 using Synergy.App.Data;
-using Synergy.App.Data.Models;
 using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Implementation
 {
     public class ColumnMetadataBusiness(
-        IContextBase<ColumnMetadataViewModel, Data.Models.ColumnMetadata> repo,
+        IContextBase<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel> repo,
         IMapper autoMapper,
         IQueryBase<ColumnMetadataViewModel> repoQuery,
         IServiceProvider serviceProvider,
         ICmsQueryBusiness cmsQueryBusiness)
-        : BusinessBase<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(repo, serviceProvider),
+        : BusinessBase<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(repo, serviceProvider),
             IColumnMetadataBusiness
     {
-        private readonly IContextBase<ColumnMetadataViewModel, Data.Models.ColumnMetadata> _repo = repo;
+        private readonly IContextBase<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel> _repo = repo;
 
 
-        public override async Task<CommandResult<ColumnMetadataViewModel>> Create(ColumnMetadataViewModel model,
+        public override async Task<CommandResult<ColumnMetadataViewModel>> Create(ColumnMetadataViewModel viewModel,
             bool autoCommit = true)
         {
-            if (model.IsForeignKey)
+            if (viewModel.IsForeignKey)
             {
-                var fkTable = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadata>(x =>
-                    x.Name == model.ForeignKeyTableName && x.Schema == model.ForeignKeyTableSchemaName);
+                var fkTable = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadataModel>(x =>
+                    x.Name == viewModel.ForeignKeyTableName && x.Schema == viewModel.ForeignKeyTableSchemaName);
                 if (fkTable != null)
                 {
-                    model.ForeignKeyTableId = fkTable.Id;
-                    if (model.ForeignKeyColumnName.IsNotNullAndNotEmpty())
+                    viewModel.ForeignKeyTableId = fkTable.Id;
+                    if (viewModel.ForeignKeyColumnName.IsNotNullAndNotEmpty())
                     {
-                        var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
+                        var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x =>
                             x.TableMetadataId == fkTable.Id &&
-                            x.Name == model.ForeignKeyColumnName);
+                            x.Name == viewModel.ForeignKeyColumnName);
                         if (fkColumn != null)
                         {
-                            model.ForeignKeyColumnId = fkColumn.Id;
+                            viewModel.ForeignKeyColumnId = fkColumn.Id;
                         }
                     }
 
-                    if (model.ForeignKeyDisplayColumnName.IsNotNullAndNotEmpty())
+                    if (viewModel.ForeignKeyDisplayColumnName.IsNotNullAndNotEmpty())
                     {
-                        var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
+                        var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x =>
                             x.TableMetadataId == fkTable.Id &&
-                            x.Name == model.ForeignKeyDisplayColumnName);
+                            x.Name == viewModel.ForeignKeyDisplayColumnName);
                         if (fkColumnDisplay != null)
                         {
-                            model.ForeignKeyDisplayColumnId = fkColumnDisplay.Id;
+                            viewModel.ForeignKeyDisplayColumnId = fkColumnDisplay.Id;
                         }
                     }
 
-                    if (model.ForeignKeyConstraintName.IsNullOrEmpty())
+                    if (viewModel.ForeignKeyConstraintName.IsNullOrEmpty())
                     {
-                        var table = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadata>(x =>
-                            x.Id == model.TableMetadataId);
+                        var table = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadataModel>(x =>
+                            x.Id == viewModel.TableMetadataId);
                         if (table != null)
                         {
-                            model.ForeignKeyConstraintName =
-                                $"FK_{table.Name}_{fkTable.Name}_{model.Name}_{model.ForeignKeyColumnName}";
+                            viewModel.ForeignKeyConstraintName =
+                                $"FK_{table.Name}_{fkTable.Name}_{viewModel.Name}_{viewModel.ForeignKeyColumnName}";
                         }
                     }
                 }
             }
 
-            if (model.ForeignKeyConstraintName != null)
+            if (viewModel.ForeignKeyConstraintName != null)
             {
-                model.ForeignKeyConstraintName = TruncateForeignKeyContraint(model.ForeignKeyConstraintName);
+                viewModel.ForeignKeyConstraintName = TruncateForeignKeyContraint(viewModel.ForeignKeyConstraintName);
             }
 
             var colExists =
-                await _repo.GetSingle(x => x.TableMetadataId == model.TableMetadataId && x.Name == model.Name);
+                await _repo.GetSingle(x => x.TableMetadataId == viewModel.TableMetadataId && x.Name == viewModel.Name);
             if (colExists != null)
             {
-                model.Id = colExists.Id;
-                model.DataAction = DataActionEnum.Edit;
-                return await Edit(model);
+                viewModel.Id = colExists.Id;
+                viewModel.DataAction = DataActionEnum.Edit;
+                return await Edit(viewModel);
             }
 
-            var result = await base.Create(model, autoCommit);
+            var result = await base.Create(viewModel, autoCommit);
             if (result.IsSuccess)
             {
-                model.Id = result.Item.Id;
+                viewModel.Id = result.Item.Id;
             }
 
             // await ManageForeignKeyReferenceColumn(model);
-            return CommandResult<ColumnMetadataViewModel>.Instance(model, result.IsSuccess, result.Messages);
+            return CommandResult<ColumnMetadataViewModel>.Instance(viewModel, result.IsSuccess, result.Messages);
         }
 
-        public async override Task<CommandResult<ColumnMetadataViewModel>> Edit(ColumnMetadataViewModel model,
+        public async override Task<CommandResult<ColumnMetadataViewModel>> Edit(ColumnMetadataViewModel viewModel,
             bool autoCommit = true)
         {
-            var EditableByS = model.EditableBy;
-            var EditableContextS = model.EditableContext;
-            var ViewableByS = model.ViewableBy;
-            var ViewableContextS = model.ViewableContext;
-            if (model.IsForeignKey)
+            var EditableByS = viewModel.EditableBy;
+            var EditableContextS = viewModel.EditableContext;
+            var ViewableByS = viewModel.ViewableBy;
+            var ViewableContextS = viewModel.ViewableContext;
+            if (viewModel.IsForeignKey)
             {
-                var fkTable = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadata>(x =>
-                    x.Name == model.ForeignKeyTableName && x.Schema == model.ForeignKeyTableSchemaName);
+                var fkTable = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadataModel>(x =>
+                    x.Name == viewModel.ForeignKeyTableName && x.Schema == viewModel.ForeignKeyTableSchemaName);
                 if (fkTable != null)
                 {
-                    model.ForeignKeyTableId = fkTable.Id;
-                    if (model.ForeignKeyColumnName.IsNotNullAndNotEmpty())
+                    viewModel.ForeignKeyTableId = fkTable.Id;
+                    if (viewModel.ForeignKeyColumnName.IsNotNullAndNotEmpty())
                     {
-                        var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
+                        var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x =>
                             x.TableMetadataId == fkTable.Id &&
-                            x.Name == model.ForeignKeyColumnName);
+                            x.Name == viewModel.ForeignKeyColumnName);
                         if (fkColumn != null)
                         {
-                            model.ForeignKeyColumnId = fkColumn.Id;
+                            viewModel.ForeignKeyColumnId = fkColumn.Id;
                         }
                     }
 
-                    if (model.ForeignKeyDisplayColumnName.IsNotNullAndNotEmpty())
+                    if (viewModel.ForeignKeyDisplayColumnName.IsNotNullAndNotEmpty())
                     {
-                        var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
+                        var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x =>
                             x.TableMetadataId == fkTable.Id &&
-                            x.Name == model.ForeignKeyDisplayColumnName);
+                            x.Name == viewModel.ForeignKeyDisplayColumnName);
                         if (fkColumnDisplay != null)
                         {
-                            model.ForeignKeyDisplayColumnId = fkColumnDisplay.Id;
+                            viewModel.ForeignKeyDisplayColumnId = fkColumnDisplay.Id;
                         }
                     }
 
-                    if (model.ForeignKeyConstraintName.IsNullOrEmpty())
+                    if (viewModel.ForeignKeyConstraintName.IsNullOrEmpty())
                     {
-                        var table = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadata>(x =>
-                            x.Id == model.TableMetadataId);
+                        var table = await _repo.GetSingle<TableMetadataViewModel, Data.Models.TableMetadataModel>(x =>
+                            x.Id == viewModel.TableMetadataId);
                         if (table != null)
                         {
-                            model.ForeignKeyConstraintName =
-                                $"FK_{table.Name}_{fkTable.Name}_{model.Name}_{model.ForeignKeyColumnName}";
+                            viewModel.ForeignKeyConstraintName =
+                                $"FK_{table.Name}_{fkTable.Name}_{viewModel.Name}_{viewModel.ForeignKeyColumnName}";
                         }
                     }
                 }
             }
 
-            if (model.IgnorePermission)
+            if (viewModel.IgnorePermission)
             {
-                var exist = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x => x.Id == model.Id);
+                var exist = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x => x.Id == viewModel.Id);
 
                 if (exist != null)
                 {
-                    model.EditableBy = exist.EditableBy;
-                    model.EditableContext = exist.EditableContext;
-                    model.ViewableBy = exist.ViewableBy;
-                    model.ViewableContext = exist.ViewableContext;
+                    viewModel.EditableBy = exist.EditableBy;
+                    viewModel.EditableContext = exist.EditableContext;
+                    viewModel.ViewableBy = exist.ViewableBy;
+                    viewModel.ViewableContext = exist.ViewableContext;
                 }
             }
 
-            if (model.ForeignKeyConstraintName != null)
+            if (viewModel.ForeignKeyConstraintName != null)
             {
-                model.ForeignKeyConstraintName = TruncateForeignKeyContraint(model.ForeignKeyConstraintName);
+                viewModel.ForeignKeyConstraintName = TruncateForeignKeyContraint(viewModel.ForeignKeyConstraintName);
             }
 
-            var result = await base.Edit(model, autoCommit);
-            model.EditableBy = EditableByS;
-            model.EditableContext = EditableContextS;
-            model.ViewableBy = ViewableByS;
-            model.ViewableContext = ViewableContextS;
+            var result = await base.Edit(viewModel, autoCommit);
+            viewModel.EditableBy = EditableByS;
+            viewModel.EditableContext = EditableContextS;
+            viewModel.ViewableBy = ViewableByS;
+            viewModel.ViewableContext = ViewableContextS;
             // await ManageForeignKeyReferenceColumn(model);
 
-            return CommandResult<ColumnMetadataViewModel>.Instance(model);
+            return CommandResult<ColumnMetadataViewModel>.Instance(viewModel);
         }
 
 

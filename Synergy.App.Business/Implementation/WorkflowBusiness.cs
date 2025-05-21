@@ -42,7 +42,7 @@ public class WorkflowBusiness(
         var bookmarkQueueItem = new NewBookmarkQueueItem
         {
             BookmarkId = bookmarkId,
-            Options = new ResumeBookmarkOptions()
+            Options = new ResumeBookmarkOptions
             {
                 Input = input
             }
@@ -53,22 +53,22 @@ public class WorkflowBusiness(
 
     public async Task<CommandResult<List<WorkflowViewModel>>> GetInstances()
     {
-        var query = $"""
-                     select wi."Status" WorkflowStatus, wi."SubStatus" InstanceStatus, b."Id" BookmarkId 
-                     from "Elsa"."Bookmarks" b
-                     left join "Elsa"."WorkflowInstances" wi on b."WorkflowInstanceId" = wi."Id"
-                     """;
+        var query = """
+                    select wi."Status" WorkflowStatus, wi."SubStatus" InstanceStatus, b."Id" BookmarkId 
+                    from "Elsa"."Bookmarks" b
+                    left join "Elsa"."WorkflowInstances" wi on b."WorkflowInstanceId" = wi."Id"
+                    """;
         var result = await repo.ExecuteQueryList(query, new {});
         return CommandResult<List<WorkflowViewModel>>.Instance(result);
     }
 
     public async Task<CommandResult<WorkflowViewModel>> GetInstanceById(string id)
     {
-        var query = $"""
-                     select wi."Status", wi."SubStatus", b."Id" from "Elsa"."Bookmarks" b
-                     left join "Elsa"."WorkflowInstances" wi on b."WorkflowInstanceId" = wi."Id"
-                     where wi."Id"== @id
-                     """;
+        var query = """
+                    select wi."Status", wi."SubStatus", b."Id" from "Elsa"."Bookmarks" b
+                    left join "Elsa"."WorkflowInstances" wi on b."WorkflowInstanceId" = wi."Id"
+                    where wi."Id"== @id
+                    """;
         var result = await repo.ExecuteQuerySingle(query, new { id });
         return CommandResult<WorkflowViewModel>.Instance(result);
     }

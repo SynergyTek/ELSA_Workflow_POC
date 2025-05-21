@@ -5,7 +5,7 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Interface
 {
-    public interface ITableMetadataBusiness : IBusinessBase<TableMetadataViewModel, TableMetadata>
+    public interface ITableMetadataBusiness : IBusinessBase<TableMetadataViewModel, TableMetadataModel>
     {
         Task<CommandResult<TableMetadataViewModel>> ManageTemplateTable(TemplateViewModel model, bool ignorePermission,
             Guid parentTemplateId);

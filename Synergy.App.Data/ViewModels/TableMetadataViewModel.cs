@@ -14,7 +14,7 @@ namespace Synergy.App.Data.ViewModels
 
 
 {
-    public class TableMetadataViewModel:TableMetadata
+    public class TableMetadataViewModel:TableMetadataModel
     {
        // public Guid Id { get; set; }  // from BaseModel
        

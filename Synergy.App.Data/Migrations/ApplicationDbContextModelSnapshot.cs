@@ -125,159 +125,6 @@ namespace Synergy.App.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.ColumnMetadata", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("DataType")
-                        .HasColumnType("integer");
-
-                    b.Property<string[]>("EditableBy")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<string[]>("EditableContext")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<Guid>("ForeignKeyColumnId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ForeignKeyColumnName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyConstraintName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyDisplayColumnAlias")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("ForeignKeyDisplayColumnDataType")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ForeignKeyDisplayColumnLabelName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyTableAliasName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ForeignKeyTableId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ForeignKeyTableName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyTableSchemaName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("HideForeignKeyTableColumns")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDefaultDisplayColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsForeignKey")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsHiddenColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsLogColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsMultiValueColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsNullable")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsPrimaryKey")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsReferenceColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsSystemColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsUdfColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsUniqueColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsVirtualColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsVirtualForeignKey")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LabelName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("LastUpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("LastUpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("TableMetadataId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("UdfUIType")
-                        .HasColumnType("integer");
-
-                    b.Property<string[]>("ViewableBy")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<string[]>("ViewableContext")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ForeignKeyColumnId");
-
-                    b.HasIndex("ForeignKeyTableId");
-
-                    b.HasIndex("TableMetadataId");
-
-                    b.ToTable("ColumnMetadata");
-                });
-
-
-
             modelBuilder.Entity("Synergy.App.Data.Models.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -302,16 +149,20 @@ namespace Synergy.App.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Role", (string)null);
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.TableMetadata", b =>
+            modelBuilder.Entity("Synergy.App.Data.Models.TableMetadataModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -325,10 +176,6 @@ namespace Synergy.App.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -358,10 +205,10 @@ namespace Synergy.App.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TableMetadata");
+                    b.ToTable("TableMetadataModel");
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.Template", b =>
+            modelBuilder.Entity("Synergy.App.Data.Models.TemplateModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -378,14 +225,6 @@ namespace Synergy.App.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("GroupCode")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -406,92 +245,17 @@ namespace Synergy.App.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("OtherAttachmentId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("RecordId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("TableMetadataId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("TemplateCategoryId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UdfTableMetadataId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UdfTemplateId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("TableMetadataId");
 
-                    b.HasIndex("TemplateCategoryId");
-
-                    b.HasIndex("UdfTableMetadataId");
-
-                    b.HasIndex("UdfTemplateId");
-
                     b.ToTable("Template");
-                });
-
-            modelBuilder.Entity("Synergy.App.Data.Models.TemplateCategory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string[]>("AllowedPortalIds")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("IconFileId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("LastUpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("LastUpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ParentId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TemplateCategory");
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.User", b =>
@@ -556,9 +320,52 @@ namespace Synergy.App.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("User", (string)null);
                 });
 
+            modelBuilder.Entity("Synergy.App.Data.Models.WorkflowModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AssignedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AssignedToUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("LastUpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("LastUpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedByUserId");
+
+                    b.HasIndex("AssignedToUserId");
+
+                    b.ToTable("Workflow");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
@@ -611,80 +418,18 @@ namespace Synergy.App.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.ColumnMetadata", b =>
+            modelBuilder.Entity("Synergy.App.Data.Models.TemplateModel", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.ColumnMetadata", "ForeignKeyColumn")
-                        .WithMany()
-                        .HasForeignKey("ForeignKeyColumnId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.TableMetadata", "ForeignKeyTable")
-                        .WithMany()
-                        .HasForeignKey("ForeignKeyTableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.TableMetadata", "TableMetadata")
+                    b.HasOne("Synergy.App.Data.Models.TableMetadataModel", "TableMetadata")
                         .WithMany()
                         .HasForeignKey("TableMetadataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ForeignKeyColumn");
-
-                    b.Navigation("ForeignKeyTable");
-
                     b.Navigation("TableMetadata");
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.Leave", b =>
-                {
-                    b.HasOne("Synergy.App.Data.Models.User", "AppliedBy")
-                        .WithMany()
-                        .HasForeignKey("AppliedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppliedBy");
-                });
-
-            modelBuilder.Entity("Synergy.App.Data.Models.Template", b =>
-                {
-                    b.HasOne("Synergy.App.Data.Models.TableMetadata", "TableMetadata")
-                        .WithMany()
-                        .HasForeignKey("TableMetadataId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.TemplateCategory", "TemplateCategory")
-                        .WithMany()
-                        .HasForeignKey("TemplateCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.TableMetadata", "UdfTableMetadata")
-                        .WithMany()
-                        .HasForeignKey("UdfTableMetadataId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.Template", "UdfTemplate")
-                        .WithMany()
-                        .HasForeignKey("UdfTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TableMetadata");
-
-                    b.Navigation("TemplateCategory");
-
-                    b.Navigation("UdfTableMetadata");
-
-                    b.Navigation("UdfTemplate");
-                });
-
-            modelBuilder.Entity("Synergy.App.Data.Models.Workflow", b =>
+            modelBuilder.Entity("Synergy.App.Data.Models.WorkflowModel", b =>
                 {
                     b.HasOne("Synergy.App.Data.Models.User", "AssignedByUser")
                         .WithMany()

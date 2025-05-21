@@ -1,12 +1,7 @@
 using System.Linq.Expressions;
-using Elsa.Workflows.Management;
-using Elsa.Workflows.Management.Filters;
-using Elsa.Workflows.Models;
-using Elsa.Workflows.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 using Synergy.App.Business.Interface;
 using Synergy.App.Data.Models;
-using Workflow = Elsa.Workflows.Activities.Workflow;
 
 namespace Synergy.App.Business.Implementation
 {

@@ -17,21 +17,12 @@ public class HomeController : Controller
 {
     private readonly IUserContext _userContext;
     private readonly IWorkflowBusiness _workflowBusiness;
-    private readonly IBookmarkQueue _bookmarkQueue;
-    private readonly IStimulusHasher _stimulusHasher;
-    private readonly IWorkflowStarter _workflowStarter;
 
     public HomeController(IUserContext userContext,
-        IWorkflowBusiness workflowBusiness,
-        IBookmarkQueue bookmarkQueue,
-        IStimulusHasher stimulusHasher,
-        IWorkflowStarter workflowStarter)
+        IWorkflowBusiness workflowBusiness)
     {
         _userContext = userContext;
         _workflowBusiness = workflowBusiness;
-        _bookmarkQueue = bookmarkQueue;
-        _stimulusHasher = stimulusHasher;
-        _workflowStarter = workflowStarter;
     }
 
     [Authorize]
@@ -39,20 +30,6 @@ public class HomeController : Controller
     {
         var tasks = _workflowBusiness.GetInstances().Result.Item;
         return View(tasks);
-    }
-
-    private async Task ResumeBookmarkAsync(Guid id, CancellationToken c = default)
-    {
-        var stimulus = new CreateTaskStimulus(id);
-
-        var activityTypeName = ActivityTypeNameHelper.GenerateTypeName<AssignTaskToUser>();
-
-        var bookmarkQueueItem = new NewBookmarkQueueItem
-        {
-            ActivityTypeName = activityTypeName,
-            StimulusHash = _stimulusHasher.Hash(activityTypeName, stimulus),
-        };
-        await _bookmarkQueue.EnqueueAsync(bookmarkQueueItem, c);
     }
 
 
@@ -65,7 +42,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> CompleteTask(string taskId)
     {
-        var a = await _workflowBusiness.ResumeWorkflow(taskId, new()
+        await _workflowBusiness.ResumeWorkflow(taskId, new()
         {
             { "Status", "Approved" }
         });
@@ -74,7 +51,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> RejectTask(string taskId)
     {
-        var a = await _workflowBusiness.ResumeWorkflow(taskId, new()
+        await _workflowBusiness.ResumeWorkflow(taskId, new()
         {
             { "Status", "Rejected" }
         });
@@ -83,7 +60,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> CancelTask(string taskId)
     {
-        var a = await _workflowBusiness.ResumeWorkflow(taskId, new()
+        await _workflowBusiness.ResumeWorkflow(taskId, new()
         {
             { "Status", "Cancelled" }
         });
@@ -117,16 +94,6 @@ public class HomeController : Controller
                 "User", user
             }
         });
-        return Json(new { Success = true });
-    }
-
-    public IActionResult RaiseComplaint()
-    {
-        return Json(new { Success = true });
-    }
-
-    public IActionResult ApplyVisa()
-    {
         return Json(new { Success = true });
     }
 

@@ -9,10 +9,10 @@ using Synergy.App.Data.ViewModels;
 namespace Synergy.App.Business.Implementation
 {
     public class CmsQueryBusiness(
-        IContextBase<TemplateViewModel, Template> repo,
-        IQueryBase<TemplateViewModel> queryRepo,
+        IContextBase<TemplateViewModel, TemplateModel> repo,
+        IQueryBase<object> queryRepo,
         IServiceProvider serviceProvider)
-        : BusinessBase<TemplateViewModel, Template>(repo, serviceProvider), ICmsQueryBusiness
+        : BusinessBase<TemplateViewModel, TemplateModel>(repo, serviceProvider), ICmsQueryBusiness
     {
         public async Task<bool> ManageTableExists(TableMetadataViewModel existingTableMetadata)
         {
@@ -232,7 +232,7 @@ namespace Synergy.App.Business.Implementation
 
         public async Task<TableMetadataViewModel?> GetViewableColumnMetadataListData(string schemaName, string tableName)
         {
-            var query = @$"select ta.""Id"",t.""TemplateType"" from public.""TableMetadata"" ta 
+            var query = @$"select ta.""Id"" from public.""TableMetadata"" ta 
             left join public.""Template"" t on ta.""Id""=coalesce(t.""UdfTableMetadataId"",t.""TableMetadataId"") and t.""IsDeleted""=false
             where ta.""Schema""='{schemaName}' and ta.""Name""='{tableName}' and ta.""IsDeleted""=false";
             var tableMetadata = await queryRepo.ExecuteQuerySingle<TableMetadataViewModel>(query, null);

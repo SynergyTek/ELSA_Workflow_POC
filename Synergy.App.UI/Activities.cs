@@ -98,6 +98,18 @@ public class AssignTaskToRole : Activity
 }
 
 [Activity("Synergy", "Send a notification to user")]
+public class ExecuteBusiness : CodeActivity
+{
+    [Input(Description = "Assign task to role")]
+    public Input<List<string>> Names { get; set; } = null!;
+
+    protected override void Execute(ActivityExecutionContext context)
+    {
+
+    }
+}
+
+[Activity("Synergy", "Send a notification to user")]
 public class Notification : CodeActivity
 {
     [Input(Description = "The user to send the notification to")]

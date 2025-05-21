@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Synergy.App.Data.ViewModels
 {
-    public class ColumnMetadataViewModel : ColumnMetadata
+    public class ColumnMetadataViewModel : ColumnMetadataModel
     {
         [UIHint("ForeignKeyTable")]
         public new Guid ForeignKeyTableId { get; set; }

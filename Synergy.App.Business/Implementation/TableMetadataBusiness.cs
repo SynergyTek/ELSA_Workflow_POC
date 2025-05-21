@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using AutoMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Synergy.App.Business.Interface;
@@ -11,28 +10,23 @@ using Synergy.App.Data.ViewModels;
 namespace Synergy.App.Business.Implementation
 {
     public class TableMetadataBusiness(
-        IContextBase<TableMetadataViewModel, Data.Models.TableMetadata> repo,
-        IMapper autoMapper,
+        IContextBase<TableMetadataViewModel, TableMetadataModel> repo,
         IColumnMetadataBusiness columnMetadataBusiness,
         ICmsBusiness cmsBusiness,
-        IQueryBase<TableMetadataViewModel> queryRepo,
         ICmsQueryBusiness cmsQueryBusiness,
-          IUserContext userContext,
+        IUserContext userContext,
         IServiceProvider serviceProvider)
-        : BusinessBase<TableMetadataViewModel, Data.Models.TableMetadata>(repo, serviceProvider), ITableMetadataBusiness
+        : BusinessBase<TableMetadataViewModel, TableMetadataModel>(repo, serviceProvider),
+            ITableMetadataBusiness
     {
         private readonly IServiceProvider _serviceProvider = serviceProvider;
-        private readonly IContextBase<TableMetadataViewModel, Data.Models.TableMetadata> _repo = repo;
+        private readonly IContextBase<TableMetadataViewModel, TableMetadataModel> _repo = repo;
 
         public override async Task<CommandResult<TableMetadataViewModel>> Create(TableMetadataViewModel model,
             bool autoCommit = true)
         {
             var errorList = new Dictionary<string, string>();
-            var displayName = await base.GetSingle(x => x.DisplayName == model.DisplayName);
-            if (!displayName.IsNotNull())
-            {
-                errorList.Add("DisplayName", "Display name already exist.");
-            }
+
 
             var tableName = await base.GetSingle(x => x.Name == model.Name);
             if (!tableName.IsNotNull())
@@ -48,18 +42,15 @@ namespace Synergy.App.Business.Implementation
 
             if (model.ColumnMetadatas.IsNotNull())
             {
-                foreach (var col in model.ColumnMetadatas)
+                foreach (var col in model.ColumnMetadatas.Where(col => col.ForeignKeyConstraintName.IsNotNullAndNotEmpty()))
                 {
-                    if (col.ForeignKeyConstraintName.IsNotNullAndNotEmpty())
+                    var columnconstraint = await columnMetadataBusiness.GetSingle(c =>
+                        c.ForeignKeyConstraintName == col.ForeignKeyConstraintName);
+                    if (columnconstraint != null)
                     {
-                        var columnconstraint = await columnMetadataBusiness.GetSingle(c =>
-                            c.ForeignKeyConstraintName == col.ForeignKeyConstraintName);
-                        if (columnconstraint != null)
-                        {
-                            errorList.Add("ForeignKeyConstraintName",
-                                "Column - " + col.ForeignKeyConstraintName +
-                                ", Foreign key constraint name already exist.");
-                        }
+                        errorList.Add("ForeignKeyConstraintName",
+                            "Column - " + col.ForeignKeyConstraintName +
+                            ", Foreign key constraint name already exist.");
                     }
                 }
             }
@@ -105,7 +96,7 @@ namespace Synergy.App.Business.Implementation
         }
 
         public List<ColumnMetadataViewModel> AddBaseColumns(TableMetadataViewModel table,
-            IContextBase<TableMetadataViewModel, Data.Models.TableMetadata> repo, DataActionEnum dataAction)
+            IContextBase<TableMetadataViewModel, TableMetadataModel> repo, DataActionEnum dataAction)
         {
             var list = new List<ColumnMetadataViewModel>();
             if (table.ColumnMetadatas.IsNotNull())
@@ -119,23 +110,23 @@ namespace Synergy.App.Business.Implementation
                 Name = "Id",
                 LabelName = "Id",
                 Alias = "Id",
-                DataType = Data.DataColumnTypeEnum.Text,
+                DataType = DataColumnTypeEnum.Text,
                 IsPrimaryKey = true,
                 IsSystemColumn = true,
                 IsHiddenColumn = true,
                 IsNullable = false,
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
                 Name = "CreatedDate",
                 LabelName = "Created Date",
                 Alias = "CreatedDate",
-                DataType = Data.DataColumnTypeEnum.DateTime,
+                DataType = DataColumnTypeEnum.DateTime,
                 IsSystemColumn = true,
                 IsLogColumn = true,
                 IsNullable = false,
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
@@ -143,7 +134,7 @@ namespace Synergy.App.Business.Implementation
                 LabelName = "Created By User Id",
                 Alias = "CreatedBy",
                 IsNullable = false,
-                DataType = Data.DataColumnTypeEnum.Text,
+                DataType = DataColumnTypeEnum.Text,
                 IsSystemColumn = true,
                 IsLogColumn = true,
 
@@ -159,25 +150,25 @@ namespace Synergy.App.Business.Implementation
                 ForeignKeyDisplayColumnDataType = DataColumnTypeEnum.Text,
                 // HideForeignKeyTableColumns = true,
                 ForeignKeyTableAliasName = "CreatedByUser"
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
                 Name = "LastUpdatedDate",
                 LabelName = "Last Updated Date",
                 Alias = "LastUpdatedDate",
-                DataType = Data.DataColumnTypeEnum.DateTime,
+                DataType = DataColumnTypeEnum.DateTime,
                 IsSystemColumn = true,
                 IsLogColumn = true,
                 IsNullable = false,
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
                 Name = "LastUpdatedBy",
                 LabelName = "Updated By User Id",
                 Alias = "LastUpdatedBy",
-                DataType = Data.DataColumnTypeEnum.Text,
+                DataType = DataColumnTypeEnum.Text,
                 IsSystemColumn = true,
                 IsLogColumn = true,
                 IsNullable = false,
@@ -194,78 +185,78 @@ namespace Synergy.App.Business.Implementation
                 ForeignKeyDisplayColumnDataType = DataColumnTypeEnum.Text,
                 //  HideForeignKeyTableColumns = true,
                 ForeignKeyTableAliasName = "UpdatedByUser"
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
                 Name = "IsDeleted",
                 LabelName = "Is Deleted",
                 Alias = "IsDeleted",
-                DataType = Data.DataColumnTypeEnum.Bool,
+                DataType = DataColumnTypeEnum.Bool,
                 IsSystemColumn = true,
                 IsHiddenColumn = true,
                 IsNullable = false,
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
                 Name = "CompanyId",
                 LabelName = "Company Id",
                 Alias = "CompanyId",
-                DataType = Data.DataColumnTypeEnum.Text,
+                DataType = DataColumnTypeEnum.Text,
                 IsSystemColumn = true,
                 IsHiddenColumn = true,
                 IsNullable = false,
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
                 Name = "LegalEntityId",
                 LabelName = "LegalEntity Id",
                 Alias = "LegalEntityId",
-                DataType = Data.DataColumnTypeEnum.Text,
+                DataType = DataColumnTypeEnum.Text,
                 IsSystemColumn = true,
                 IsHiddenColumn = true,
                 IsNullable = true,
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
                 Name = "SequenceOrder",
                 LabelName = "Sequence Order",
                 Alias = "SequenceOrder",
-                DataType = Data.DataColumnTypeEnum.Long,
+                DataType = DataColumnTypeEnum.Long,
                 IsSystemColumn = true,
                 IsHiddenColumn = true,
                 IsNullable = true,
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
                 Name = "Status",
                 LabelName = "Status",
                 Alias = "Status",
-                DataType = Data.DataColumnTypeEnum.Integer,
+                DataType = DataColumnTypeEnum.Integer,
                 IsSystemColumn = true,
                 IsHiddenColumn = true,
-            }, table, dataAction, repo));
+            }, table, dataAction));
             list.Add(AddColumn(new ColumnMetadataViewModel
             {
                 Id = Guid.NewGuid(),
                 Name = "VersionNo",
                 LabelName = "VersionNo",
                 Alias = "VersionNo",
-                DataType = Data.DataColumnTypeEnum.Long,
+                DataType = DataColumnTypeEnum.Long,
                 IsSystemColumn = true,
                 IsHiddenColumn = true,
-            }, table, dataAction, repo));
+            }, table, dataAction));
 
             return list;
         }
 
 
         private ColumnMetadataViewModel AddColumn(ColumnMetadataViewModel col, TableMetadataViewModel table,
-            DataActionEnum dataAction, IContextBase<TableMetadataViewModel, Data.Models.TableMetadata> repo)
+            DataActionEnum dataAction)
         {
             col.Id = Guid.NewGuid();
             col.CreatedBy = userContext.UserId;
@@ -279,15 +270,10 @@ namespace Synergy.App.Business.Implementation
         }
 
 
-        public async override Task<CommandResult<TableMetadataViewModel>> Edit(TableMetadataViewModel data,
+        public override async Task<CommandResult<TableMetadataViewModel>> Edit(TableMetadataViewModel data,
             bool autoCommit = true)
         {
             var errorList = new Dictionary<string, string>();
-            var dispname = await base.GetSingle(x => x.DisplayName == data.DisplayName && x.Id != data.Id);
-            if (dispname != null)
-            {
-                errorList.Add("DisplayName", "Display name already exist.");
-            }
 
             var tablename = await base.GetSingle(x => x.Name == data.Name && x.Id != data.Id);
             if (tablename != null)
@@ -440,9 +426,11 @@ namespace Synergy.App.Business.Implementation
 
         private async Task<CommandResult<TableMetadataViewModel>> CreateTemplateTable(TemplateViewModel model)
         {
-            var table = new TableMetadataViewModel();
-            table.IsChildTable = model.IsChildTable;
-            var temp = await _repo.GetSingleById<TemplateViewModel, Data.Models.Template>(model.Id);
+            var table = new TableMetadataViewModel
+            {
+                IsChildTable = model.IsChildTable
+            };
+            var temp = await _repo.GetSingleById<TemplateViewModel, TemplateModel>(model.Id);
             if (temp != null)
             {
                 table.ColumnMetadatas = new List<ColumnMetadataViewModel>();
@@ -457,7 +445,6 @@ namespace Synergy.App.Business.Implementation
                 }
 
                 table.Name = temp.Name;
-                table.DisplayName = temp.DisplayName;
                 table.Alias = temp.Code;
                 table.Schema = ApplicationConstant.Database.Schema.Cms;
                 table.TemplateId = model.Id;
@@ -465,7 +452,7 @@ namespace Synergy.App.Business.Implementation
                 if (res.IsSuccess)
                 {
                     temp.TableMetadataId = res.Item.Id;
-                    await _repo.Edit<TemplateViewModel, Data.Models.Template>(temp);
+                    await _repo.Edit<TemplateViewModel, TemplateModel>(temp);
                 }
 
                 return res;
@@ -487,7 +474,7 @@ namespace Synergy.App.Business.Implementation
 
                 var result = JObject.Parse(model.Json);
                 JArray rows = (JArray)result.SelectToken("components");
-                var temp = await _repo.GetSingleById<TemplateViewModel, Data.Models.Template>(model.Id);
+                var temp = await _repo.GetSingleById<TemplateViewModel, TemplateModel>(model.Id);
                 var table = await GetSingleById(temp.TableMetadataId);
                 table.IsChildTable = model.IsChildTable;
                 if (table != null)
@@ -511,7 +498,7 @@ namespace Synergy.App.Business.Implementation
                             temp.Json = obj.ToString();
                         }
 
-                        await _repo.Edit<TemplateViewModel, Data.Models.Template>(temp);
+                        await _repo.Edit<TemplateViewModel, TemplateModel>(temp);
                         var formbusi = _serviceProvider.GetService<ITemplateBusiness>();
                         foreach (var child in table.ChildTable)
                         {
@@ -522,12 +509,9 @@ namespace Synergy.App.Business.Implementation
                                 {
                                     //  PortalId = model.PortalId,
                                     Name = child.Name,
-                                    DisplayName = child.Name,
-                                    Code = child.Name,
+                                    Code = child.Code,
                                     Json = child.Json,
-                                    IsChildTable = true,
-                                    // TemplateType = TemplateTypeEnum.Form,
-                                    TemplateCategoryId = model.TemplateCategoryId
+                                    IsChildTable = true
                                 };
                                 await formbusi.Create(ChildformTemp);
                             }
@@ -599,14 +583,13 @@ namespace Synergy.App.Business.Implementation
                         || type == "signature" || type == "file" || type == "hidden" || type == "datagrid" ||
                         type == "editgrid"
                         || (type == "htmlelement" && key == "chartgrid") || (type == "htmlelement" && key == "chartJs"))
-                        //|| (type == "content" && key == "content"))
                     {
-                        DataColumnTypeEnum ftype = DataColumnTypeEnum.Text;
                         var reserve = jcomp.SelectToken("reservedKey");
                         if (reserve == null)
                         {
                             var tempmodel = JsonConvert.DeserializeObject<FormFieldViewModel>(jcomp.ToString());
                             var uiTye = tempmodel.type.ToEnum<UdfUITypeEnum>();
+                            DataColumnTypeEnum ftype;
                             switch (uiTye)
                             {
                                 case UdfUITypeEnum.textfield:
@@ -623,12 +606,11 @@ namespace Synergy.App.Business.Implementation
                                     break;
 
                                 case UdfUITypeEnum.checkbox:
-                                    ftype = DataColumnTypeEnum.Bool;
-                                    break;
 
                                 case UdfUITypeEnum.radio:
                                     ftype = DataColumnTypeEnum.Bool;
                                     break;
+
                                 case UdfUITypeEnum.select:
                                     ftype = DataColumnTypeEnum.Text;
                                     if (tempmodel.multiple)
@@ -644,9 +626,17 @@ namespace Synergy.App.Business.Implementation
                                     ftype = DataColumnTypeEnum.Time;
                                     break;
                                 case UdfUITypeEnum.file:
-                                    ftype = DataColumnTypeEnum.Text;
-                                    break;
 
+                                case UdfUITypeEnum.hidden:
+                                case UdfUITypeEnum.signature:
+                                case UdfUITypeEnum.day:
+                                case UdfUITypeEnum.currency:
+                                case UdfUITypeEnum.tags:
+                                case UdfUITypeEnum.phoneNumber:
+                                case UdfUITypeEnum.url:
+                                case UdfUITypeEnum.email:
+                                case UdfUITypeEnum.htmlelement:
+                                case UdfUITypeEnum.button:
                                 default:
                                     ftype = DataColumnTypeEnum.Text;
                                     break;
@@ -682,18 +672,16 @@ namespace Synergy.App.Business.Implementation
                                 var tableschema = split[0];
                                 var tablename = split[1];
                                 fieldmodel.IsForeignKey = true;
-                                //fieldmodel.ForeignKeyColumnName = tempmodel.mapId;
                                 fieldmodel.ForeignKeyColumnName = "Id";
                                 fieldmodel.ForeignKeyTableName = tablename;
                                 fieldmodel.ForeignKeyTableAliasName = tablename;
                                 fieldmodel.IsNullable = true;
-                                //fieldmodel.HideForeignKeyTableColumns = false;
                                 fieldmodel.ForeignKeyTableSchemaName = split[0];
                                 fieldmodel.ForeignKeyDisplayColumnName = tempmodel.mapValue;
                                 fieldmodel.ForeignKeyDisplayColumnAlias = tablename + "_" + tempmodel.mapValue;
                                 fieldmodel.ForeignKeyDisplayColumnLabelName = tablename + " " + tempmodel.mapValue;
-                                // fieldmodel.ForeignKeyConstraintName = $"FK_{table.Name}_{tablename}_{tempmodel.key}_{tempmodel.mapId}";
-                                fieldmodel.ForeignKeyConstraintName = $"FK_{table.Name}_{tablename}_{tempmodel.key}_Id";
+                                fieldmodel.ForeignKeyConstraintName = "FK_" + table.Name + "_" + tablename + "_" +
+                                                                      tempmodel.key + "_Id";
                                 fieldmodel.ForeignKeyDisplayColumnDataType = DataColumnTypeEnum.Text;
                             }
 
@@ -711,7 +699,7 @@ namespace Synergy.App.Business.Implementation
                                 fieldmodel.ForeignKeyDisplayColumnAlias = "LOV_" + "Name";
                                 fieldmodel.ForeignKeyDisplayColumnLabelName = "LOV " + "Name";
                                 // fieldmodel.ForeignKeyConstraintName = $"FK_{table.Name}_{tablename}_{tempmodel.key}_{tempmodel.mapId}";
-                                fieldmodel.ForeignKeyConstraintName = $"FK_{table.Name}_LOV_{tempmodel.key}_Id";
+                                fieldmodel.ForeignKeyConstraintName = string.Format("FK_{0}_LOV_{1}_Id", table.Name, tempmodel.key);
                                 fieldmodel.ForeignKeyDisplayColumnDataType = DataColumnTypeEnum.Text;
                             }
 
@@ -853,7 +841,6 @@ namespace Synergy.App.Business.Implementation
                 return;
             }
 
-            var schema = "public";
             var allClasses = assembly.GetTypes().Where(a =>
                 !a.Name.EndsWith("Log") && a.IsClass && a.Namespace != null &&
                 a.Namespace.Contains(@"Synergy.App.DataModel")).ToList();
@@ -867,7 +854,7 @@ namespace Synergy.App.Business.Implementation
 
             foreach (var table in allClasses)
             {
-                schema = "public";
+                var schema = "public";
                 var customAttributes =
                     table.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.Schema.TableAttribute),
                         false).FirstOrDefault();
@@ -891,7 +878,6 @@ namespace Synergy.App.Business.Implementation
                     tableExist.Schema = schema;
                     tableExist.Name = table.Name;
                     tableExist.Alias = table.Name;
-                    tableExist.DisplayName = table.Name;
                     tableExist.DataAction = DataActionEnum.Edit;
                     tableExist.LastUpdatedBy = userContext.UserId;
                     tableExist.LastUpdatedDate = DateTime.Now;
@@ -937,7 +923,6 @@ namespace Synergy.App.Business.Implementation
                     tableExist.Schema = schema;
                     tableExist.Name = table.Name;
                     tableExist.Alias = table.Name;
-                    tableExist.DisplayName = table.Name;
                     tableExist.DataAction = DataActionEnum.Create;
                     tableExist.LastUpdatedBy = userContext.UserId;
                     tableExist.LastUpdatedDate = DateTime.Now;
@@ -986,9 +971,10 @@ namespace Synergy.App.Business.Implementation
 
         public async Task<List<ColumnMetadataViewModel>> GetTableData(Guid tableMetadataId, string recordId)
         {
-            var list = await _repo.GetList<ColumnMetadataViewModel, Data.Models.ColumnMetadata>(x =>
+            var list = await _repo.GetList<ColumnMetadataViewModel, ColumnMetadataModel>(x =>
                 x.TableMetadataId == tableMetadataId);
-            var table = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableMetadataId);
+            var table =
+                await _repo.GetSingleById<TableMetadataViewModel, TableMetadataModel>(tableMetadataId);
             if (table != null)
             {
                 var name = table.Name;
@@ -1011,13 +997,13 @@ namespace Synergy.App.Business.Implementation
             string udfValue)
         {
             var template =
-                await _repo.GetSingle<TemplateViewModel, Data.Models.Template>(x => x.Code == templateCode || x.Id == templateId);
+                await _repo.GetSingle<TemplateViewModel, TemplateModel>(x =>
+                    x.Code == templateCode || x.Id == templateId);
             if (template != null)
             {
-                var tableId = template.UdfTableMetadataId == Guid.Empty
-                    ? template.TableMetadataId
-                    : template.UdfTableMetadataId;
-                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableId);
+                var tableId =  template.TableMetadataId;
+                var tableMetadata =
+                    await _repo.GetSingleById<TableMetadataViewModel, TableMetadataModel>(tableId);
                 if (tableMetadata != null)
                 {
                     var name = tableMetadata.Name;
@@ -1035,15 +1021,14 @@ namespace Synergy.App.Business.Implementation
 
         public async Task<DataRow> GetTableDataByHeaderId(Guid templateId, string headerId)
         {
-            var template = await _repo.GetSingleById<TemplateViewModel, Data.Models.Template>(templateId);
+            var template = await _repo.GetSingleById<TemplateViewModel, TemplateModel>(templateId);
             if (template != null)
             {
                 var fieldName = "";
 
-                var tableId = template.UdfTableMetadataId == Guid.Empty
-                    ? template.TableMetadataId
-                    : template.UdfTableMetadataId;
-                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableId);
+                var tableId =  template.TableMetadataId;
+                var tableMetadata =
+                    await _repo.GetSingleById<TableMetadataViewModel, TableMetadataModel>(tableId);
                 if (tableMetadata != null)
                 {
                     var schema = tableMetadata.Schema;
@@ -1063,15 +1048,15 @@ namespace Synergy.App.Business.Implementation
         public async Task<DataRow> DeleteTableDataByHeaderId(string templateCode, Guid templateId, string headerId)
         {
             var template =
-                await _repo.GetSingle<TemplateViewModel, Data.Models.Template>(x => x.Code == templateCode || x.Id == templateId);
+                await _repo.GetSingle<TemplateViewModel, TemplateModel>(x =>
+                    x.Code == templateCode || x.Id == templateId);
             if (template != null)
             {
                 var fieldName = "";
 
-                var tableId = template.UdfTableMetadataId == Guid.Empty
-                    ? template.TableMetadataId
-                    : template.UdfTableMetadataId;
-                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableId);
+                var tableId =  template.TableMetadataId;
+                var tableMetadata =
+                    await _repo.GetSingleById<TableMetadataViewModel, TableMetadataModel>(tableId);
                 if (tableMetadata != null)
                 {
                     var schema = tableMetadata.Schema;
@@ -1092,30 +1077,25 @@ namespace Synergy.App.Business.Implementation
             Dictionary<string, object> columnsToUpdate)
         {
             var template =
-                await _repo.GetSingle<TemplateViewModel, Data.Models.Template>(x => x.Code == templateCode || x.Id == templateId);
+                await _repo.GetSingle<TemplateViewModel, TemplateModel>(x =>
+                    x.Code == templateCode || x.Id == templateId);
             if (template != null)
             {
                 var fieldName = "";
 
-                var tableId = template.UdfTableMetadataId == Guid.Empty
-                    ? template.TableMetadataId
-                    : template.UdfTableMetadataId;
-                var tableMetadata = await _repo.GetSingleById<TableMetadataViewModel, Data.Models.TableMetadata>(tableId);
+                var tableId =  template.TableMetadataId;
+                var tableMetadata =
+                    await _repo.GetSingleById<TableMetadataViewModel, TableMetadataModel>(tableId);
                 if (tableMetadata != null)
                 {
-                    var columnKeys = new List<string>();
-                    foreach (var col in columnsToUpdate)
-                    {
-                        columnKeys.Add(
-                            @$"""{col.Key}"" = {BusinessHelper.ConvertToDbValue(col.Value, false, DataColumnTypeEnum.Text)}");
-                    }
+                    var columnKeys = columnsToUpdate.Select(col => @$"""{col.Key}"" = {BusinessHelper.ConvertToDbValue(col.Value, false, DataColumnTypeEnum.Text)}").ToList();
 
                     columnKeys.Add(@$"""LastUpdatedBy"" = '{userContext.UserId}'");
                     columnKeys.Add(@$"""LastUpdatedDate"" = '{DateTime.Now.ToDatabaseDateFormat()}'");
                     var schema = tableMetadata.Schema;
                     var name = tableMetadata.Name;
                     var selectQuery =
-                        @$"update {schema}.""{name}"" set {string.Join(",", columnKeys)} where ""{fieldName}""='{headerId}' ";
+                        $"""update {schema}."{name}" set {string.Join(",", columnKeys)} where "{fieldName}"='{headerId}' """;
                     await cmsQueryBusiness.EditTableDataByHeaderIdData(schema, name, columnKeys, fieldName, headerId);
                 }
             }
@@ -1175,14 +1155,13 @@ namespace Synergy.App.Business.Implementation
             tableName = tableName.Replace("\"", ""); // Regex.Replace(tableName, @"[^0-9a-zA-Z]+", "");
             columnName = columnName.Replace("\"", ""); // Regex.Replace(columnName, @"[^0-9a-zA-Z]+", "");
             var model = await GetSingle(x => x.Schema == schema.Trim() && x.Name == tableName.Trim());
-            if (model != null)
+            if (model == null) return new ColumnMetadataViewModel();
             {
                 var column =
                     await columnMetadataBusiness.GetSingle(x => x.TableMetadataId == model.Id && x.Name == columnName);
                 return column;
             }
 
-            return new ColumnMetadataViewModel();
         }
     }
 }

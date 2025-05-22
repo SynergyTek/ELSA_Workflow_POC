@@ -9,7 +9,7 @@ public class TemplateModel : BaseModel
     public string Code { get; set; }
     public string Description { get; set; }
     [ForeignKey("TableMetadata")] public Guid TableMetadataId { get; set; }
-    public TableMetadataModel TableMetadata { get; set; }
+    public TableModel Table { get; set; }
 
 
     public string Json { get; set; }

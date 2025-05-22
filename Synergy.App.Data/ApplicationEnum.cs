@@ -144,3 +144,14 @@ public enum StatusEnum
     Inactive = 2
 }
 
+public enum ApplicationStatusEnum
+{
+    [Description("Draft")]
+    Draft = 1,
+    [Description("In Progress")]
+    InProgress = 2,
+    [Description("Completed")]
+    Completed = 3,
+    [Description("Cancelled")]
+    Cancelled = 4,
+}

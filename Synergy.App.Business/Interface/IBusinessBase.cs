@@ -8,8 +8,8 @@ namespace Synergy.App.Business.Interface
     {
         Task<List<TV>> GetList();
         Task<List<TV>> GetList(Expression<Func<TD, bool>> where, params Expression<Func<TD, object>>[] include);
-        Task<TV> GetSingle(Expression<Func<TD, bool>> where, params Expression<Func<TD, object>>[] include);
-        Task<TV> GetSingleById(Guid id, params Expression<Func<TD, object>>[] include);
+        Task<TV?> GetSingle(Expression<Func<TD, bool>> where, params Expression<Func<TD, object>>[] include);
+        Task<TV?> GetSingleById(Guid id, params Expression<Func<TD, object>>[] include);
         Task<CommandResult<TV>> Create(TV model, bool autoCommit = true);
 
         Task<CommandResult<TV>> Edit(TV model, bool autoCommit = true);

@@ -1,15 +1,8 @@
-using Elsa.Common.Models;
-using Elsa.Workflows;
-using Elsa.Workflows.Helpers;
-using Elsa.Workflows.Management.Filters;
-using Elsa.Workflows.Models;
-using Elsa.Workflows.Runtime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Synergy.App.Business.Interface;
 using Synergy.App.Data.ViewModels;
 using Activity = System.Diagnostics.Activity;
-using WorkflowStatus = Synergy.App.Data.WorkflowStatus;
 
 namespace Synergy.App.UI.Controllers;
 

@@ -1,6 +1,6 @@
 namespace Synergy.App.Data.Models;
 
-public class TableMetadataModel : BaseModel
+public class TableModel : BaseModel
 {
     public string Code { get; set; }
     public string Name { get; set; }

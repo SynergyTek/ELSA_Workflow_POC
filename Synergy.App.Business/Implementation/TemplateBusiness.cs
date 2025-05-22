@@ -6,7 +6,7 @@ namespace Synergy.App.Business.Implementation;
 
 public class TemplateBusiness(
     IContextBase<TemplateViewModel, TemplateModel> repo,
-       ITableMetadataBusiness tableMetadataBusiness,
+       ITableBusiness tableBusiness,
     IServiceProvider sp)
     : BusinessBase<TemplateViewModel, TemplateModel>(repo, sp), ITemplateBusiness
 {
@@ -15,7 +15,7 @@ public class TemplateBusiness(
         var result = await base.Create(model, autoCommit);
         if (!result.IsSuccess)
             return CommandResult<TemplateViewModel>.Instance(model, result.IsSuccess, result.Messages);
-        var tableResult = await tableMetadataBusiness.ManageTemplateTable(model, false, model.ParentId);
+        var tableResult = await tableBusiness.ManageTemplateTable(model, false, model.ParentId);
         return !tableResult.IsSuccess ? CommandResult<TemplateViewModel>.Instance(model, tableResult.IsSuccess, tableResult.Messages) : CommandResult<TemplateViewModel>.Instance(model, result.IsSuccess, result.Messages);
     }
 
@@ -25,7 +25,7 @@ public class TemplateBusiness(
         var result = await base.Edit(model, autoCommit);
         if (!result.IsSuccess)
             return CommandResult<TemplateViewModel>.Instance(model, result.IsSuccess, result.Messages);
-        var tableResult = await tableMetadataBusiness.ManageTemplateTable(model, false, model.ParentId);
+        var tableResult = await tableBusiness.ManageTemplateTable(model, false, model.ParentId);
         return !tableResult.IsSuccess ? CommandResult<TemplateViewModel>.Instance(model, tableResult.IsSuccess, tableResult.Messages) : CommandResult<TemplateViewModel>.Instance(model, result.IsSuccess, result.Messages);
     }
 }

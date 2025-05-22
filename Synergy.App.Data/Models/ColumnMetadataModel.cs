@@ -26,7 +26,7 @@ public class ColumnMetadataModel:BaseModel
 
         [ForeignKey("ForeignKeyTable")]
         public Guid ForeignKeyTableId { get; set; }
-        public TableMetadataModel ForeignKeyTable { get; set; }
+        public TableModel ForeignKeyTable { get; set; }
         public string ForeignKeyTableName { get; set; }
         public string ForeignKeyTableAliasName { get; set; }
         public string ForeignKeyTableSchemaName { get; set; }
@@ -42,7 +42,7 @@ public class ColumnMetadataModel:BaseModel
 
         [ForeignKey("TableMetadataModel")]
         public Guid TableMetadataId { get; set; }
-        public TableMetadataModel TableMetadata { get; set; }
+        public TableModel Table { get; set; }
 
         public string[] EditableBy { get; set; }
         public string[] ViewableBy { get; set; }

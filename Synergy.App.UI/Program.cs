@@ -7,18 +7,19 @@ using Elsa.EntityFrameworkCore.Modules.Management;
 using Elsa.EntityFrameworkCore.Modules.Runtime;
 using Elsa.Extensions;
 using Elsa.Identity.Providers;
+using Elsa.Workflows;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Synergy.App.Business;
-using Synergy.App.Business.Implementation;
 using Synergy.App.Data;
 using Synergy.App.Data.Models;
-
+using Synergy.App.UI;
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
+var elsaConfiguration = configuration.GetSection("Elsa");
 var connectionString = configuration.GetConnectionString("PostgreConnection") ??
                        throw new InvalidOperationException("Connection string 'PostgreConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -81,13 +82,19 @@ services.AddElsa(elsa =>
         .UseCSharp()
         .UseHttp(http =>
         {
-            http.ConfigureHttpOptions = options => configuration.GetSection("Http").Bind(options);
+            http.ConfigureHttpOptions = options => elsaConfiguration.GetSection("Http").Bind(options);
             http.UseCache();
         })
         .UseScheduling().AddActivitiesFrom<Program>()
-        .AddWorkflowsFrom<Program>();
+        .AddWorkflowsFrom<Program>()
+        .AddSwagger()
+        .UseEmail(config =>
+            {
+                config.ConfigureOptions = options => elsaConfiguration.GetSection("Smtp").Bind(options);
+            }
+            );
 });
-
+services.AddScoped<IPropertyUIHandler,CustomDropDownOptionsProvider>();
 // Configure CORS to allow designer app hosted on a different origin to invoke the APIs.
 services.AddCors(cors => cors
     .AddDefaultPolicy(policy => policy

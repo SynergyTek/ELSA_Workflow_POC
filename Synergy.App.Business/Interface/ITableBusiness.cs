@@ -5,9 +5,9 @@ using Synergy.App.Data.ViewModels;
 
 namespace Synergy.App.Business.Interface
 {
-    public interface ITableMetadataBusiness : IBusinessBase<TableMetadataViewModel, TableMetadataModel>
+    public interface ITableBusiness : IBusinessBase<TableViewModel, TableModel>
     {
-        Task<CommandResult<TableMetadataViewModel>> ManageTemplateTable(TemplateViewModel model, bool ignorePermission,
+        Task<CommandResult<TableViewModel>> ManageTemplateTable(TemplateViewModel model, bool ignorePermission,
             Guid parentTemplateId);
 
         Task UpdateStaticTables(string? tableName);
@@ -21,6 +21,6 @@ namespace Synergy.App.Business.Interface
         Task EditTableDataByHeaderId(string templateCode, Guid templateId, string headerId,
             Dictionary<string, object> columnsToUpdate);
 
-        public Task ChildComp(JArray comps, TableMetadataViewModel table, int seqNo);
+        public Task ChildComp(JArray comps, TableViewModel table, int seqNo);
     }
 }

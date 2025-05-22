@@ -10,6 +10,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<WorkflowModel> Workflow { get; set; }
     public DbSet<TemplateModel> Template { get; set; }
+    public DbSet<TableModel> Table { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,7 +22,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<IdentityUserLogin<Guid>>(entity => { entity.ToTable("UserLogin"); });
         modelBuilder.Entity<IdentityUserToken<Guid>>(entity => { entity.ToTable("UserToken"); });
         modelBuilder.Entity<IdentityUserRole<Guid>>(entity => { entity.ToTable("UserRole"); });
-
 
 
         modelBuilder.Entity<WorkflowModel>()

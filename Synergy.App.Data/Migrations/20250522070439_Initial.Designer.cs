@@ -12,7 +12,7 @@ using Synergy.App.Data;
 namespace Synergy.App.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250520124510_Initial")]
+    [Migration("20250522070439_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -46,7 +46,7 @@ namespace Synergy.App.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("RoleClaim", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -70,7 +70,7 @@ namespace Synergy.App.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UserClaim", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -91,7 +91,7 @@ namespace Synergy.App.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("UserLogin", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -106,7 +106,7 @@ namespace Synergy.App.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRole", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -125,7 +125,7 @@ namespace Synergy.App.Data.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("UserToken", (string)null);
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.Role", b =>
@@ -155,7 +155,7 @@ namespace Synergy.App.Data.Migrations
                     b.ToTable("Role", (string)null);
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.TableMetadataModel", b =>
+            modelBuilder.Entity("Synergy.App.Data.Models.TableModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -208,7 +208,7 @@ namespace Synergy.App.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TableMetadataModel");
+                    b.ToTable("TableModel");
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.TemplateModel", b =>
@@ -251,12 +251,15 @@ namespace Synergy.App.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("TableId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("TableMetadataId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TableMetadataId");
+                    b.HasIndex("TableId");
 
                     b.ToTable("Template");
                 });
@@ -423,13 +426,13 @@ namespace Synergy.App.Data.Migrations
 
             modelBuilder.Entity("Synergy.App.Data.Models.TemplateModel", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.TableMetadataModel", "TableMetadata")
+                    b.HasOne("Synergy.App.Data.Models.TableModel", "Table")
                         .WithMany()
-                        .HasForeignKey("TableMetadataId")
+                        .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("TableMetadata");
+                    b.Navigation("Table");
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.WorkflowModel", b =>

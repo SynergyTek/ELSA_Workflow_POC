@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Synergy.App.Data;
+using Synergy.App.Business.Interface;
 using Synergy.App.Data.Models;
 using Synergy.App.Data.ViewModels;
 
@@ -10,7 +10,8 @@ namespace Synergy.App.UI.Controllers
     [Authorize]
     public class UserController(
         UserManager<User> userManager,
-        RoleManager<Role> roleManager
+        RoleManager<Role> roleManager,
+        IUserContext userContext
     ) : Controller
     {
         public IActionResult Index()
@@ -67,6 +68,7 @@ namespace Synergy.App.UI.Controllers
             }
 
             var roles = await userManager.GetRolesAsync(user);
+            ViewBag.Roles = roleManager.Roles.ToList();
             return View(new UserViewModel
             {
                 Id = user.Id,
@@ -74,6 +76,30 @@ namespace Synergy.App.UI.Controllers
                 Email = user.Email,
                 Roles = roles
             });
+        }
+
+        public async Task<IActionResult> AddUserToRole(string userId, string roleCode)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(roleCode))
+            {
+                return NotFound();
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            await userManager.AddToRoleAsync(user, roleCode);
+            return RedirectToAction("Manage", new { id = userId });
+        }
+
+        public async Task<IActionResult> RemoveUserFromRole(string userId, string roleCode)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(roleCode))
+            {
+                return NotFound();
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            await userManager.RemoveFromRoleAsync(user, roleCode);
+            return RedirectToAction("Manage", new { id = userId });
         }
 
         //
@@ -131,7 +157,6 @@ namespace Synergy.App.UI.Controllers
             if (role == null) return View();
             await roleManager.DeleteAsync(role);
             return RedirectToAction(nameof(Index));
-
         }
     }
 }

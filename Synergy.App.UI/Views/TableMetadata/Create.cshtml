@@ -1,0 +1,60 @@
+@model Synergy.App.Data.Models.TableModel
+
+@{
+    ViewData["Title"] = "Create TableMetadata";
+}
+
+<h1>Create Table Metadata</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="Code" class="control-label"></label>
+                <input asp-for="Code" class="form-control" />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Alias" class="control-label"></label>
+                <input asp-for="Alias" class="form-control" />
+                <span asp-validation-for="Alias" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Schema" class="control-label"></label>
+                <input asp-for="Schema" class="form-control" />
+                <span asp-validation-for="Schema" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Query" class="control-label"></label>
+                <textarea asp-for="Query" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Query" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <div class="form-check">
+                    <input asp-for="CreateTable" class="form-check-input" />
+                    <label asp-for="CreateTable" class="form-check-label"></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

@@ -3,48 +3,64 @@
 @{
 	ViewData["Title"] = "Manage User";
 }
-<div class="container">
-	<div class="row row-cols-md-2 px-2 py-3 rounded border">
-		<div class="col mb-md-4">
-			<div class=" input-group">
-				<label asp-for="Email"
-				       class="input-group-text"></label>
-				<input asp-for="Email"
-				       class="form-control" />
+<div class="container vstack gap-4 align-items-center">
+	<div>
+		<div class="row row-cols-md-2 px-2 py-3 rounded border">
+			<div class="col mb-md-4">
+				<div class=" input-group">
+					<label asp-for="Email"
+					       class="input-group-text"></label>
+					<input asp-for="Email"
+					       class="form-control" />
+				</div>
 			</div>
-		</div>
-		<div class="col mb-md-4">
-			<div class=" input-group">
-				<label asp-for="UserName"
-				       class="input-group-text"></label>
-				<input asp-for="UserName"
-				       class="form-control" />
+			<div class="col mb-md-4">
+				<div class=" input-group">
+					<label asp-for="UserName"
+					       class="input-group-text"></label>
+					<input asp-for="UserName"
+					       class="form-control" />
+				</div>
 			</div>
-		</div>
-		<div class="col mb-md-4">
-			<div class=" input-group">
-				<label asp-for="PhoneNumber"
-				       class="input-group-text"></label>
-				<input asp-for="PhoneNumber"
-				       class="form-control" />
+			<div class="col mb-md-4">
+				<div class=" input-group">
+					<label asp-for="PhoneNumber"
+					       class="input-group-text"></label>
+					<input asp-for="PhoneNumber"
+					       class="form-control" />
+				</div>
 			</div>
-		</div>
 
+		</div>
 	</div>
-	<div class="card">
+	<div class="card w-50">
 		<div class="card-header">
 			<h5 class="card-title">Roles</h5>
 		</div>
 		<div class="card-body">
-			<div class="row">
-				@foreach (var role in Model.Roles)
+			<div class="vstack gap-4">
+				@foreach (var role in (List<Role>)ViewBag.Roles)
 				{
-					<div class="col mb-md-4">
-						<div class=" input-group">
-							<label asp-for="@role"
-							       class="input-group-text"></label>
-							<input asp-for="@role"
-							       class="form-control" />
+					<div class="row">
+
+						<p class="col-4">@role.Name</p>
+						<p class="col-4">@role.NormalizedName</p>
+						<div class="col-4">
+							@if (Model.Roles.Contains(role.Name))
+							{
+								<a class="btn btn-danger btn-sm"
+								   asp-action="RemoveUserFromRole"
+								   asp-route-userId="@Model.Id"
+								   asp-route-roleCode="@role.NormalizedName">Remove</a>
+							}
+							else
+							{
+								<a class="btn btn-success btn-sm"
+								   asp-action="AddUserToRole"
+								   asp-route-userId="@Model.Id"
+								   asp-route-roleCode="@role.NormalizedName"
+								   >Add</a>
+							}
 						</div>
 					</div>
 				}

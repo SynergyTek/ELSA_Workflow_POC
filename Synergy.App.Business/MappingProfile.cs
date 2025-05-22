@@ -17,7 +17,7 @@ namespace Synergy.App.Business
             CreateMap<WorkflowModel, WorkflowViewModel>().ReverseMap();
             CreateMap<User, UserViewModel>().ReverseMap();
             CreateMap<TemplateModel, TemplateViewModel>().ReverseMap();
-            CreateMap<TableMetadataModel, TableMetadataViewModel>().ReverseMap();
+            CreateMap<TableModel, TableViewModel>().ReverseMap();
             CreateMap<ColumnMetadataModel, ColumnMetadataViewModel>().ReverseMap();
         }
     }

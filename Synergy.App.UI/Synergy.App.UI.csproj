@@ -11,6 +11,7 @@
         <PackageReference Include="AutoMapper.Data" Version="9.0.0" />
         <PackageReference Include="Elsa" Version="3.3.5" />
         <PackageReference Include="Elsa.CSharp" Version="3.3.5" />
+        <PackageReference Include="Elsa.Email" Version="3.3.5" />
         <PackageReference Include="Elsa.EntityFrameworkCore" Version="3.3.5" />
 
         <PackageReference Include="Elsa.EntityFrameworkCore.PostgreSql" Version="3.3.5" />
@@ -21,7 +22,7 @@
         <PackageReference Include="Elsa.Workflows.Api" Version="3.3.5" />
         <PackageReference Include="Humanizer" Version="3.0.0-beta.96" />
         <PackageReference Include="IKVM" Version="8.11.2" />
-        
+
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.15" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.15" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.15" />
@@ -34,50 +35,25 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Scripting.Common" Version="4.13.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.15" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.15">
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-          <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.15" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.15" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.15">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Synergy.App.Business\Synergy.App.Business.csproj" />
-      <ProjectReference Include="..\Synergy.App.Data\Synergy.App.Data.csproj" />
+        <ProjectReference Include="..\Synergy.App.Business\Synergy.App.Business.csproj" />
+        <ProjectReference Include="..\Synergy.App.Data\Synergy.App.Data.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Views\Elsa\Index.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Leave\Create.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Leave\Delete.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Leave\Details.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Leave\Edit.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Leave\Index.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Notification\Create.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Notification\Delete.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Notification\Details.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Notification\Edit.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Notification\Index.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Template\Create.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Template\Delete.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Template\Details.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Template\Edit.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Template\Index.cshtml" />
-      <_ContentIncludedByDefault Remove="Views\Template\Manage.cshtml" />
-    </ItemGroup>
 
-    <ItemGroup>
-      <UpToDateCheckInput Remove="Views\Template\Create.cshtml" />
-      <UpToDateCheckInput Remove="Views\Template\Delete.cshtml" />
-      <UpToDateCheckInput Remove="Views\Template\Details.cshtml" />
-      <UpToDateCheckInput Remove="Views\Template\Edit.cshtml" />
-      <UpToDateCheckInput Remove="Views\Template\Index.cshtml" />
-    </ItemGroup>
 
 </Project>
+

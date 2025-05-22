@@ -37,6 +37,7 @@ builder.Services.AddRemoteBackend(backendApiConfig);
 builder.Services.AddLoginModule();
 builder.Services.AddDashboardModule();
 builder.Services.AddWorkflowsModule();
+
 // Build the application.
 var app = builder.Build();
 

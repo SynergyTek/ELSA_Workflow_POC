@@ -14,7 +14,7 @@ namespace Synergy.App.Data.ViewModels
 
 
 {
-    public class TableMetadataViewModel:TableMetadataModel
+    public class TableViewModel:TableModel
     {
        // public Guid Id { get; set; }  // from BaseModel
        
@@ -32,7 +32,7 @@ namespace Synergy.App.Data.ViewModels
         public Guid TemplateId { get; set; }
         public string Json { get; set; }
 
-        public List<TableMetadataViewModel> ChildTable { get; set; }
+        public List<TableViewModel> ChildTable { get; set; }
         public bool IsChildTable { get; set; }
         public string TemplateCode { get; set; }
         public DataActionEnum DataAction { get; set; }

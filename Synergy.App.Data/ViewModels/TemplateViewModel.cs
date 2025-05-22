@@ -32,5 +32,12 @@ namespace Synergy.App.Data.ViewModels
         public long? SequenceOrder { get; set; }
         public string? RecordId { get; set; }
         public Guid ParentId { get; set; }
+        public string Json { get; set; } 
+        public bool EnableSaveButton { get; set; }
+        public string SaveButtonText { get; set; }
+        public string SaveButtonCss { get; set; }
+        public bool EnableBackButton { get; set; }
+        public string BackButtonText { get; set; }
+        public string BackButtonCss { get; set; }
     }
 }

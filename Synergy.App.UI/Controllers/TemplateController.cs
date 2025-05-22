@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using com.sun.corba.se.spi.ior;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +6,10 @@ using Synergy.App.Business.Interface;
 using Synergy.App.Data;
 using Synergy.App.Data.Models;
 using Synergy.App.Data.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Synergy.App.UI.Controllers
 {
@@ -154,5 +155,29 @@ namespace Synergy.App.UI.Controllers
         {
             return context.Template.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> Template()
+        {
+            return View();
+        }
+        public async Task<IActionResult> FormTemplate()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateForm(TemplateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewData["TableMetadataId"] = new SelectList(context.Set<TableMetadataModel>(), "Id", "Alias", model.TableMetadataId);
+                return View(model);
+            }
+
+            await business.Create(model); 
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

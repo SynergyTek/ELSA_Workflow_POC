@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Synergy.Elsa.Studio\\Synergy.Elsa.Studio.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Synergy.App.UI\\Synergy.App.UI.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

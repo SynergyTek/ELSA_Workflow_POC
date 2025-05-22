@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Template Builder</title>
+    <link rel="stylesheet" href="https://cdn.form.io/formiojs/formio.full.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+        .tab-content {
+            padding: 20px;
+        }
+
+        #templateBuilder {
+            min-height: 600px;
+        }
+
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <ul class="nav nav-tabs" id="builderTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="tableMetadata-tab" data-toggle="tab" href="#tableMetadata" role="tab">General</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab">Form</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Static HTML Form -->
+            <div class="tab-pane fade show active" id="tableMetadata" role="tabpanel">
+                <div class="col-md-8 mx-auto mt-4">
+                    <form id="tableMetadataForm">
+                        <div class="form-group">
+                            <label>Code</label>
+                            <input type="text" class="form-control" id="code" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" id="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Alias</label>
+                            <input type="text" class="form-control" id="alias">
+                        </div>
+                        <div class="form-group">
+                            <label>Schema</label>
+                            <input type="text" class="form-control" id="schema">
+                        </div>
+                        <div class="form-group">
+                            <label>Query</label>
+                            <textarea class="form-control" id="query"></textarea>
+                        </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="createTable">
+                            <label class="form-check-label">Create Table</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Table Metadata</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Form.io Tab -->
+            <div class="tab-pane fade" id="template" role="tabpanel">
+                <div class="col-md-10 mx-auto mt-4">
+                    <div id="templateBuilder"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="successNotification" class="alert alert-success">Saved successfully!</div>
+    <div id="errorNotification" class="alert alert-danger">Error saving!</div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.form.io/formiojs/formio.full.min.js"></script>
+    <script>
+        // Show notifications
+        function showNotification(type, duration = 3000) {
+          const el = document.getElementById(`${type}Notification`);
+          el.style.display = 'block';
+          setTimeout(() => el.style.display = 'none', duration);
+        }
+
+        // Submit static Table Metadata form
+        document.getElementById('tableMetadataForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const data = {
+            code: document.getElementById('code').value,
+            name: document.getElementById('name').value,
+            description: document.getElementById('description').value,
+            alias: document.getElementById('alias').value,
+            schema: document.getElementById('schema').value,
+            query: document.getElementById('query').value,
+            createTable: document.getElementById('createTable').checked
+          };
+
+          fetch('/api/tablemetadata', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          })
+          .then(res => res.ok ? showNotification('success') : Promise.reject())
+          .catch(() => showNotification('error'));
+        });
+
+        // Form.io Form Builder
+        const templateForm = {
+          components: [
+            { type: 'textfield', key: 'name', label: 'Name', placeholder: 'Enter template name', validate: { required: true }},
+            { type: 'textfield', key: 'code', label: 'Code', placeholder: 'Enter template code', validate: { required: true }},
+            { type: 'textarea', key: 'description', label: 'Description', placeholder: 'Enter template description' },
+            {
+              type: 'select',
+              key: 'tableMetadataId',
+              label: 'Table Metadata',
+              dataSrc: 'url',
+              data: { url: '/api/tablemetadata' },
+              valueProperty: 'id',
+              template: '{{ item.name }}',
+              validate: { required: true }
+            },
+            {
+              type: 'textarea',
+              key: 'json',
+              label: 'JSON',
+              placeholder: 'Enter template JSON',
+              editor: 'ace',
+              validate: { required: true }
+            },
+            {
+              type: 'button',
+              action: 'submit',
+              label: 'Submit',
+              theme: 'primary'
+            }
+          ]
+        };
+
+        Formio.builder(document.getElementById('templateBuilder'), templateForm).then(builder => {
+          builder.on('submitDone', submission => {
+            fetch('/api/template', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(submission.data)
+            })
+            .then(res => res.ok ? showNotification('success') : Promise.reject())
+            .catch(() => showNotification('error'));
+          });
+        });
+    </script>
+</body>
+</html>

@@ -11,6 +11,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<WorkflowModel> Workflow { get; set; }
     public DbSet<TemplateModel> Template { get; set; }
     public DbSet<TableModel> Table { get; set; }
+    public DbSet<ColumnModel> Column { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

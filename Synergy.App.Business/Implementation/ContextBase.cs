@@ -18,7 +18,7 @@ public class ContextBase<TV, TD>(
     public IUserContext UserContext { get; set; }
     private DbContextOptions<ApplicationDbContext> DbOptions { get; set; } = dbOptions;
 
-    public async Task<TV> Create(TV model, bool autoCommit = true)
+    public async Task<TV?> Create(TV model, bool autoCommit = true)
     {
         return await Create<TV, TD>(model, autoCommit);
     }
@@ -119,7 +119,7 @@ public class ContextBase<TV, TD>(
         }
     }
 
-    public async Task<TVm> GetSingle<TVm, TDm>(Expression<Func<TDm, bool>> where,
+    public async Task<TVm?> GetSingle<TVm, TDm>(Expression<Func<TDm, bool>> where,
         params Expression<Func<TDm, object>>[] include) where TVm : BaseModel where TDm : BaseModel
     {
         where = AndAlso(x => x.IsDeleted == false, where);
@@ -135,8 +135,8 @@ public class ContextBase<TV, TD>(
                 return data.ToViewModel<TVm, TDm>(autoMapper);
             }
 
-            var result2 = await context.Set<TDm>().AsNoTracking().FirstAsync(where);
-            return result2.ToViewModel<TVm, TDm>(autoMapper);
+            var result2 = await context.Set<TDm>().AsNoTracking().FirstOrDefaultAsync(where);
+            return result2?.ToViewModel<TVm, TDm>(autoMapper);
         }
         finally
         {
@@ -147,6 +147,10 @@ public class ContextBase<TV, TD>(
     public async Task<TVm?> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)
         where TVm : BaseModel where TDm : BaseModel
     {
+        if (id == Guid.Empty)
+        {
+            return null;
+        }
         var context = GetDbContext();
         try
         {
@@ -169,7 +173,7 @@ public class ContextBase<TV, TD>(
         }
     }
 
-    public async Task<TVm> Create<TVm, TDm>(TVm model, bool autoCommit = true)
+    public async Task<TVm?> Create<TVm, TDm>(TVm model, bool autoCommit = true)
         where TVm : BaseModel where TDm : BaseModel
     {
         var baseModel = autoMapper.Map<TVm, TDm>(model);
@@ -184,7 +188,7 @@ public class ContextBase<TV, TD>(
                 await context.SaveChangesAsync();
             }
 
-            return model;
+            return baseModel.ToViewModel<TVm,TDm>(autoMapper);
         }
         finally
         {

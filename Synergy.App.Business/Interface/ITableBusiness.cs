@@ -11,12 +11,12 @@ namespace Synergy.App.Business.Interface
             Guid parentTemplateId);
 
         Task UpdateStaticTables(string? tableName);
-        Task<List<ColumnMetadataViewModel>> GetTableData(string tableMetadataId, string recordId);
+        Task<List<ColumnViewModel>> GetTableData(string tableMetadataId, string recordId);
         Task<DataRow> GetTableDataByColumn(string templateCode, Guid templateId, string udfName, string udfValue);
         Task<DataRow> GetTableDataByHeaderId(Guid templateId, string headerId);
         Task<DataRow> DeleteTableDataByHeaderId(string templateCode, Guid templateId, string headerId);
-        Task<ColumnMetadataViewModel> GetColumnByTableName(string schema, string tableName, string columnName);
-        Task<List<ColumnMetadataViewModel>> GetViewColumnByTableName(string schema, string tableName);
+        Task<ColumnViewModel> GetColumnByTableName(string schema, string tableName, string columnName);
+        Task<List<ColumnViewModel>> GetViewColumnByTableName(string schema, string tableName);
 
         Task EditTableDataByHeaderId(string templateCode, Guid templateId, string headerId,
             Dictionary<string, object> columnsToUpdate);

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synergy.App.Data;
@@ -11,9 +12,11 @@ using Synergy.App.Data;
 namespace Synergy.App.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250522132537_TemplateJSON")]
+    partial class TemplateJSON
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,157 +126,6 @@ namespace Synergy.App.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserToken", (string)null);
-                });
-
-            modelBuilder.Entity("Synergy.App.Data.Models.ColumnModel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("DataType")
-                        .HasColumnType("integer");
-
-                    b.Property<string[]>("EditableBy")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<string[]>("EditableContext")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<Guid>("ForeignKeyColumnId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ForeignKeyColumnName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyConstraintName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyDisplayColumnAlias")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("ForeignKeyDisplayColumnDataType")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ForeignKeyDisplayColumnLabelName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyTableAliasName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ForeignKeyTableId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ForeignKeyTableName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyTableSchemaName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("HideForeignKeyTableColumns")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDefaultDisplayColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsForeignKey")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsHiddenColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsLogColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsMultiValueColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsNullable")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsPrimaryKey")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsReferenceColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsSystemColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsUdfColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsUniqueColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsVirtualColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsVirtualForeignKey")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LabelName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("LastUpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("LastUpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("TableId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("UdfUIType")
-                        .HasColumnType("integer");
-
-                    b.Property<string[]>("ViewableBy")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<string[]>("ViewableContext")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ForeignKeyColumnId");
-
-                    b.HasIndex("ForeignKeyTableId");
-
-                    b.HasIndex("TableId");
-
-                    b.ToTable("Column");
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.Role", b =>
@@ -400,6 +252,9 @@ namespace Synergy.App.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<Guid>("TableId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TableMetadataId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -567,33 +422,6 @@ namespace Synergy.App.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Synergy.App.Data.Models.ColumnModel", b =>
-                {
-                    b.HasOne("Synergy.App.Data.Models.ColumnModel", "ForeignKeyColumn")
-                        .WithMany()
-                        .HasForeignKey("ForeignKeyColumnId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.TableModel", "ForeignKeyTable")
-                        .WithMany()
-                        .HasForeignKey("ForeignKeyTableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.TableModel", "Table")
-                        .WithMany()
-                        .HasForeignKey("TableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ForeignKeyColumn");
-
-                    b.Navigation("ForeignKeyTable");
-
-                    b.Navigation("Table");
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.TemplateModel", b =>

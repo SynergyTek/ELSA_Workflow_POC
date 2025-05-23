@@ -15,7 +15,27 @@ public class TemplateController(ApplicationDbContext context, ITemplateBusiness 
 
     public IActionResult Create()
     {
-        return View("Manage",null);
+        return View("Manage", null);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Manage(TemplateViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("Manage", model);
+        }
+
+        if (model.Id == Guid.Empty)
+        {
+            await business.Create(model);
+        }
+        else
+        {
+            await business.Edit(model);
+        }
+
+        return RedirectToAction("Index");
     }
 
     public IActionResult Edit(TemplateViewModel model)

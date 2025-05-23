@@ -54,10 +54,10 @@ public class CmsBusiness(
 
         var constraints = await cmsQueryBusiness.GetEditFormTableConstraints(table);
 
-        var tableColumnList = new List<ColumnMetadataViewModel>();
+        var tableColumnList = new List<ColumnViewModel>();
         foreach (DataRow row in existColumn.Rows)
         {
-            var data = new ColumnMetadataViewModel
+            var data = new ColumnViewModel
             {
                 Name = row["column_name"].ToString(),
                 DataTypestr = row["data_type"].ToString(),
@@ -66,8 +66,8 @@ public class CmsBusiness(
             tableColumnList.Add(data);
         }
 
-        var existingMetadataColumnList = await _repo.GetList<ColumnMetadataModel, ColumnMetadataModel>
-            (x => x.TableMetadataId == table.Id && x.IsVirtualColumn == false);
+        var existingMetadataColumnList = await _repo.GetList<ColumnModel, ColumnModel>
+            (x => x.TableId == table.Id && x.IsVirtualColumn == false);
         var query = new StringBuilder(
             $"ALTER TABLE {ApplicationConstant.Database.Schema.Cms}.\"{table.Name}\"");
         var alterColumnScriptList = new List<string>();
@@ -137,8 +137,8 @@ public class CmsBusiness(
         const string tableVarWithSchema = "<<table-schema>>";
         const string tableVar = "<<table>>";
 
-        var columns = await _repo.GetList<ColumnMetadataModel, ColumnMetadataModel>(x =>
-            x.TableMetadataId == table.Id && x.IsVirtualColumn == false);
+        var columns = await _repo.GetList<ColumnModel, ColumnModel>(x =>
+            x.TableId == table.Id && x.IsVirtualColumn == false);
         var query = new StringBuilder();
         if (dropTable)
         {
@@ -198,7 +198,7 @@ public class CmsBusiness(
     }
 
 
-    private string ConvertToPostgreType(ColumnMetadataModel column)
+    private string ConvertToPostgreType(ColumnModel column)
     {
         if (column.IsSystemColumn)
         {
@@ -221,7 +221,7 @@ public class CmsBusiness(
     }
 
 
-    private void ManageForeignKey(List<string> alterColumnScriptList, ColumnMetadataModel column, DataTable constraints)
+    private void ManageForeignKey(List<string> alterColumnScriptList, ColumnModel column, DataTable constraints)
     {
         if (column.IsForeignKey && column.IsVirtualForeignKey == false &&
             column.ForeignKeyConstraintName.IsNotNullAndNotEmpty())

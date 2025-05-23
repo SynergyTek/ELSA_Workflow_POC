@@ -5,53 +5,52 @@
 }
 <div class="container-fluid">
     <h2 class="pb-3">Manage Template</h2>
-    <div class="row">
+    <form class="row"
+          id="templateForm"
+          asp-action="Manage"
+          method="post">
+        @Html.HiddenFor(m=>m.Json)
         <div class="form-group col-md-6">
             <label asp-for="Name"
                    class="form-label">Template Name</label>
-            @Html.TextBoxFor(m=>m.Name, new{@class="form-control"})
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
         </div>
         <div class="form-group col-md-6">
             <label asp-for="Code"
                    class="form-label">Template Code</label>
-            @Html.TextBoxFor(m=>m.Code, new{@class="form-control"})
+            @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
         </div>
         <div class="form-group col-md-6">
             <label asp-for="Description"
                    class="form-label">Description</label>
-            @Html.TextAreaFor(m=>m.Name, new{@class="form-control"})
+            @Html.TextAreaFor(m => m.Name, new { @class = "form-control" })
         </div>
-        <hr class="mt-4" />
+        <hr class="mt-4"/>
         <div class="col-md-12 mx-auto mt-4">
             <div id="templateBuilder"></div>
         </div>
+        <div class="mt-4">
+            <button type="button" id="submitForm" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
 
-    </div>
-
-</div>
-
-<!-- Notifications -->
-<div id="successNotification"
-     class="alert alert-success "
-     style="display: none">Saved successfully!
-</div>
-<div id="errorNotification"
-     class="alert alert-danger"
-     style="display: none">Error saving!
 </div>
 
 
 <script>
-    // Show notifications
-    function showNotification(type, duration = 3000) {
-        const el = document.getElementById(`${type}Notification`);
-        el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', duration);
-    }
 
-    Formio.builder(document.getElementById('templateBuilder'),  @(Model?.Json ?? "{}"),{
-        noDefaultSubmitButton:true,
+    let formio = null
+    document.querySelector("#submitForm").addEventListener("click", (e) => {
+        document.querySelector("#Json").value = JSON.stringify(formio.form)
+        document.querySelector("#templateForm").submit()
+
+    })
+     Formio.builder(document.getElementById('templateBuilder'),  @(Model?.Json ?? "{}"),{
+        noDefaultSubmitButton: true,
         alwaysConfirmComponentRemoval: true,
         showFullJsonSchema: true
-    })
+    }).then(builder => {
+        formio = builder
+
+     })
 </script>

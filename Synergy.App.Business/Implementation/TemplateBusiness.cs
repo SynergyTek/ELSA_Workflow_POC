@@ -12,10 +12,11 @@ public class TemplateBusiness(
 {
     public override async Task<CommandResult<TemplateViewModel>> Create(TemplateViewModel model, bool autoCommit = true)
     {
+        var tableResult = await tableBusiness.ManageTemplateTable(model, false, model.ParentId);
+        model.TableId = tableResult.Item.Id;
         var result = await base.Create(model, autoCommit);
         if (!result.IsSuccess)
             return CommandResult<TemplateViewModel>.Instance(model, result.IsSuccess, result.Messages);
-        var tableResult = await tableBusiness.ManageTemplateTable(model, false, model.ParentId);
         return !tableResult.IsSuccess ? CommandResult<TemplateViewModel>.Instance(model, tableResult.IsSuccess, tableResult.Messages) : CommandResult<TemplateViewModel>.Instance(model, result.IsSuccess, result.Messages);
     }
 

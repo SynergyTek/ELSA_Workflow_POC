@@ -1,36 +1,34 @@
-﻿using AutoMapper;
-using Synergy.App.Business.Interface;
+﻿using Synergy.App.Business.Interface;
 using Synergy.App.Data;
 using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.Models;
 
 namespace Synergy.App.Business.Implementation;
 
 public class ColumnMetadataBusiness(
-    IContextBase<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel> repo,
-    IMapper autoMapper,
-    IQueryBase<ColumnMetadataViewModel> repoQuery,
+    IContextBase<ColumnViewModel, ColumnModel> repo,
     IServiceProvider serviceProvider,
     ICmsQueryBusiness cmsQueryBusiness)
-    : BusinessBase<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(repo, serviceProvider),
+    : BusinessBase<ColumnViewModel, ColumnModel>(repo, serviceProvider),
         IColumnMetadataBusiness
 {
-    private readonly IContextBase<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel> _repo = repo;
+    private readonly IContextBase<ColumnViewModel, ColumnModel> _repo = repo;
 
 
-    public override async Task<CommandResult<ColumnMetadataViewModel>> Create(ColumnMetadataViewModel viewModel,
+    public override async Task<CommandResult<ColumnViewModel>> Create(ColumnViewModel viewModel,
         bool autoCommit = true)
     {
         if (viewModel.IsForeignKey)
         {
-            var fkTable = await _repo.GetSingle<TableViewModel, Data.Models.TableModel>(x =>
+            var fkTable = await _repo.GetSingle<TableViewModel, TableModel>(x =>
                 x.Name == viewModel.ForeignKeyTableName && x.Schema == viewModel.ForeignKeyTableSchemaName);
             if (fkTable != null)
             {
                 viewModel.ForeignKeyTableId = fkTable.Id;
                 if (viewModel.ForeignKeyColumnName.IsNotNullAndNotEmpty())
                 {
-                    var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x =>
-                        x.TableMetadataId == fkTable.Id &&
+                    var fkColumn = await _repo.GetSingle<ColumnViewModel, ColumnModel>(x =>
+                        x.TableId == fkTable.Id &&
                         x.Name == viewModel.ForeignKeyColumnName);
                     if (fkColumn != null)
                     {
@@ -40,8 +38,8 @@ public class ColumnMetadataBusiness(
 
                 if (viewModel.ForeignKeyDisplayColumnName.IsNotNullAndNotEmpty())
                 {
-                    var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x =>
-                        x.TableMetadataId == fkTable.Id &&
+                    var fkColumnDisplay = await _repo.GetSingle<ColumnViewModel, ColumnModel>(x =>
+                        x.TableId == fkTable.Id &&
                         x.Name == viewModel.ForeignKeyDisplayColumnName);
                     if (fkColumnDisplay != null)
                     {
@@ -51,8 +49,8 @@ public class ColumnMetadataBusiness(
 
                 if (viewModel.ForeignKeyConstraintName.IsNullOrEmpty())
                 {
-                    var table = await _repo.GetSingle<TableViewModel, Data.Models.TableModel>(x =>
-                        x.Id == viewModel.TableMetadataId);
+                    var table = await _repo.GetSingle<TableViewModel, TableModel>(x =>
+                        x.Id == viewModel.TableId);
                     if (table != null)
                     {
                         viewModel.ForeignKeyConstraintName =
@@ -68,7 +66,7 @@ public class ColumnMetadataBusiness(
         }
 
         var colExists =
-            await _repo.GetSingle(x => x.TableMetadataId == viewModel.TableMetadataId && x.Name == viewModel.Name);
+            await _repo.GetSingle(x => x.TableId == viewModel.TableId && x.Name == viewModel.Name);
         if (colExists != null)
         {
             viewModel.Id = colExists.Id;
@@ -83,27 +81,27 @@ public class ColumnMetadataBusiness(
         }
 
         // await ManageForeignKeyReferenceColumn(model);
-        return CommandResult<ColumnMetadataViewModel>.Instance(viewModel, result.IsSuccess, result.Messages);
+        return CommandResult<ColumnViewModel>.Instance(viewModel, result.IsSuccess, result.Messages);
     }
 
-    public async override Task<CommandResult<ColumnMetadataViewModel>> Edit(ColumnMetadataViewModel viewModel,
+    public override async Task<CommandResult<ColumnViewModel>> Edit(ColumnViewModel viewModel,
         bool autoCommit = true)
     {
-        var EditableByS = viewModel.EditableBy;
-        var EditableContextS = viewModel.EditableContext;
-        var ViewableByS = viewModel.ViewableBy;
-        var ViewableContextS = viewModel.ViewableContext;
+        var editableByS = viewModel.EditableBy;
+        var editableContextS = viewModel.EditableContext;
+        var viewableByS = viewModel.ViewableBy;
+        var viewableContextS = viewModel.ViewableContext;
         if (viewModel.IsForeignKey)
         {
-            var fkTable = await _repo.GetSingle<TableViewModel, Data.Models.TableModel>(x =>
+            var fkTable = await _repo.GetSingle<TableViewModel, TableModel>(x =>
                 x.Name == viewModel.ForeignKeyTableName && x.Schema == viewModel.ForeignKeyTableSchemaName);
             if (fkTable != null)
             {
                 viewModel.ForeignKeyTableId = fkTable.Id;
                 if (viewModel.ForeignKeyColumnName.IsNotNullAndNotEmpty())
                 {
-                    var fkColumn = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x =>
-                        x.TableMetadataId == fkTable.Id &&
+                    var fkColumn = await _repo.GetSingle<ColumnViewModel, ColumnModel>(x =>
+                        x.TableId == fkTable.Id &&
                         x.Name == viewModel.ForeignKeyColumnName);
                     if (fkColumn != null)
                     {
@@ -113,8 +111,8 @@ public class ColumnMetadataBusiness(
 
                 if (viewModel.ForeignKeyDisplayColumnName.IsNotNullAndNotEmpty())
                 {
-                    var fkColumnDisplay = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x =>
-                        x.TableMetadataId == fkTable.Id &&
+                    var fkColumnDisplay = await _repo.GetSingle<ColumnViewModel, ColumnModel>(x =>
+                        x.TableId == fkTable.Id &&
                         x.Name == viewModel.ForeignKeyDisplayColumnName);
                     if (fkColumnDisplay != null)
                     {
@@ -124,8 +122,8 @@ public class ColumnMetadataBusiness(
 
                 if (viewModel.ForeignKeyConstraintName.IsNullOrEmpty())
                 {
-                    var table = await _repo.GetSingle<TableViewModel, Data.Models.TableModel>(x =>
-                        x.Id == viewModel.TableMetadataId);
+                    var table = await _repo.GetSingle<TableViewModel, TableModel>(x =>
+                        x.Id == viewModel.TableId);
                     if (table != null)
                     {
                         viewModel.ForeignKeyConstraintName =
@@ -137,7 +135,7 @@ public class ColumnMetadataBusiness(
 
         if (viewModel.IgnorePermission)
         {
-            var exist = await _repo.GetSingle<ColumnMetadataViewModel, Data.Models.ColumnMetadataModel>(x => x.Id == viewModel.Id);
+            var exist = await _repo.GetSingle<ColumnViewModel, ColumnModel>(x => x.Id == viewModel.Id);
 
             if (exist != null)
             {
@@ -154,42 +152,40 @@ public class ColumnMetadataBusiness(
         }
 
         var result = await base.Edit(viewModel, autoCommit);
-        viewModel.EditableBy = EditableByS;
-        viewModel.EditableContext = EditableContextS;
-        viewModel.ViewableBy = ViewableByS;
-        viewModel.ViewableContext = ViewableContextS;
+        viewModel.EditableBy = editableByS;
+        viewModel.EditableContext = editableContextS;
+        viewModel.ViewableBy = viewableByS;
+        viewModel.ViewableContext = viewableContextS;
         // await ManageForeignKeyReferenceColumn(model);
 
-        return CommandResult<ColumnMetadataViewModel>.Instance(viewModel);
+        return CommandResult<ColumnViewModel>.Instance(viewModel);
     }
 
 
-    public async Task<List<ColumnMetadataViewModel>> GetViewableColumnMetadataList(string schemaName,
+    public async Task<List<ColumnViewModel>> GetViewableColumnMetadataList(string schemaName,
         string tableName, bool includeForeignKeyTableColumns = true)
     {
         var tableMetadata = await cmsQueryBusiness.GetViewableColumnMetadataListData(schemaName, tableName);
         //   var templateType = TemplateTypeEnum.FormIndexPage;
-        if (tableMetadata != null && tableMetadata.Id != null)
+        if (tableMetadata?.Id != null)
         {
             //templateType = tableMetadata.TemplateType;
 
             return await GetViewableColumnMetadataList(tableMetadata.Id, includeForeignKeyTableColumns);
         }
 
-        return await Task.FromResult(default(List<ColumnMetadataViewModel>));
+        return await Task.FromResult(default(List<ColumnViewModel>));
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetViewableColumnMetadataList(Guid tableMetadataId,
+    public async Task<List<ColumnViewModel>> GetViewableColumnMetadataList(Guid tableMetadataId,
         bool includeForeignKeyTableColumns = true)
     {
-        var list = new List<ColumnMetadataViewModel>();
-
-        list = await _repo.GetList(x =>
-            x.TableMetadataId == tableMetadataId && (x.IsHiddenColumn == false || x.IsPrimaryKey));
+        var list = await _repo.GetList(x =>
+            x.TableId == tableMetadataId && (x.IsHiddenColumn == false || x.IsPrimaryKey));
         if (includeForeignKeyTableColumns)
         {
             var fkColumns = await GetViewableForeignKeyColumnListForForm(tableMetadataId, list);
-            if (fkColumns != null && fkColumns.Count > 0)
+            if (fkColumns.Count != 0)
             {
                 list.AddRange(fkColumns);
             }
@@ -197,11 +193,11 @@ public class ColumnMetadataBusiness(
 
 
         list = await _repo.GetList(x =>
-            x.TableMetadataId == tableMetadataId && (x.IsHiddenColumn == false || x.IsPrimaryKey));
-        if (includeForeignKeyTableColumns)
+            x.TableId == tableMetadataId && (x.IsHiddenColumn == false || x.IsPrimaryKey));
+        if (!includeForeignKeyTableColumns) return list.OrderBy(x => x.Name).ToList();
         {
             var fkColumns = await GetViewableForeignKeyColumnListForForm(tableMetadataId, list);
-            if (fkColumns != null && fkColumns.Count > 0)
+            if (fkColumns.Count != 0)
             {
                 list.AddRange(fkColumns);
             }
@@ -226,10 +222,10 @@ public class ColumnMetadataBusiness(
         return name;
     }
 
-    private async Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForForm(Guid tableMetadataId,
-        List<ColumnMetadataViewModel> columnList)
+    private async Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForForm(Guid tableMetadataId,
+        List<ColumnViewModel> columnList)
     {
-        var list = new List<ColumnMetadataViewModel>();
+        var list = new List<ColumnViewModel>();
         var fks = columnList.Where(x => x.IsForeignKey && x.ForeignKeyTableId != Guid.Empty);
         if (fks != null && fks.Any())
         {

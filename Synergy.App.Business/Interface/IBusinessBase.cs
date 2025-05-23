@@ -21,7 +21,7 @@ namespace Synergy.App.Business.Interface
         Task<List<TVm>> GetList<TVm, TDm>(Expression<Func<TDm, bool>> where,
             params Expression<Func<TDm, object>>[] include) where TVm : BaseModel where TDm : BaseModel;
 
-        Task<TVm> GetSingle<TVm, TDm>(Expression<Func<TDm, bool>> where, params Expression<Func<TDm, object>>[] include)
+        Task<TVm?> GetSingle<TVm, TDm>(Expression<Func<TDm, bool>> where, params Expression<Func<TDm, object>>[] include)
             where TVm : BaseModel where TDm : BaseModel;
 
         Task<TVm?> GetSingleById<TVm, TDm>(Guid id, params Expression<Func<TDm, object>>[] include)

@@ -16,6 +16,7 @@ using Synergy.App.Business;
 using Synergy.App.Data;
 using Synergy.App.Data.Models;
 using Synergy.App.UI;
+
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
@@ -23,7 +24,9 @@ var elsaConfiguration = configuration.GetSection("Elsa");
 var connectionString = configuration.GetConnectionString("PostgreConnection") ??
                        throw new InvalidOperationException("Connection string 'PostgreConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString)
+        .EnableDetailedErrors()
+);
 
 services.AddIdentityCore<User>()
     .AddRoles<Role>()
@@ -67,7 +70,8 @@ services.AddAuthentication(options =>
 services.AddElsa(elsa =>
 {
     // Configure Management layer to use EF Core.
-    elsa.UseWorkflowManagement(management =>
+    elsa
+        .UseWorkflowManagement(management =>
             management.UseEntityFrameworkCore(ef => ef.UsePostgreSql(connectionString)))
         .UseWorkflowRuntime(runtime =>
             runtime.UseEntityFrameworkCore(ef => ef.UsePostgreSql(connectionString)))
@@ -88,13 +92,10 @@ services.AddElsa(elsa =>
         .UseScheduling().AddActivitiesFrom<Program>()
         .AddWorkflowsFrom<Program>()
         .AddSwagger()
-        .UseEmail(config =>
-            {
-                config.ConfigureOptions = options => elsaConfiguration.GetSection("Smtp").Bind(options);
-            }
-            );
+        .UseEmail(config => { config.ConfigureOptions = options => elsaConfiguration.GetSection("Smtp").Bind(options); }
+        );
 });
-services.AddScoped<IPropertyUIHandler,CustomDropDownOptionsProvider>();
+services.AddScoped<IPropertyUIHandler, CustomDropDownOptionsProvider>();
 // Configure CORS to allow designer app hosted on a different origin to invoke the APIs.
 services.AddCors(cors => cors
     .AddDefaultPolicy(policy => policy

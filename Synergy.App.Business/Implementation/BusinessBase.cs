@@ -24,7 +24,7 @@ public class BusinessBase<TV, TD>(IContextBase<TV, TD> repo, IServiceProvider sp
         return await Edit<TV, TD>(model, autoCommit);
     }
 
-    public virtual async Task<TV> GetSingle(Expression<Func<TD, bool>> where,
+    public virtual async Task<TV?> GetSingle(Expression<Func<TD, bool>> where,
         params Expression<Func<TD, object>>[] include)
     {
         return await GetSingle<TV, TD>(where, include);
@@ -62,7 +62,7 @@ public class BusinessBase<TV, TD>(IContextBase<TV, TD> repo, IServiceProvider sp
         return await repo.GetList<TVm, TDm>(where, include);
     }
 
-    public virtual async Task<TVm> GetSingle<TVm, TDm>(Expression<Func<TDm, bool>> where,
+    public virtual async Task<TVm?> GetSingle<TVm, TDm>(Expression<Func<TDm, bool>> where,
         params Expression<Func<TDm, object>>[] include)
         where TVm : BaseModel
         where TDm : BaseModel
@@ -99,6 +99,12 @@ public class BusinessBase<TV, TD>(IContextBase<TV, TD> repo, IServiceProvider sp
         #endregion
 
         var result = await repo.Create<TVm, TDm>(model, autoCommit);
+
+        if (result == null)
+        {
+            return CommandResult<TVm>.Instance(model, false,
+                new Dictionary<string, string> { { "Error", "Failed to create the model." } });
+        }
 
         #region Post Submission Logic
 

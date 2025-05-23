@@ -29,20 +29,20 @@ public class TableBusiness(
 
 
         var tableName = await base.GetSingle(x => x.Name == model.Name);
-        if (!tableName.IsNotNull())
+        if (tableName!=null)
         {
             errorList.Add("Name", "Name already exist.");
         }
 
         var tableAlias = await base.GetSingle(x => x.Alias == model.Alias);
-        if (!tableAlias.IsNotNull())
+        if (tableAlias!=null)
         {
             errorList.Add("Alias", "Alias/Short name already exist.");
         }
 
-        if (model.ColumnMetadatas.IsNotNull())
+        if (model.Columns.IsNotNull())
         {
-            foreach (var col in model.ColumnMetadatas.Where(col => col.ForeignKeyConstraintName.IsNotNullAndNotEmpty()))
+            foreach (var col in model.Columns.Where(col => col.ForeignKeyConstraintName.IsNotNullAndNotEmpty()))
             {
                 var columnconstraint = await columnMetadataBusiness.GetSingle(c =>
                     c.ForeignKeyConstraintName == col.ForeignKeyConstraintName);
@@ -59,52 +59,64 @@ public class TableBusiness(
         {
             return CommandResult<TableViewModel>.Instance(model, false, errorList);
         }
-        else
+
+        var result = await base.Create(model, autoCommit);
+
+        if (!result.IsSuccess) return CommandResult<TableViewModel>.Instance(model, result.IsSuccess, result.Messages);
         {
-            var result = await base.Create(model, autoCommit);
+            model.Id = result.Item.Id;
+            // foreach (var col in model.Columns)
+            // {
+            //     col.TableId = result.Item.Id;
+            //     col.Table = result.Item;
+            //     switch (col.DataAction)
+            //     {
+            //         case DataActionEnum.Create:
+            //         {
+            //             var colresult = await columnMetadataBusiness.Create(col);
+            //             if (colresult.IsSuccess)
+            //             {
+            //                 col.Id = colresult.Item.Id;
+            //             }
+            //
+            //             break;
+            //         }
+            //         case DataActionEnum.Edit:
+            //         {
+            //             var colresult = await columnMetadataBusiness.Edit(col);
+            //             if (colresult.IsSuccess)
+            //             {
+            //                 col.Id = colresult.Item.Id;
+            //             }
+            //
+            //             break;
+            //         }
+            //         case DataActionEnum.Delete:
+            //         case DataActionEnum.Read:
+            //         case DataActionEnum.None:
+            //         case DataActionEnum.View:
+            //             break;
+            //         default:
+            //             throw new ArgumentOutOfRangeException();
+            //     }
+            // }
 
-            if (result.IsSuccess)
-            {
-                model.Id = result.Item.Id;
-                foreach (var col in model.ColumnMetadatas)
-                {
-                    col.TableMetadataId = result.Item.Id;
-                    if (col.DataAction == DataActionEnum.Create)
-                    {
-                        // col.IsNullable = true;
-                        var colresult = await columnMetadataBusiness.Create(col);
-                        if (colresult.IsSuccess)
-                        {
-                            col.Id = colresult.Item.Id;
-                        }
-                    }
-                    else if (col.DataAction == DataActionEnum.Edit)
-                    {
-                        var colresult = await columnMetadataBusiness.Edit(col);
-                        if (colresult.IsSuccess)
-                        {
-                            //col.Id = colresult.Item.Id;
-                        }
-                    }
-                }
-
-                await cmsBusiness.ManageTable(model);
-            }
-
-            return CommandResult<TableViewModel>.Instance(model, result.IsSuccess, result.Messages);
+            await cmsBusiness.ManageTable(model);
         }
+
+        return CommandResult<TableViewModel>.Instance(model, result.IsSuccess, result.Messages);
     }
 
-    public List<ColumnMetadataViewModel> AddBaseColumns(TableViewModel table,
+    public List<ColumnViewModel> AddBaseColumns(TableViewModel table,
         IContextBase<TableViewModel, TableModel> repo, DataActionEnum dataAction)
     {
-        var list = new List<ColumnMetadataViewModel>();
-        if (table.ColumnMetadatas.IsNotNull())
+        var list = new List<ColumnViewModel>();
+        if (table.Columns.IsNotNull())
         {
-            list = table.ColumnMetadatas.OrderBy(x => x.SequenceOrder).ToList();
+            list = table.Columns.OrderBy(x => x.SequenceOrder).ToList();
         }
 
-        list.Insert(0, AddColumn(new ColumnMetadataViewModel
+        list.Insert(0, AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "Id",
@@ -116,7 +128,7 @@ public class TableBusiness(
             IsHiddenColumn = true,
             IsNullable = false,
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "CreatedDate",
@@ -127,7 +139,7 @@ public class TableBusiness(
             IsLogColumn = true,
             IsNullable = false,
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "CreatedBy",
@@ -151,7 +163,7 @@ public class TableBusiness(
             // HideForeignKeyTableColumns = true,
             ForeignKeyTableAliasName = "CreatedByUser"
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "LastUpdatedDate",
@@ -162,7 +174,7 @@ public class TableBusiness(
             IsLogColumn = true,
             IsNullable = false,
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "LastUpdatedBy",
@@ -186,7 +198,7 @@ public class TableBusiness(
             //  HideForeignKeyTableColumns = true,
             ForeignKeyTableAliasName = "UpdatedByUser"
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "IsDeleted",
@@ -197,7 +209,7 @@ public class TableBusiness(
             IsHiddenColumn = true,
             IsNullable = false,
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "CompanyId",
@@ -208,7 +220,7 @@ public class TableBusiness(
             IsHiddenColumn = true,
             IsNullable = false,
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "LegalEntityId",
@@ -219,7 +231,7 @@ public class TableBusiness(
             IsHiddenColumn = true,
             IsNullable = true,
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "SequenceOrder",
@@ -230,7 +242,7 @@ public class TableBusiness(
             IsHiddenColumn = true,
             IsNullable = true,
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "Status",
@@ -240,7 +252,7 @@ public class TableBusiness(
             IsSystemColumn = true,
             IsHiddenColumn = true,
         }, table, dataAction));
-        list.Add(AddColumn(new ColumnMetadataViewModel
+        list.Add(AddColumn(new ColumnViewModel
         {
             Id = Guid.NewGuid(),
             Name = "VersionNo",
@@ -255,7 +267,7 @@ public class TableBusiness(
     }
 
 
-    private ColumnMetadataViewModel AddColumn(ColumnMetadataViewModel col, TableViewModel table,
+    private ColumnViewModel AddColumn(ColumnViewModel col, TableViewModel table,
         DataActionEnum dataAction)
     {
         col.Id = Guid.NewGuid();
@@ -264,7 +276,7 @@ public class TableBusiness(
         col.LastUpdatedBy = userContext.UserId;
         col.LastUpdatedDate = DateTime.Now;
         col.IsDeleted = false;
-        col.TableMetadataId = table.Id;
+        col.TableId = table.Id;
         col.DataAction = dataAction;
         return col;
     }
@@ -287,15 +299,15 @@ public class TableBusiness(
             errorList.Add("Alias", "Alias/Short name already exist.");
         }
 
-        if (data.ColumnMetadatas.IsNotNull())
+        if (data.Columns.IsNotNull())
         {
-            foreach (var col in data.ColumnMetadatas)
+            foreach (var col in data.Columns)
             {
                 if (col.ForeignKeyConstraintName.IsNotNullAndNotEmpty())
                 {
                     //var columnconstraint = await repo.GetSingle<ColumnMetadataViewModel, ColumnMetadata>(c => c.ForeignKeyConstraintName == col.ForeignKeyConstraintName && c.TableMetadataId!=model.Id);
                     var columnconstraint = await columnMetadataBusiness.GetSingle(c =>
-                        c.ForeignKeyConstraintName == col.ForeignKeyConstraintName && c.TableMetadataId != data.Id);
+                        c.ForeignKeyConstraintName == col.ForeignKeyConstraintName && c.TableId != data.Id);
                     if (columnconstraint != null)
                     {
                         errorList.Add("ForeignKeyConstraintName",
@@ -319,15 +331,15 @@ public class TableBusiness(
                 //{
                 //    data.ColumnMetadatas = AddBaseColumns(data, repo, DataActionEnum.Edit).ToList();
                 //}
-                var existList = await columnMetadataBusiness.GetList(x => x.TableMetadataId == data.Id);
-                var curlist = data.ColumnMetadatas.Select(x => x.Name).ToList();
+                var existList = await columnMetadataBusiness.GetList(x => x.TableId == data.Id);
+                var curlist = data.Columns.Select(x => x.Name).ToList();
                 var notexist = existList.Where(x => !curlist.Contains(x.Name)).ToList();
                 foreach (var delitem in notexist)
                 {
                     await columnMetadataBusiness.Delete(delitem.Id);
                 }
 
-                foreach (var col2 in data.ColumnMetadatas)
+                foreach (var col2 in data.Columns)
                 {
                     col2.IgnorePermission = data.IgnorePermission;
                     if (col2.IsSystemColumn)
@@ -339,7 +351,7 @@ public class TableBusiness(
                             && x.IsForeignKey == col2.IsForeignKey);
                         if (changed == null)
                         {
-                            col2.TableMetadataId = result.Item.Id;
+                            col2.TableId = result.Item.Id;
                             var isInDb = existList.Any(x => x.Name == col2.Name);
                             if (isInDb == false)
                             {
@@ -363,7 +375,7 @@ public class TableBusiness(
                         var exist = existList.FirstOrDefault(x => x.Name == col2.Name);
                         if (exist == null)
                         {
-                            col2.TableMetadataId = result.Item.Id;
+                            col2.TableId = result.Item.Id;
                             var colresult = await columnMetadataBusiness.Create(col2);
                             if (colresult.IsSuccess)
                             {
@@ -379,13 +391,9 @@ public class TableBusiness(
                                             exist.IsUniqueColumn != col2.IsUniqueColumn
                                             || exist.IsForeignKey != col2.IsForeignKey
                                             || exist.UdfUIType != col2.UdfUIType;
-                            //|| !Helper.CompareStringArray(exist.ViewableBy, col2.ViewableBy)
-                            //|| !Helper.CompareStringArray(exist.ViewableContext, col2.ViewableContext)
-                            //|| !Helper.CompareStringArray(exist.EditableBy, col2.EditableBy)
-                            //|| !Helper.CompareStringArray(exist.EditableContext, col2.EditableContext);
                             if (isChanged)
                             {
-                                col2.TableMetadataId = result.Item.Id;
+                                col2.TableId = result.Item.Id;
                                 var isInDb = existList.Any(x => x.Name == col2.Name);
                                 if (isInDb == false)
                                 {
@@ -431,16 +439,15 @@ public class TableBusiness(
             IsChildTable = model.IsChildTable
         };
         var temp = await _repo.GetSingleById<TemplateViewModel, TemplateModel>(model.Id);
-        if (temp == null)
+        if (temp != null)
             return CommandResult<TableViewModel>.Instance(table, false,
                 new Dictionary<string, string> { { "Name", "Name already exist." } });
-        table.ColumnMetadatas = [];
+        table.Columns = [];
         table.ChildTable = [];
 
         if (model.Json.IsNotNullAndNotEmpty())
         {
             var result = JObject.Parse(model.Json);
-            temp.Json = result.ToString();
             var components = result.SelectToken("components");
             if (components == null)
             {
@@ -452,14 +459,14 @@ public class TableBusiness(
             await ChildComp(rows, table, 1);
         }
 
-        table.Name = temp.Name;
-        table.Alias = temp.Code;
+        table.Name = model.Name;
+        table.Alias = model.Code;
+        table.Code = model.Code;
+        table.Description = model.Description;
+        table.Query = string.Empty;
         table.Schema = ApplicationConstant.Database.Schema.Cms;
         table.TemplateId = model.Id;
         var res = await Create(table);
-        if (!res.IsSuccess) return res;
-        temp.TableMetadataId = res.Item.Id;
-        await _repo.Edit<TemplateViewModel, TemplateModel>(temp);
 
         return res;
     }
@@ -477,10 +484,10 @@ public class TableBusiness(
             var result = JObject.Parse(model.Json);
             var rows = (JArray)result.SelectToken("components");
             var temp = await _repo.GetSingleById<TemplateViewModel, TemplateModel>(model.Id);
-            var table = await GetSingleById(temp.TableMetadataId);
+            var table = await GetSingleById(temp.TableId);
             table.IsChildTable = model.IsChildTable;
             if (table == null) return null;
-            table.ColumnMetadatas = new List<ColumnMetadataViewModel>();
+            table.Columns = new List<ColumnViewModel>();
             table.ChildTable = new List<TableViewModel>();
             await ChildComp(rows, table, 1);
             table.IgnorePermission = ignorePermission;
@@ -536,50 +543,50 @@ public class TableBusiness(
     public async Task<CommandResult<TableViewModel>> ManageTemplateTable(TemplateViewModel model,
         bool ignorePermission, Guid parentTemplateId)
     {
-        var table = await GetSingleById(model.TableMetadataId);
-        if (table == null)
+        if (model.TableId == Guid.Empty)
         {
-            table = await GetSingle(x => x.Name == model.Name);
-            if (table == null)
-            {
-                return await CreateTemplateTable(model);
-            }
-            else
-            {
-                return await EditTemplateTable(model, ignorePermission, parentTemplateId);
-            }
-        }
-        else
-        {
-            return await EditTemplateTable(model, ignorePermission, parentTemplateId);
+            return await CreateTemplateTable(model);
         }
 
-        // return res;
+        return await EditTemplateTable(model, ignorePermission, parentTemplateId);
     }
 
     public async Task ChildComp(JArray comps, TableViewModel table, int seqNo)
     {
-        if (comps == null)
+        foreach (var jToken in comps)
         {
-            return;
-        }
-
-        foreach (JObject jcomp in comps)
-        {
+            var jcomp = (JObject)jToken;
             var typeObj = jcomp.SelectToken("type");
             var keyObj = jcomp.SelectToken("key");
-            if (typeObj.IsNotNull() && keyObj.ToString() != "Id")
+            if (!typeObj.IsNotNull() || keyObj.ToString() == "Id") continue;
+            var type = typeObj.ToString();
+            var key = keyObj.ToString();
+            switch (type)
             {
-                var type = typeObj.ToString();
-                var key = keyObj.ToString();
-                if (type == "textfield" || type == "textarea" || type == "number" || type == "password"
-                    || type == "selectboxes" || type == "checkbox" || type == "select" || type == "radio"
-                    || type == "email" || type == "url" || type == "phoneNumber" || type == "tags"
-                    || type == "datetime" || type == "day" || type == "time" || type == "currency" ||
-                    type == "button"
-                    || type == "signature" || type == "file" || type == "hidden" || type == "datagrid" ||
-                    type == "editgrid"
-                    || (type == "htmlelement" && key == "chartgrid") || (type == "htmlelement" && key == "chartJs"))
+                case "textfield":
+                case "textarea":
+                case "number":
+                case "password":
+                case "selectboxes":
+                case "checkbox":
+                case "select":
+                case "radio":
+                case "email":
+                case "url":
+                case "phoneNumber":
+                case "tags":
+                case "datetime":
+                case "day":
+                case "time":
+                case "currency":
+                case "button":
+                case "signature":
+                case "file":
+                case "hidden":
+                case "datagrid":
+                case "editgrid":
+                case "htmlelement" when key == "chartgrid":
+                case "htmlelement" when key == "chartJs":
                 {
                     var reserve = jcomp.SelectToken("reservedKey");
                     if (reserve == null)
@@ -641,7 +648,7 @@ public class TableBusiness(
 
 
                         var columnId = jcomp.SelectToken("columnMetadataId");
-                        var fieldmodel = new ColumnMetadataViewModel()
+                        var fieldmodel = new ColumnViewModel()
                         {
                             Name = tempmodel.key,
                             LabelName = tempmodel.label,
@@ -690,21 +697,19 @@ public class TableBusiness(
                             fieldmodel.ForeignKeyTableName = "LOV";
                             fieldmodel.ForeignKeyTableAliasName = "LOV";
                             fieldmodel.IsNullable = true;
-                            //fieldmodel.HideForeignKeyTableColumns = false;
                             fieldmodel.ForeignKeyTableSchemaName = "public";
                             fieldmodel.ForeignKeyDisplayColumnName = "Name";
                             fieldmodel.ForeignKeyDisplayColumnAlias = "LOV_" + "Name";
                             fieldmodel.ForeignKeyDisplayColumnLabelName = "LOV " + "Name";
-                            // fieldmodel.ForeignKeyConstraintName = $"FK_{table.Name}_{tablename}_{tempmodel.key}_{tempmodel.mapId}";
                             fieldmodel.ForeignKeyConstraintName =
-                                string.Format("FK_{0}_LOV_{1}_Id", table.Name, tempmodel.key);
+                                $"FK_{table.Name}_LOV_{tempmodel.key}_Id";
                             fieldmodel.ForeignKeyDisplayColumnDataType = DataColumnTypeEnum.Text;
                         }
 
                         if (columnId == null)
                         {
                             var column = await columnMetadataBusiness.GetSingle(x =>
-                                x.TableMetadataId == table.Id && x.Name == tempmodel.key);
+                                x.TableId == table.Id && x.Name == tempmodel.key);
                             if (column == null)
                             {
                                 fieldmodel.Id = Guid.NewGuid();
@@ -736,51 +741,63 @@ public class TableBusiness(
                             }
                         }
 
-                        table.ColumnMetadatas.Add(fieldmodel);
+                        table.Columns.Add(fieldmodel);
                     }
+
+                    break;
                 }
-                else if (type == "columns")
+                case "columns":
                 {
-                    JArray cols = (JArray)jcomp.SelectToken("columns");
+                    var cols = (JArray)jcomp.SelectToken("columns");
                     foreach (var col in cols)
                     {
-                        JArray rows = (JArray)col.SelectToken("components");
+                        var rows = (JArray)col.SelectToken("components");
                         if (rows != null)
                             await ChildComp(rows, table, seqNo);
                     }
+
+                    break;
                 }
-                else if (type == "table")
+                case "table":
                 {
-                    JArray cols1 = (JArray)jcomp.SelectToken("rows");
+                    var cols1 = (JArray)jcomp.SelectToken("rows");
 
                     foreach (var col in cols1)
                     {
                         foreach (var child in col.Children())
                         {
-                            JArray rows = (JArray)child.SelectToken("components");
+                            var rows = (JArray)child.SelectToken("components");
                             if (rows != null)
                                 await ChildComp(rows, table, seqNo);
                         }
                     }
-                }
-                else
-                {
-                    JArray rows = (JArray)jcomp.SelectToken("components");
-                    if (rows != null)
-                        await ChildComp(rows, table, seqNo);
-                }
 
-                //Child Grid
-                if ((type == "datagrid" || type == "editgrid") && table.IsChildTable)
+                    break;
+                }
+                default:
                 {
-                    JArray rows = (JArray)jcomp.SelectToken("components");
+                    var rows = (JArray)jcomp.SelectToken("components");
                     if (rows != null)
                         await ChildComp(rows, table, seqNo);
+                    break;
                 }
-                else if (type == "datagrid" || type == "editgrid")
+            }
+
+            switch (type)
+            {
+                //Child Grid
+                case "datagrid" or "editgrid" when table.IsChildTable:
                 {
-                    bool parent = false;
-                    JArray rows = (JArray)jcomp.SelectToken("components");
+                    var rows = (JArray)jcomp.SelectToken("components");
+                    if (rows != null)
+                        await ChildComp(rows, table, seqNo);
+                    break;
+                }
+                case "datagrid":
+                case "editgrid":
+                {
+                    var parent = false;
+                    var rows = (JArray)jcomp.SelectToken("components");
                     foreach (JObject jc in rows)
                     {
                         var parentId = jc.SelectToken("key");
@@ -792,7 +809,7 @@ public class TableBusiness(
 
                     if (!parent)
                     {
-                        JObject jb = new JObject();
+                        var jb = new JObject();
                         var newProperty = new JProperty("key", "ParentId");
                         jb.Add(newProperty);
                         var newProperty1 = new JProperty("type", "textfield");
@@ -803,7 +820,7 @@ public class TableBusiness(
                         jb.Add(newProperty12);
                         rows.Add(jb);
                         //ID
-                        JObject jb1 = new JObject();
+                        var jb1 = new JObject();
                         var newProperty2 = new JProperty("key", "Id");
                         jb1.Add(newProperty2);
                         var newProperty3 = new JProperty("type", "textfield");
@@ -822,9 +839,7 @@ public class TableBusiness(
                         Json = jcomp.ToString()
                     };
                     table.ChildTable.Add(childmodel);
-                    //JArray rows = (JArray)jcomp.SelectToken("components");
-                    //if (rows != null)
-                    //    await ChildComp(rows, table, seqNo);
+                    break;
                 }
             }
         }
@@ -896,16 +911,16 @@ public class TableBusiness(
                     x.Name != "VersionNo"
                     && (x.PropertyType.BaseType == null || x.PropertyType.BaseType.Name != "DataModelBase")
                 ).ToList();
-                tableExist.ColumnMetadatas = new List<ColumnMetadataViewModel>();
+                tableExist.Columns = new List<ColumnViewModel>();
                 foreach (var item in props)
                 {
-                    tableExist.ColumnMetadatas.Add(new ColumnMetadataViewModel
+                    tableExist.Columns.Add(new ColumnViewModel
                     {
                         Name = item.Name,
                         Alias = item.Name,
                         IsNullable = true,
                         DataType = item.PropertyType.ToDatabaseColumn(),
-                        TableMetadataId = tableExist.Id,
+                        TableId = tableExist.Id,
                         DataAction = DataActionEnum.Create,
                         LabelName = item.Name.ToSentenceCase(),
                         Status = StatusEnum.Active,
@@ -929,7 +944,7 @@ public class TableBusiness(
                 tableExist.CreateTable = false;
                 tableExist.Status = StatusEnum.Active;
                 var props = table.GetProperties();
-                tableExist.ColumnMetadatas = new List<ColumnMetadataViewModel>();
+                tableExist.Columns = new List<ColumnViewModel>();
                 foreach (var item in props.Where(x =>
                              x.Name != "Id" &&
                              x.Name != "CreatedDate" &&
@@ -944,13 +959,13 @@ public class TableBusiness(
                              && (x.PropertyType.BaseType == null || x.PropertyType.BaseType.Name != "DataModelBase")
                          ))
                 {
-                    tableExist.ColumnMetadatas.Add(new ColumnMetadataViewModel
+                    tableExist.Columns.Add(new ColumnViewModel
                     {
                         Name = item.Name,
                         Alias = item.Name,
                         IsNullable = true,
                         DataType = item.PropertyType.ToDatabaseColumn(),
-                        TableMetadataId = id,
+                        TableId = id,
                         DataAction = DataActionEnum.Create,
                         LabelName = item.Name.ToSentenceCase(),
                         Status = StatusEnum.Active,
@@ -962,15 +977,15 @@ public class TableBusiness(
         }
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetTableData(string tableMetadataId, string recordId)
+    public async Task<List<ColumnViewModel>> GetTableData(string tableMetadataId, string recordId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetTableData(Guid tableMetadataId, string recordId)
+    public async Task<List<ColumnViewModel>> GetTableData(Guid tableMetadataId, string recordId)
     {
-        var list = await _repo.GetList<ColumnMetadataViewModel, ColumnMetadataModel>(x =>
-            x.TableMetadataId == tableMetadataId);
+        var list = await _repo.GetList<ColumnViewModel, ColumnModel>(x =>
+            x.TableId == tableMetadataId);
         var table =
             await _repo.GetSingleById<TableViewModel, TableModel>(tableMetadataId);
         if (table != null)
@@ -999,7 +1014,7 @@ public class TableBusiness(
                 x.Code == templateCode || x.Id == templateId);
         if (template != null)
         {
-            var tableId = template.TableMetadataId;
+            var tableId = template.TableId;
             var tableMetadata =
                 await _repo.GetSingleById<TableViewModel, TableModel>(tableId);
             if (tableMetadata != null)
@@ -1024,7 +1039,7 @@ public class TableBusiness(
         {
             var fieldName = "";
 
-            var tableId = template.TableMetadataId;
+            var tableId = template.TableId;
             var tableMetadata =
                 await _repo.GetSingleById<TableViewModel, TableModel>(tableId);
             if (tableMetadata != null)
@@ -1052,7 +1067,7 @@ public class TableBusiness(
         {
             var fieldName = "";
 
-            var tableId = template.TableMetadataId;
+            var tableId = template.TableId;
             var tableMetadata =
                 await _repo.GetSingleById<TableViewModel, TableModel>(tableId);
             if (tableMetadata != null)
@@ -1081,7 +1096,7 @@ public class TableBusiness(
         {
             var fieldName = "";
 
-            var tableId = template.TableMetadataId;
+            var tableId = template.TableId;
             var tableMetadata =
                 await _repo.GetSingleById<TableViewModel, TableModel>(tableId);
             if (tableMetadata != null)
@@ -1102,13 +1117,13 @@ public class TableBusiness(
         // return ;
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetViewColumnByTableName(string schema, string tableName)
+    public async Task<List<ColumnViewModel>> GetViewColumnByTableName(string schema, string tableName)
     {
         var columns = await cmsQueryBusiness.GetViewColumnByTableNameData(schema, tableName);
-        var tableColumnList = new List<ColumnMetadataViewModel>();
+        var tableColumnList = new List<ColumnViewModel>();
         foreach (DataRow row in columns.Rows)
         {
-            var data = new ColumnMetadataViewModel();
+            var data = new ColumnViewModel();
             data.Name = row["column_name"].ToString();
             data.Alias = row["column_name"].ToString();
             data.LabelName = row["column_name"].ToString();
@@ -1149,16 +1164,16 @@ public class TableBusiness(
         return tableColumnList;
     }
 
-    public async Task<ColumnMetadataViewModel> GetColumnByTableName(string schema, string tableName,
+    public async Task<ColumnViewModel> GetColumnByTableName(string schema, string tableName,
         string columnName)
     {
         tableName = tableName.Replace("\"", ""); // Regex.Replace(tableName, @"[^0-9a-zA-Z]+", "");
         columnName = columnName.Replace("\"", ""); // Regex.Replace(columnName, @"[^0-9a-zA-Z]+", "");
         var model = await GetSingle(x => x.Schema == schema.Trim() && x.Name == tableName.Trim());
-        if (model == null) return new ColumnMetadataViewModel();
+        if (model == null) return new ColumnViewModel();
         {
             var column =
-                await columnMetadataBusiness.GetSingle(x => x.TableMetadataId == model.Id && x.Name == columnName);
+                await columnMetadataBusiness.GetSingle(x => x.TableId == model.Id && x.Name == columnName);
             return column;
         }
     }

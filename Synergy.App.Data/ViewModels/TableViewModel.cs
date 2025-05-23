@@ -8,23 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-
 namespace Synergy.App.Data.ViewModels
 
 
-
 {
-    public class TableViewModel:TableModel
+    public class TableViewModel : TableModel
     {
-       // public Guid Id { get; set; }  // from BaseModel
-       
-        // ViewModel-specific properties
-        public List<ColumnMetadataViewModel> ColumnMetadatas { get; set; }
-        public List<ColumnMetadataViewModel> ColumnMetadataView { get; set; }
+        public List<ColumnViewModel> Columns { get; set; }
 
-        public string? ModuleName { get; set; }
-        public string? ColumnMetaDetails { get; set; }
-        public string? Type { get; set; }
         public string OldName { get; set; }
         public string OldSchema { get; set; }
 

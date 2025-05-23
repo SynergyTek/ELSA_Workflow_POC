@@ -8,7 +8,7 @@ public class BaseModel
 {
     [ScaffoldColumn(false)]
     [Key]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
 
     [ScaffoldColumn(false)]
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;

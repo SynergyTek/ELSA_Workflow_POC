@@ -16,8 +16,8 @@ namespace Synergy.App.Business.Interface
 
         Task<DataTable> GetEditFormTableExistColumn(TableViewModel table);
         Task<DataTable> GetEditFormTableConstraints(TableViewModel table);
-        Task<List<ColumnMetadataViewModel>> GetForeignKeyColumnByTableMetadata(TableViewModel tableMetaData);
-        Task<DataTable> GetDataByColumn(ColumnMetadataViewModel column, object columnValue, TableViewModel tableMetaData, Guid excludeId);
+        Task<List<ColumnViewModel>> GetForeignKeyColumnByTableMetadata(TableViewModel tableMetaData);
+        Task<DataTable> GetDataByColumn(ColumnViewModel column, object columnValue, TableViewModel tableMetaData, Guid excludeId);
 
         Task<string?> GetLatestMigrationScript();
       //  Task<TemplateViewModel> ExecuteMigrationScript(string script);
@@ -31,12 +31,12 @@ namespace Synergy.App.Business.Interface
 
 
         Task<TableViewModel?> GetViewableColumnMetadataListData(string schemaName, string tableName);
-        Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForFormData(Guid tableMetadataId);
-        Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForNoteData(Guid tableMetadataId);
-        Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForTaskData(Guid tableMetadataId);
-        Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForTaskData2();
-        Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForServiceData(Guid tableMetadataId);
-        Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForServiceData1(Guid tableMetadataId);
+        Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForFormData(Guid tableMetadataId);
+        Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForNoteData(Guid tableMetadataId);
+        Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForTaskData(Guid tableMetadataId);
+        Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForTaskData2();
+        Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForServiceData(Guid tableMetadataId);
+        Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForServiceData1(Guid tableMetadataId);
 
         Task<DataTable> GetTableData(Guid tableMetadataId, string recordId, string name, string schema);
         Task<DataTable> GetTableDataByColumnData(string schema, string name, string udfName, string udfValue);

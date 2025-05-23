@@ -167,7 +167,7 @@ public class CmsQueryBusiness(
         return dt;
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetForeignKeyColumnByTableMetadata(
+    public async Task<List<ColumnViewModel>> GetForeignKeyColumnByTableMetadata(
         TableViewModel tableMetaData)
     {
         var query = $@"SELECT  fc.*,true as ""IsForeignKeyTableColumn"",c.""ForeignKeyTableName"" as ""TableName""
@@ -179,11 +179,11 @@ public class CmsQueryBusiness(
                 where c.""TableMetadataId""='{tableMetaData.Id}'
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false";
 
-        var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+        var result = await queryRepo.ExecuteQueryList<ColumnViewModel>(query, null);
         return result;
     }
 
-    public async Task<DataTable> GetDataByColumn(ColumnMetadataViewModel column, object columnValue,
+    public async Task<DataTable> GetDataByColumn(ColumnViewModel column, object columnValue,
         TableViewModel tableMetaData, Guid excludeId)
     {
         var selectQuery =
@@ -238,7 +238,7 @@ public class CmsQueryBusiness(
         return tableMetadata;
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForFormData(
+    public async Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForFormData(
         Guid tableMetadataId)
     {
         var query = $@"SELECT  fc.*,true as IsForeignKeyTableColumn,c.""ForeignKeyTableName"" as TableName
@@ -249,11 +249,11 @@ public class CmsQueryBusiness(
                 join public.""ColumnMetadata"" fc on ft.""Id""=fc.""TableMetadataId"" and fc.""IsDeleted""=false
                 where c.""TableMetadataId""='{tableMetadataId}' and fc.""IsHiddenColumn"" = false  and c.""HideForeignKeyTableColumns""=false  
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false  ";
-        var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+        var result = await queryRepo.ExecuteQueryList<ColumnViewModel>(query, null);
         return result;
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForNoteData(
+    public async Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForNoteData(
         Guid tableMetadataId)
     {
         var query = $@"SELECT  fc.*,true as IsForeignKeyTableColumn,c.""ForeignKeyTableName"" as TableName
@@ -263,11 +263,11 @@ public class CmsQueryBusiness(
                 join public.""ColumnMetadata"" fc on ft.""Id""=fc.""TableMetadataId"" and fc.""IsDeleted""=false
                 where c.""TableMetadataId""='{tableMetadataId}' and fc.""IsHiddenColumn"" = false and c.""HideForeignKeyTableColumns""=false 
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false  ";
-        var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+        var result = await queryRepo.ExecuteQueryList<ColumnViewModel>(query, null);
         return result;
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForTaskData(
+    public async Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForTaskData(
         Guid tableMetadataId)
     {
         var query = $@"SELECT  fc.*,true as IsForeignKeyTableColumn,c.""ForeignKeyTableName"" as TableName
@@ -277,11 +277,11 @@ public class CmsQueryBusiness(
                 join public.""ColumnMetadata"" fc on ft.""Id""=fc.""TableMetadataId"" and fc.""IsDeleted""=false
                 where c.""TableMetadataId""='{tableMetadataId}' and fc.""IsHiddenColumn"" = false and c.""HideForeignKeyTableColumns""=false  
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false  ";
-        var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+        var result = await queryRepo.ExecuteQueryList<ColumnViewModel>(query, null);
         return result;
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForTaskData2()
+    public async Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForTaskData2()
     {
         var query1 = $@"SELECT c.* ,c.""Name"" as ""Name"",c.""LabelName"" as ""LabelName""
             FROM public.""ColumnMetadata"" c
@@ -306,11 +306,11 @@ public class CmsQueryBusiness(
             where t.""Name""='User' and  c.""IsHiddenColumn"" = false and c.""IsDeleted""=false  
             and c.""Name"" in ({Helper.GetViewableUserColumns})
             ";
-        var result1 = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query1, null);
+        var result1 = await queryRepo.ExecuteQueryList<ColumnViewModel>(query1, null);
         return result1;
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForServiceData(
+    public async Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForServiceData(
         Guid tableMetadataId)
     {
         var query = $@"SELECT  fc.*,true as IsForeignKeyTableColumn,c.""ForeignKeyTableName"" as TableName
@@ -320,11 +320,11 @@ public class CmsQueryBusiness(
                 join public.""ColumnMetadata"" fc on ft.""Id""=fc.""TableMetadataId"" and fc.""IsDeleted""=false
                 where c.""TableMetadataId""='{tableMetadataId}' and fc.""IsHiddenColumn"" = false and c.""HideForeignKeyTableColumns""=false  
                 and c.""IsForeignKey""=true and c.""IsDeleted""=false  ";
-        var result = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query, null);
+        var result = await queryRepo.ExecuteQueryList<ColumnViewModel>(query, null);
         return result;
     }
 
-    public async Task<List<ColumnMetadataViewModel>> GetViewableForeignKeyColumnListForServiceData1(
+    public async Task<List<ColumnViewModel>> GetViewableForeignKeyColumnListForServiceData1(
         Guid tableMetadataId)
     {
         var query1 = $@"SELECT c.* ,c.""Name"" as ""Name"",c.""LabelName"" as ""LabelName""
@@ -350,7 +350,7 @@ public class CmsQueryBusiness(
             where t.""Name""='User' and  c.""IsHiddenColumn"" = false and c.""IsDeleted""=false 
             and c.""Name"" in ({Helper.GetViewableUserColumns})
             ";
-        var result1 = await queryRepo.ExecuteQueryList<ColumnMetadataViewModel>(query1, null);
+        var result1 = await queryRepo.ExecuteQueryList<ColumnViewModel>(query1, null);
         return result1;
     }
 
@@ -406,7 +406,7 @@ public class CmsQueryBusiness(
     }
 
 
-    public async Task<string?> GetForeignKeyId(ColumnMetadataViewModel col, string val)
+    public async Task<string?> GetForeignKeyId(ColumnViewModel col, string val)
     {
         string query =
             $@"Select ""Id"" from ""{col.ForeignKeyTableSchemaName}"".""{col.ForeignKeyTableName}"" where ""{col.ForeignKeyDisplayColumnName}""='{val}' ";

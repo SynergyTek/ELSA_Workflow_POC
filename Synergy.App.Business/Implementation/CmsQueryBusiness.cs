@@ -187,7 +187,7 @@ public class CmsQueryBusiness(
         TableViewModel tableMetaData, Guid excludeId)
     {
         var selectQuery =
-            @$"select * from {ApplicationConstant.Database.Schema.Cms}.""{tableMetaData.Name}"" where  ""IsDeleted""=false and ""{column.Name}""='{columnValue}'";
+            @$"select * from {ApplicationConstant.Database.Schema.Form}.""{tableMetaData.Name}"" where  ""IsDeleted""=false and ""{column.Name}""='{columnValue}'";
         if (excludeId != Guid.Empty)
         {
             selectQuery = @$"{selectQuery} and ""Id""<>'{excludeId}'";
@@ -201,7 +201,7 @@ public class CmsQueryBusiness(
     public async Task DeleteFrom(TemplateViewModel model, TableViewModel tableMetaData)
     {
         var selectQuery =
-            new StringBuilder(@$"update {ApplicationConstant.Database.Schema.Cms}.""{tableMetaData.Name}"" set ");
+            new StringBuilder(@$"update {ApplicationConstant.Database.Schema.Form}.""{tableMetaData.Name}"" set ");
         selectQuery.Append(Environment.NewLine);
         selectQuery.Append(@$"""IsDeleted""=true,{Environment.NewLine}");
         selectQuery.Append(@$"""LastUpdatedDate""='{DateTime.Now.ToDatabaseDateFormat()}',{Environment.NewLine}");

@@ -464,7 +464,7 @@ public class TableBusiness(
         table.Code = model.Code;
         table.Description = model.Description;
         table.Query = string.Empty;
-        table.Schema = ApplicationConstant.Database.Schema.Cms;
+        table.Schema = ApplicationConstant.Database.Schema.Form;
         table.TemplateId = model.Id;
         var res = await Create(table);
 

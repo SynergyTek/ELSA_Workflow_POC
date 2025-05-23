@@ -51,7 +51,7 @@ namespace Synergy.App.Common
             public static class Schema
             {
                 public const string Dbo = "dbo";
-                public const string Cms = "cms";
+                public const string Form = "form";
                 public const string _Public = "public";
                 public const string Log = "log";
 

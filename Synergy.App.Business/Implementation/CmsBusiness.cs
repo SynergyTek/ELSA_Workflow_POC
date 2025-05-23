@@ -69,7 +69,7 @@ public class CmsBusiness(
         var existingMetadataColumnList = await _repo.GetList<ColumnModel, ColumnModel>
             (x => x.TableId == table.Id && x.IsVirtualColumn == false);
         var query = new StringBuilder(
-            $"ALTER TABLE {ApplicationConstant.Database.Schema.Cms}.\"{table.Name}\"");
+            $"ALTER TABLE {ApplicationConstant.Database.Schema.Form}.\"{table.Name}\"");
         var alterColumnScriptList = new List<string>();
         foreach (var existingMetadaColumn in existingMetadataColumnList)
         {
@@ -190,7 +190,7 @@ public class CmsBusiness(
         query.Append(Environment.NewLine);
         query.Append($"ALTER TABLE {tableVarWithSchema} OWNER to {ApplicationConstant.Database.Owner.Postgres};");
 
-        var tableWithSchema = $"{ApplicationConstant.Database.Schema.Cms}.\"{table.Name}\"";
+        var tableWithSchema = $"{ApplicationConstant.Database.Schema.Form}.\"{table.Name}\"";
         var tableName = $"{table.Name}";
         var tableQuery = query.ToString().Replace(tableVarWithSchema, tableWithSchema).Replace(tableVar, tableName);
 

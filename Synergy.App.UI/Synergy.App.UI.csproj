@@ -53,6 +53,19 @@
         <ProjectReference Include="..\Synergy.App.Data\Synergy.App.Data.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\TableMetadata\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TableMetadata\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TableMetadata\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TableMetadata\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\TableMetadata\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Columns\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Columns\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Columns\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Columns\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Columns\Index.cshtml" />
+    </ItemGroup>
+
 
 
 </Project>

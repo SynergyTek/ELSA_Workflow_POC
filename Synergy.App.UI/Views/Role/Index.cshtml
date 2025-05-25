@@ -30,7 +30,7 @@
 						<td>@role.Name</td>
 						<td>@role.NormalizedName</td>
 						<td>
-							<a id="edit" data-id="@role.Id" asp-action="Edit"
+							<a id="edit" data-id="@role.Id" asp-action="Edit" asp-route-id="@role.Id"
 							        class="btn btn-sm btn-primary ">Edit</a>
 							<a id="delete" data-id="@role.Id" asp-action="Delete" asp-route-id="@role.Id"
 							   class="btn btn-sm btn-danger ">Delete</a>

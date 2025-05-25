@@ -38,13 +38,14 @@ public class TemplateController(ApplicationDbContext context, ITemplateBusiness 
         return RedirectToAction("Index");
     }
 
-    public IActionResult Edit(TemplateViewModel model)
+    public async Task<IActionResult> Edit(TemplateViewModel model)
     {
         return View("Manage", model);
     }
 
-    public IActionResult Delete()
+    public async Task<IActionResult> Delete(Guid id)
     {
-        throw new NotImplementedException();
+        await business.Delete(id);
+        return RedirectToAction("Index");
     }
 }

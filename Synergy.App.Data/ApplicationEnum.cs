@@ -60,6 +60,8 @@ public enum DataColumnTypeEnum
     TextArray = 7,
     [Description("Time")]
     Time = 8,
+    [Description("Timestamp")]
+    Timestamp = 9,
 }
 public enum UdfUITypeEnum
 {

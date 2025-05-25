@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Synergy.App.Data;
@@ -11,9 +12,11 @@ using Synergy.App.Data;
 namespace Synergy.App.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250525191844_CircularDependency")]
+    partial class CircularDependency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,7 +141,7 @@ namespace Synergy.App.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CreatedById")
+                    b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<int>("DataType")
@@ -254,7 +257,7 @@ namespace Synergy.App.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UpdatedById")
+                    b.Property<Guid>("UpdatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<string[]>("ViewableBy")
@@ -267,15 +270,11 @@ namespace Synergy.App.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("ForeignKeyColumnId");
 
                     b.HasIndex("ForeignKeyTableId");
 
                     b.HasIndex("TableId");
-
-                    b.HasIndex("UpdatedById");
 
                     b.ToTable("Column");
                 });
@@ -319,7 +318,7 @@ namespace Synergy.App.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CreatedById")
+                    b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsDeleted")
@@ -339,16 +338,12 @@ namespace Synergy.App.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UpdatedById")
+                    b.Property<Guid>("UpdatedBy")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("TemplateId");
-
-                    b.HasIndex("UpdatedById");
 
                     b.ToTable("Table");
                 });
@@ -367,7 +362,7 @@ namespace Synergy.App.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CreatedById")
+                    b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
@@ -393,14 +388,10 @@ namespace Synergy.App.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UpdatedById")
+                    b.Property<Guid>("UpdatedBy")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
 
                     b.ToTable("Template");
                 });
@@ -485,7 +476,7 @@ namespace Synergy.App.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CreatedById")
+                    b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsDeleted")
@@ -502,7 +493,7 @@ namespace Synergy.App.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UpdatedById")
+                    b.Property<Guid>("UpdatedBy")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -510,10 +501,6 @@ namespace Synergy.App.Data.Migrations
                     b.HasIndex("AssignedByUserId");
 
                     b.HasIndex("AssignedToUserId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
 
                     b.ToTable("Workflow");
                 });
@@ -571,12 +558,6 @@ namespace Synergy.App.Data.Migrations
 
             modelBuilder.Entity("Synergy.App.Data.Models.ColumnModel", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Synergy.App.Data.Models.ColumnModel", "ForeignKeyColumn")
                         .WithMany()
                         .HasForeignKey("ForeignKeyColumnId")
@@ -595,67 +576,22 @@ namespace Synergy.App.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("ForeignKeyColumn");
 
                     b.Navigation("ForeignKeyTable");
 
                     b.Navigation("Table");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.TableModel", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Synergy.App.Data.Models.TemplateModel", "Template")
                         .WithMany()
                         .HasForeignKey("TemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Template");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("Synergy.App.Data.Models.TemplateModel", b =>
-                {
-                    b.HasOne("Synergy.App.Data.Models.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("Synergy.App.Data.Models.WorkflowModel", b =>
@@ -672,25 +608,9 @@ namespace Synergy.App.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("AssignedByUser");
 
                     b.Navigation("AssignedToUser");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
                 });
 #pragma warning restore 612, 618
         }

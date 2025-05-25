@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Synergy.App.Data;
 using Synergy.App.Data.Models;
 using Synergy.App.Data.ViewModels;
 
@@ -54,7 +55,7 @@ namespace Synergy.App.UI.Controllers
                 return NotFound();
             }
 
-            return View(role as RoleViewModel);
+            return View(role);
         }
 
         // POST: Application/Edit/5
@@ -65,7 +66,7 @@ namespace Synergy.App.UI.Controllers
         public async Task<IActionResult> Edit(RoleViewModel role)
         {
             if (!ModelState.IsValid) return View(role);
-            await roleManager.UpdateAsync(role);
+            await roleManager.UpdateNormalizedRoleNameAsync(role);
             return RedirectToAction(nameof(Index));
         }
 

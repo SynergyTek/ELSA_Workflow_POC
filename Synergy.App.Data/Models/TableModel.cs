@@ -1,14 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Synergy.App.Common;
+
 namespace Synergy.App.Data.Models;
 
 public class TableModel : BaseModel
 {
-    public string Code { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Alias { get; set; }
-    public string Schema { get; set; }
+    [ForeignKey("Template")] public Guid TemplateId { get; set; }
+    public TemplateModel Template { get; set; }
+    [MaxLength(16)] public string Schema { get; set; } = ApplicationConstant.Database.Schema.Form;
 
 
     public bool CreateTable { get; set; }
-    public string Query { get; set; }
 }

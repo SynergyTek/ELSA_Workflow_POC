@@ -20,10 +20,7 @@ public static class BusinessHelper
 		services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<ICmsBusiness, CmsBusiness>();
-        services.AddScoped<ICmsQueryBusiness, CmsQueryBusiness>();
 		services.AddScoped<ITemplateBusiness, TemplateBusiness>();
-		services.AddScoped<ITableBusiness, TableBusiness>();
-		services.AddScoped<IColumnMetadataBusiness, ColumnMetadataBusiness>();
 
 	}
     public static object ConvertToDbValue(object s, bool isSystemColumn, DataColumnTypeEnum dataType)

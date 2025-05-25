@@ -8,19 +8,20 @@ public class BaseModel
 {
     [ScaffoldColumn(false)]
     [Key]
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } 
 
     [ScaffoldColumn(false)]
-    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [ScaffoldColumn(false)]
-    public Guid CreatedBy { get; set; }
+    public User CreatedBy { get; set; }
+
 
     [ScaffoldColumn(false)]
-    public DateTime LastUpdatedDate { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     [ScaffoldColumn(false)]
-    public Guid LastUpdatedBy { get; set; }
+    public User UpdatedBy { get; set; }
 
     [ScaffoldColumn(false)]
     public bool IsDeleted { get; set; }

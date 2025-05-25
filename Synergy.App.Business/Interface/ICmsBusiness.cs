@@ -7,8 +7,5 @@ namespace Synergy.App.Business.Interface
 {
     public interface ICmsBusiness : IBusinessBase<TemplateViewModel, TemplateModel>
     {
-        Task ManageTable(TableViewModel table);
-
-
     }
 }

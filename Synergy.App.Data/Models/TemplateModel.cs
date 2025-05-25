@@ -6,13 +6,8 @@ namespace Synergy.App.Data.Models;
 
 public class TemplateModel : BaseModel
 {
-    [Required] public string Name { get; set; }
-    [Required] public string Code { get; set; }
-    public string Description { get; set; } = string.Empty;
-
-    [ForeignKey("Table")] public Guid TableId { get; set; }
-
-    [ValidateNever] public TableModel Table { get; set; }
-
+    [MaxLength(50)] [Required] public string Name { get; set; } = String.Empty;
+    [MaxLength(60)] [Required] public string Code { get; set; } = string.Empty;
+    [MaxLength(300)] public string Description { get; set; } = string.Empty;
     [Column(TypeName = "jsonb")] public string Json { get; set; } = "{}";
 }

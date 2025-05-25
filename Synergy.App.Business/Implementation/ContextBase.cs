@@ -177,8 +177,9 @@ public class ContextBase<TV, TD>(
         where TVm : BaseModel where TDm : BaseModel
     {
         var baseModel = autoMapper.Map<TVm, TDm>(model);
-        baseModel.CreatedBy = userContext.Id;
-        baseModel.LastUpdatedBy = userContext.Id;
+        baseModel.Id = Guid.NewGuid();
+        baseModel.CreatedBy = userContext.User;
+        baseModel.UpdatedBy = userContext.User;
         var context = GetDbContext();
         try
         {
@@ -213,12 +214,14 @@ public class ContextBase<TV, TD>(
         where TVm : BaseModel where TDm : BaseModel
     {
         var existingItem = await GetSingleById<TDm, TDm>(model.Id);
-        model.CreatedDate = existingItem.CreatedDate;
+        if (existingItem == null)
+        {
+            throw new KeyNotFoundException($"Item with ID {model.Id} not found.");
+        }
+        model.CreatedAt = existingItem.CreatedAt;
         model.CreatedBy = existingItem.CreatedBy;
-
-
-        model.LastUpdatedDate = DateTime.UtcNow;
-        model.LastUpdatedBy = userContext.Id;
+        model.UpdatedAt = DateTime.UtcNow;
+        model.UpdatedBy = userContext.User;
         var baseModel = autoMapper.Map(model, existingItem);
         var context = GetDbContext();
         try

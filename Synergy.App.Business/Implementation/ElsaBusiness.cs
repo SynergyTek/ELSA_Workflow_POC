@@ -19,10 +19,15 @@ public class ElsaBusiness(
         {
             throw new Exception($"No user with given email {email} found");
         }
+        var byUser = await userManager.FindByIdAsync(byUserId.ToString());
+        if (byUser == null)
+        {
+            throw new Exception($"No user with given id {byUserId} found");
+        }
         var reviewModel = new WorkflowViewModel
         {
-            CreatedBy = byUserId,
-            LastUpdatedBy = byUserId,
+            CreatedBy = byUser,
+            UpdatedBy = byUser,
             AssignedToUserId = user.Id,
             AssignedByUserId = byUserId,
             Title = title
@@ -40,10 +45,15 @@ public class ElsaBusiness(
         {
             throw new Exception($"No user in given role {roleCode} found");
         }
+        var byUser = await userManager.FindByIdAsync(byUserId.ToString());
+        if (byUser == null)
+        {
+            throw new Exception($"No user with given id {byUserId} found");
+        }
         var reviewModel = new WorkflowViewModel
         {
-            CreatedBy = byUserId,
-            LastUpdatedBy = byUserId,
+            CreatedBy = byUser,
+            UpdatedBy = byUser,
             AssignedToUserId = user.Id,
             AssignedByUserId = byUserId,
             Title = title

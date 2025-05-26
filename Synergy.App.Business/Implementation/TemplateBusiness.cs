@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AutoMapper;
+using Newtonsoft.Json;
 using Synergy.App.Business.Interface;
 using Synergy.App.Common;
 using Synergy.App.Data;
@@ -11,19 +12,15 @@ namespace Synergy.App.Business.Implementation;
 public class TemplateBusiness(
     IContextBase<TemplateViewModel, TemplateModel> repo,
     IContextBase<TableViewModel, TableModel> tableRepo,
-    IContextBase<ColumnViewModel, ColumnModel> columnRepo,
+    IUserContext userContext,
     IQueryBase<TableViewModel> tableQueryRepo,
     IServiceProvider sp)
     : BusinessBase<TemplateViewModel, TemplateModel>(repo, sp), ITemplateBusiness
 {
-    private readonly IContextBase<TemplateViewModel, TemplateModel> _repo = repo;
-
     public override async Task<CommandResult<TemplateViewModel>> Create(TemplateViewModel model, bool autoCommit = true)
     {
-        var templateResult = await base.Create(model, autoCommit);
-        await ManageTemplateTable(templateResult.Item, false);
-        return CommandResult<TemplateViewModel>.Instance(templateResult.Item, templateResult.IsSuccess,
-            templateResult.Messages);
+        await ManageTemplateTable(model);
+        return CommandResult<TemplateViewModel>.Instance(model);
     }
 
     public override async Task<CommandResult<TemplateViewModel>> Edit(TemplateViewModel model, bool autoCommit = true)
@@ -40,6 +37,9 @@ public class TemplateBusiness(
     private async Task<CommandResult<TableModel>> ManageTemplateTable(
         TemplateViewModel model, bool autoCommit = true)
     {
+
+        model.CreatedBy = userContext.User;
+        model.UpdatedBy = userContext.User;
         var tableModel = new TableViewModel
         {
             Schema = ApplicationConstant.Database.Schema.Form,
@@ -47,12 +47,14 @@ public class TemplateBusiness(
         };
 
         var tableResult = await tableRepo.Create(tableModel, autoCommit);
-        if (tableResult == null)
+        var tableResultModel = tableResult;
+        if (tableResultModel == null)
         {
             return CommandResult<TableModel>.Instance(null, false, "Failed to create table");
         }
+
         var json = JsonConvert.DeserializeObject<dynamic>(model.Json);
-        var columnsJson = json.components;
+        var columnsJson = json?.components;
         var columns = new List<ColumnViewModel>();
         if (columnsJson != null)
         {
@@ -72,24 +74,24 @@ public class TemplateBusiness(
         var columnQueryResult = await ManageTemplateColumn(columns);
         if (!columnQueryResult.IsSuccess)
         {
-            return CommandResult<TableModel>.Instance(tableResult, false, columnQueryResult.Messages);
+            return CommandResult<TableModel>.Instance(tableResultModel, false, columnQueryResult.Messages);
         }
 
         var columnQuery = columnQueryResult.Item;
         if (IsNullOrEmpty(columnQuery))
         {
-            return CommandResult<TableModel>.Instance(tableResult, true, "No columns to create");
+            return CommandResult<TableModel>.Instance(tableResultModel, true, "No columns to create");
         }
 
         var query = $"""
-                     CREATE TABLE IF NOT EXISTS {tableModel.Schema}."{model.Name}" (
+                     CREATE TABLE IF NOT EXISTS {tableModel.Schema}."{model.Reference}" (
                      {columnQuery}
                      )
                      """;
 
         await tableQueryRepo.ExecuteCommand(query, null);
 
-        return CommandResult<TableModel>.Instance(tableResult, true, "Table created successfully");
+        return CommandResult<TableModel>.Instance(tableResultModel, true, "Table created successfully");
     }
 
     private async Task<CommandResult<string>> ManageTemplateColumn(List<ColumnViewModel> columns)
@@ -99,22 +101,16 @@ public class TemplateBusiness(
             return CommandResult<string>.Instance("", false, "No columns provided");
         }
 
-        var columnTasks = new List<Task>();
         var columnQueries = new List<string>
         {
-            "\"Id\" UUID PRIMARY KEY",
-            "\"CreatedDate\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            "\"LastUpdatedDate\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            "\"CreatedBy\" UUID Foreign Key REFERENCES public.\"User\"(\"Id\")",
-            "\"LastUpdatedBy\" UUID Foreign Key REFERENCES public.\"User\"(\"Id\")",
+            $"\"{nameof(BaseModel.Id)}\" UUID PRIMARY KEY",
+            $"\"{nameof(BaseModel.CreatedAt)}\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+            $"\"{nameof(BaseModel.UpdatedAt)}\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+            $"\"{nameof(BaseModel.CreatedBy)}Id\" UUID  REFERENCES public.\"User\"(\"Id\")",
+            $"\"{nameof(BaseModel.UpdatedBy)}Id\" UUID  REFERENCES public.\"User\"(\"Id\")",
+            $"\"{nameof(BaseModel.IsDeleted)}\" BOOLEAN DEFAULT FALSE"
         };
-        foreach (var column in columns)
-        {
-            columnTasks.Add(columnRepo.Create(column, false));
-            columnQueries.Add($"\"{column.Alias}\" {GetDataType(column.DataTypeString)}");
-        }
-
-        await Task.WhenAll(columnTasks.ToArray());
+        columnQueries.AddRange(columns.Select(column => $"\"{column.Alias}\" {GetDataType(column.DataTypeString)}"));
         return CommandResult<string>.Instance(Join(", ", columnQueries), true, "Column created successfully");
     }
 

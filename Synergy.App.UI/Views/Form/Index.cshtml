@@ -1,0 +1,38 @@
+@model List<IDictionary<string, object>>
+
+@{
+	ViewBag.Title = ViewBag.Name;
+	Layout = "_Layout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 w-100">
+	<h1>@ViewBag.Name</h1>
+	<a asp-action="Create"
+	   asp-route-templateCode="@ViewBag.TemplateCode"
+	   class="btn btn-sm btn-primary">New</a>
+
+</div>
+<table class="table">
+	<thead>
+	@foreach (var column in ViewBag.Columns)
+	{
+		<th>
+			@column
+		</th>
+	}
+	</thead>
+	<tbody>
+	@foreach (var record in Model)
+	{
+		<tr>
+			@foreach (var item in record)
+			{
+			<td>
+				@item.Value
+			</td>
+			}
+		</tr>
+	}
+	</tbody>
+</table>
+

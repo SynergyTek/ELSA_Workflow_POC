@@ -6,5 +6,5 @@ namespace Synergy.App.Business.Interface;
 public interface ITemplateBusiness: IBusinessBase<TemplateViewModel, TemplateModel>
 {
 
-    
+   
 }

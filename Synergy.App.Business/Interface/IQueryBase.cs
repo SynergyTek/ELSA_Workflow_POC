@@ -12,11 +12,13 @@ namespace Synergy.App.Business.Interface
 
         Task<TVm?> ExecuteQuerySingle<TVm>(string query, object parameters) where TVm : class, new();
         Task<List<TVm>> ExecuteQueryList<TVm>(string query, object parameters) where TVm : class, new();
-
+        Task<List<IDictionary<string, object>>> GetRows(string query, object prms);
 
         Task<TVm?> ExecuteScalar<TVm>(string query, object? parameters);
         Task<List<TVm>> ExecuteScalarList<TVm>(string query, object parameters);
         Task<DataRow?> ExecuteQueryDataRow(string query, object parameters);
+
+
 
 
 

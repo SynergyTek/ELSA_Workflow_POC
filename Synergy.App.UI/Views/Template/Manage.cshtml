@@ -9,28 +9,36 @@
           id="templateForm"
           asp-action="Manage"
           method="post">
-        @Html.HiddenFor(m=>m.Json)
+        @Html.HiddenFor(m => m.Json)
         <div class="form-group col-md-6">
             <label asp-for="Name"
-                   class="form-label">Template Name</label>
+                   class="form-label">Name</label>
             @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
         </div>
         <div class="form-group col-md-6">
-            <label asp-for="Code"
-                   class="form-label">Template Code</label>
-            @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
+            <label asp-for="Reference"
+                   class="form-label">Reference</label>
+            @Html.TextBoxFor(m => m.Reference, new { @class = "form-control" })
+        </div>
+        <div class="form-group col-md-6">
+            <label asp-for="Key"
+                   class="form-label">Key</label>
+            @Html.TextBoxFor(m => m.Key, new { @class = "form-control" })
         </div>
         <div class="form-group col-md-6">
             <label asp-for="Description"
                    class="form-label">Description</label>
             @Html.TextAreaFor(m => m.Name, new { @class = "form-control" })
         </div>
-        <hr class="mt-4"/>
+        <hr class="mt-4" />
         <div class="col-md-12 mx-auto mt-4">
             <div id="templateBuilder"></div>
         </div>
         <div class="mt-4">
-            <button type="button" id="submitForm" class="btn btn-primary">Submit</button>
+            <button type="button"
+                    id="submitForm"
+                    class="btn btn-primary">Submit
+            </button>
         </div>
     </form>
 
@@ -40,17 +48,21 @@
 <script>
 
     let formio = null
+    document.querySelector("#Name").addEventListener("input", (e) => {
+        document.querySelector("#Reference").value = e.target.value.replace(/[^a-zA-Z0-9]/g, "")
+        document.querySelector("#Key").value = e.target.value.replace(/[^a-zA-Z0-9]/g, "_").toUpperCase()
+    })
     document.querySelector("#submitForm").addEventListener("click", (e) => {
         document.querySelector("#Json").value = JSON.stringify(formio.form)
         document.querySelector("#templateForm").submit()
 
     })
-     Formio.builder(document.getElementById('templateBuilder'),  @(Model?.Json ?? "{}"),{
+    Formio.builder(document.getElementById('templateBuilder'),  @(Model?.Json ?? "{}"),{
         noDefaultSubmitButton: true,
         alwaysConfirmComponentRemoval: true,
         showFullJsonSchema: true
     }).then(builder => {
         formio = builder
 
-     })
+    })
 </script>

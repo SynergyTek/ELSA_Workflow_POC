@@ -131,8 +131,8 @@ public class ContextBase<TV, TD>(
                 var set = context.Set<TDm>().Include(include[0]);
                 set = include.Skip(1).Aggregate(set, (current, item) => current.Include(item));
 
-                var data = await set.AsNoTracking().FirstAsync(where);
-                return data.ToViewModel<TVm, TDm>(autoMapper);
+                var data = await set.AsNoTracking().FirstOrDefaultAsync(where);
+                return data?.ToViewModel<TVm, TDm>(autoMapper);
             }
 
             var result2 = await context.Set<TDm>().AsNoTracking().FirstOrDefaultAsync(where);
@@ -151,6 +151,7 @@ public class ContextBase<TV, TD>(
         {
             return null;
         }
+
         var context = GetDbContext();
         try
         {
@@ -183,13 +184,12 @@ public class ContextBase<TV, TD>(
         var context = GetDbContext();
         try
         {
-            CreateMaster(context, baseModel).Wait();
-            if (autoCommit)
-            {
-                await context.SaveChangesAsync();
-            }
+            await CreateMaster(context, baseModel);
+            if (!autoCommit) return baseModel.ToViewModel<TVm, TDm>(autoMapper);
+            context.Users.Attach(userContext.User);
+            await context.SaveChangesAsync();
 
-            return baseModel.ToViewModel<TVm,TDm>(autoMapper);
+            return baseModel.ToViewModel<TVm, TDm>(autoMapper);
         }
         finally
         {
@@ -218,6 +218,7 @@ public class ContextBase<TV, TD>(
         {
             throw new KeyNotFoundException($"Item with ID {model.Id} not found.");
         }
+
         model.CreatedAt = existingItem.CreatedAt;
         model.CreatedBy = existingItem.CreatedBy;
         model.UpdatedAt = DateTime.UtcNow;

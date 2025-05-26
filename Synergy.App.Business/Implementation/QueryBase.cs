@@ -14,6 +14,7 @@ public class QueryBase<TV>(IUserContext userContext, IConfiguration configuratio
     private const string Connection = "PostgreConnection";
     public IUserContext UserContext { get; set; } = userContext;
 
+
     public async Task<TV?> ExecuteQuerySingle(string query, object prms)
     {
         return await ExecuteQuerySingle<TV>(query, prms);
@@ -73,6 +74,13 @@ public class QueryBase<TV>(IUserContext userContext, IConfiguration configuratio
         using var conn = DbConnection();
         var result = await conn.QueryAsync<TVm>(query, prms);
         return result.ToList();
+    }
+
+    public async Task<List<IDictionary<string, object>>> GetRows(string query, object prms)
+    {
+        using var conn = DbConnection();
+        var result = await conn.QueryAsync(query, prms);
+        return result.Select(x => (IDictionary<string, object>)x).ToList();
     }
 
 

@@ -8,9 +8,9 @@
 
     <h1>Index</h1>
 
-    <button class="btn btn-sm btn-primary">
-        <a asp-action="Create">Create New</a>
-    </button>
+    <a asp-action="Create"
+       class="btn btn-sm btn-primary">New</a>
+
 </div>
 <table class="table">
     <thead>
@@ -19,7 +19,7 @@
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Code)
+            @Html.DisplayNameFor(model => model.Key)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Description)
@@ -36,7 +36,7 @@
         <th>
             @Html.DisplayNameFor(model => model.UpdatedBy)
         </th>
-        <th></th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -47,7 +47,7 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Code)
+                @Html.DisplayFor(modelItem => item.Key)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
@@ -66,10 +66,15 @@
             </td>
 
             <td>
-                <a asp-action="Edit"
-                   asp-route-model="@item">Edit</a> |
-                <a asp-action="Delete"
-                   asp-route-model="@item">Delete</a>
+                <div class="btn-toolbar">
+                    <a
+                        class="btn btn-sm btn-primary "
+                        asp-action="Edit"
+                        asp-route-model="@item">Edit</a>
+                    <a class="btn btn-sm btn-danger"
+                       asp-action="Delete"
+                       asp-route-id="@item.Id">Delete</a>
+                </div>
             </td>
         </tr>
     }

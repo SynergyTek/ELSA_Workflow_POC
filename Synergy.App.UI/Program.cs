@@ -26,6 +26,7 @@ var connectionString = configuration.GetConnectionString("PostgreConnection") ??
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString)
         .EnableDetailedErrors()
+        .EnableSensitiveDataLogging()
 );
 
 services.AddIdentityCore<User>()

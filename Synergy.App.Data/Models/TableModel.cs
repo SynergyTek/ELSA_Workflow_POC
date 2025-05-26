@@ -6,7 +6,6 @@ namespace Synergy.App.Data.Models;
 
 public class TableModel : BaseModel
 {
-    [ForeignKey("Template")] public Guid TemplateId { get; set; }
     public TemplateModel Template { get; set; }
     [MaxLength(16)] public string Schema { get; set; } = ApplicationConstant.Database.Schema.Form;
 

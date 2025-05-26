@@ -21,6 +21,8 @@ public static class BusinessHelper
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<ICmsBusiness, CmsBusiness>();
 		services.AddScoped<ITemplateBusiness, TemplateBusiness>();
+        services.AddScoped<IFormBusiness,FormBusiness>();
+        services.AddScoped<ITableBusiness, TableBusiness>();
 
 	}
     public static object ConvertToDbValue(object s, bool isSystemColumn, DataColumnTypeEnum dataType)

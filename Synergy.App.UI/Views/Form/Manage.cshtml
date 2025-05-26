@@ -1,0 +1,47 @@
+@model Synergy.App.Data.ViewModels.FormViewModel
+
+@{
+	Layout = "_Layout";
+}
+
+<div class="container">
+	<h4>@ViewBag.Title</h4>
+	<form id="mainForm"
+	      class="vstack gap-4 align-items-start justify-content-end"
+	      asp-method="post"
+	      asp-action="Manage"
+	      asp-route-templateCode="@Model.Template.Reference">
+		<div id="formio"
+		     class="w-100"></div>
+		<button class="btn btn-sm btn-primary"
+		        type="button"
+		        id="submitForm">Submit
+		</button>
+	</form>
+</div>
+<script>
+	let data = @Html.Raw(Model.Template.Json);
+	document.getElementById('submitForm').addEventListener('click', function () {
+		let form = document.getElementById('formio').firstElementChild;
+		let formData = Formio.forms[form.id];
+		fetch(document.querySelector("#mainForm").action, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(formData.submission.data)
+		}).then(response => {
+			if (response.ok) {
+				window.location.href = '/form/@Model.Template.Reference/Index';
+			} else {
+				alert('Error submitting form.');
+			}
+		}).catch(error => {
+			console.error('Error:', error);
+			alert('Error submitting form.');
+		});
+	})
+	Formio.createForm(document.getElementById('formio'), data).then(function (form) {
+
+	});
+</script>

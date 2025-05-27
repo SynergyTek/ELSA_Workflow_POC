@@ -17,7 +17,7 @@ public class FormController(IFormBusiness formBusiness, ITemplateBusiness templa
         ViewBag.Name = template.Name;
         ViewBag.TemplateCode = templateCode;
         ViewBag.Json = template.Json;
-        ViewBag.Columns = result.Item.First().Keys;
+        ViewBag.Columns = result.Item.FirstOrDefault()?.Keys ?? new List<string>();
         var model = result.Item;
         return View(model);
     }

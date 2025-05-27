@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Synergy.App.Data.Models;
 
-namespace Synergy.App.UI.Areas.Identity.Pages.Account
+namespace Synergy.App.Core.Areas.Identity.Pages.Account
 {
     public class LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger)
         : PageModel

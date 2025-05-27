@@ -15,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Synergy.App.Business;
 using Synergy.App.Data;
 using Synergy.App.Data.Models;
-using Synergy.App.UI;
+using Synergy.App.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;

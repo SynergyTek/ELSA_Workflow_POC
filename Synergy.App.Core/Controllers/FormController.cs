@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Synergy.App.Business.Interface;
 using Synergy.App.Data.ViewModels;
 
-namespace Synergy.App.UI.Controllers;
+namespace Synergy.App.Core.Controllers;
 
 [Route("form/{templateCode}/[action]")]
 public class FormController(IFormBusiness formBusiness, ITemplateBusiness templateBusiness) : Controller

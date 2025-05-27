@@ -4,7 +4,7 @@ using Synergy.App.Business.Interface;
 using Synergy.App.Data.ViewModels;
 using Activity = System.Diagnostics.Activity;
 
-namespace Synergy.App.UI.Controllers;
+namespace Synergy.App.Core.Controllers;
 
 public class HomeController : Controller
 {

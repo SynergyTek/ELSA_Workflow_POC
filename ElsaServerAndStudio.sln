@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution", "solution", "{60
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synergy.App.UI", "Synergy.App.UI\Synergy.App.UI.csproj", "{28FA2983-1421-4A92-9706-BFF5AC4C7BBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synergy.App.Core", "Synergy.App.Core\Synergy.App.Core.csproj", "{28FA2983-1421-4A92-9706-BFF5AC4C7BBD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{BAA0AD21-6BE5-4746-BBE7-2785CDB95B7C} = {BAA0AD21-6BE5-4746-BBE7-2785CDB95B7C}
 	EndProjectSection

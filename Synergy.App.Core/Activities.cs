@@ -12,7 +12,7 @@ using Synergy.App.Data.ViewModels;
 using Workflow = Elsa.Workflows.Activities.Workflow;
 
 
-namespace Synergy.App.UI;
+namespace Synergy.App.Core;
 
 public class CustomDropDownOptionsProvider : DropDownOptionsProviderBase
 {

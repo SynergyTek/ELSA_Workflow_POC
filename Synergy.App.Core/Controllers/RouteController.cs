@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Synergy.App.UI.Controllers;
+namespace Synergy.App.Core.Controllers;
 
 [Route("api/debug/routes")]
 [ApiController]

@@ -4,7 +4,7 @@ using Synergy.App.Data;
 using Synergy.App.Data.Models;
 using Synergy.App.Data.ViewModels;
 
-namespace Synergy.App.UI.Controllers
+namespace Synergy.App.Core.Controllers
 {
     public class RoleController(
         RoleManager<Role> roleManager

@@ -3,8 +3,8 @@ using System.Text;
 using Synergy.App.Business.Interface;
 using Synergy.App.Common;
 using Synergy.App.Data;
-using Synergy.App.Data.ViewModels;
-using Synergy.App.Data.Models;
+using Synergy.App.Data.ViewModel;
+using Synergy.App.Data.Model;
 
 
 namespace Synergy.App.Business.Implementation;
@@ -42,22 +42,7 @@ public class CmsBusiness(
     }
 
 
-    private void ManageForeignKey(List<string> alterColumnScriptList, ColumnModel column, DataTable constraints)
-    {
-        if (column.IsForeignKey && column.IsVirtualForeignKey == false &&
-            column.ForeignKeyConstraintName.IsNotNullAndNotEmpty())
-        {
-            var existingFk = constraints.AsEnumerable().FirstOrDefault
-                (r => r.Field<string>("conname") == column.ForeignKeyConstraintName);
-            if (existingFk != null)
-            {
-                alterColumnScriptList.Add($@"DROP CONSTRAINT ""{column.ForeignKeyConstraintName}""");
-            }
 
-            alterColumnScriptList.Add(
-                $@"ADD CONSTRAINT ""{column.ForeignKeyConstraintName}"" FOREIGN KEY (""{column.Name}"") REFERENCES {column.ForeignKeyTableSchemaName}.""{column.ForeignKeyTableName}"" (""{column.ForeignKeyColumnName}"") MATCH SIMPLE ON UPDATE NO ACTION  ON DELETE SET NULL");
-        }
-    }
 
 
     // public async Task<DataTable> GetData(string schemaName, string tableName, string columns = null,

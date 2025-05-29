@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using Synergy.App.Data.Models;
+using Synergy.App.Data.Model;
 using Task = System.Threading.Tasks.Task;
 
 namespace Synergy.App.Business.Interface

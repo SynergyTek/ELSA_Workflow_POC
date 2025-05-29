@@ -4,7 +4,7 @@ using Elsa.Workflows.Models;
 using Elsa.Workflows.Runtime;
 using Elsa.Workflows.Runtime.Options;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.ViewModel;
 
 namespace Synergy.App.Business.Implementation;
 

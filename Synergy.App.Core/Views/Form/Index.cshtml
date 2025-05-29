@@ -1,8 +1,10 @@
+@using Synergy.App.Data.ViewModel
 @model List<IDictionary<string, object>>
 
 @{
 	ViewBag.Title = ViewBag.Name;
 	Layout = "_Layout";
+	var columns = ViewBag.Columns as List<ColumnViewModel> ?? [];
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4 w-100">
@@ -14,23 +16,32 @@
 </div>
 <table class="table table-bordered table-striped">
 	<thead>
-	@foreach (var column in ViewBag.Columns)
+	@foreach (var column in columns)
 	{
 		<th>
-			@column
+			@column.Name
 		</th>
 	}
 	</thead>
 	<tbody>
-	@foreach (var record in Model)
+	@if (Model.Count > 0)
+	{
+		@foreach (var record in Model)
+		{
+			<tr>
+				@foreach (var item in columns)
+				{
+					<td>
+						@record[item.Alias]
+					</td>
+				}
+			</tr>
+		}
+	}
+	else
 	{
 		<tr>
-			@foreach (var item in record)
-			{
-			<td>
-				@item.Value
-			</td>
-			}
+			<td colspan="@columns.Count">No records found</td>
 		</tr>
 	}
 	</tbody>

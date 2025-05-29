@@ -1,25 +1,72 @@
 using Microsoft.AspNetCore.Mvc;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data;
+using Synergy.App.Data.ViewModel;
+using Synergy.App.Data.Model;
 
 namespace Synergy.App.Core.Controllers;
 
 [Route("form/{templateCode}/[action]")]
-public class FormController(IFormBusiness formBusiness, ITemplateBusiness templateBusiness) : Controller
+public class FormController(
+    IFormBusiness formBusiness,
+    ITemplateBusiness templateBusiness,
+    IContextBase<ColumnViewModel, ColumnModel> columnContext) : Controller
 {
     public async Task<IActionResult> Index(string templateCode)
     {
         var template = await templateBusiness.GetSingle(x => x.Reference == templateCode,
             include: [x => x.CreatedBy, x => x.UpdatedBy]);
         if (template == null) return NotFound();
-        var result = await formBusiness.GetList(templateCode);
+        var resultTask = formBusiness.GetList(templateCode);
+        var columnTask = columnContext.GetList(x => x.Table.Template.Reference == templateCode && x.IsVisible);
+        await Task.WhenAll(resultTask, columnTask);
+
+        var columns = new List<ColumnViewModel>();
+        columns.AddRange(GetBaseColumns());
+        columns.AddRange(columnTask.Result);
+        var model = resultTask.Result.Item;
 
         ViewBag.Name = template.Name;
         ViewBag.TemplateCode = templateCode;
         ViewBag.Json = template.Json;
-        ViewBag.Columns = result.Item.FirstOrDefault()?.Keys ?? new List<string>();
-        var model = result.Item;
+        ViewBag.Columns = columns;
         return View(model);
+    }
+
+    private IEnumerable<ColumnViewModel> GetBaseColumns()
+    {
+        return new List<ColumnViewModel>
+        {
+            new()
+            {
+                Name = "Created By",
+                Alias = "CreatedBy",
+                IsVisible = true,
+                DataType = DataColumnTypeEnum.Text
+            },
+            new()
+            {
+                Name = "Created At",
+                Alias = "CreatedAt",
+                IsVisible = true,
+                DataType = DataColumnTypeEnum.DateTime
+            },
+            new()
+            {
+                Name = "Updated By",
+                Alias = "UpdatedBy",
+                IsVisible = true,
+                DataType = DataColumnTypeEnum.Text,
+                IsForeignKey = true
+            },
+            new()
+            {
+                Name = "Updated At",
+                Alias = "UpdatedAt",
+                IsVisible = true,
+                DataType = DataColumnTypeEnum.DateTime
+            },
+        };
     }
 
     public async Task<IActionResult> Create(string templateCode, FormViewModel model)

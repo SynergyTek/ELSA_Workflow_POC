@@ -1,0 +1,83 @@
+@model Synergy.App.Data.ViewModel.ColumnViewModel
+
+@{
+    ViewData["Title"] = "Column Details";
+}
+
+<h1>Column Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Alias)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Alias)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.DataType)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.DataType)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.IsNullable)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.IsNullable)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.IsForeignKey)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.IsForeignKey)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.IsPrimaryKey)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.IsPrimaryKey)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.IsSystemColumn)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.IsSystemColumn)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.IsUniqueColumn)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.IsUniqueColumn)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.IsVisible)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.IsVisible)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.UpdatedAt)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.UpdatedAt)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.Model;
+using Synergy.App.Data.ViewModel;
 using Activity = System.Diagnostics.Activity;
 
 namespace Synergy.App.Core.Controllers;
@@ -9,19 +10,23 @@ namespace Synergy.App.Core.Controllers;
 public class HomeController : Controller
 {
     private readonly IUserContext _userContext;
+    private readonly IContextBase<WorkflowViewModel, WorkflowModel> _workflowContext;
     private readonly IWorkflowBusiness _workflowBusiness;
 
     public HomeController(IUserContext userContext,
+        IContextBase<WorkflowViewModel,WorkflowModel> workflowContext,
         IWorkflowBusiness workflowBusiness)
     {
         _userContext = userContext;
+        _workflowContext = workflowContext;
         _workflowBusiness = workflowBusiness;
     }
 
     [Authorize]
     public IActionResult Index()
     {
-        var tasks = _workflowBusiness.GetInstances().Result.Item;
+        var tasks = _workflowContext.GetList(x => x.AssignedToUser.Id == _userContext.Id || x.AssignedByUser.Id == _userContext.Id,
+            include: [x => x.AssignedToUser, x => x.AssignedByUser]).Result;
         return View(tasks);
     }
 

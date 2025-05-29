@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.Extensions.DependencyInjection;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data.Models;
+using Synergy.App.Data.Model;
 
 namespace Synergy.App.Business.Implementation;
 

@@ -1,4 +1,4 @@
-@model IEnumerable<Synergy.App.Data.ViewModels.TemplateViewModel>
+@model IEnumerable<Synergy.App.Data.ViewModel.TemplateViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -28,13 +28,13 @@
             @Html.DisplayNameFor(model => model.CreatedAt)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CreatedBy)
+            @Html.DisplayNameFor(model => model.CreatedBy.Email)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.UpdatedAt)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.UpdatedBy)
+            @Html.DisplayNameFor(model => model.UpdatedBy.Email)
         </th>
         <th>Actions</th>
     </tr>
@@ -56,13 +56,13 @@
                 @Html.DisplayFor(modelItem => item.CreatedAt)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
+                @Html.DisplayFor(modelItem => item.CreatedBy.Email)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UpdatedAt)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UpdatedBy)
+                @Html.DisplayFor(modelItem => item.UpdatedBy.Email)
             </td>
 
             <td>

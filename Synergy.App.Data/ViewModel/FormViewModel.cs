@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using Synergy.App.Data.Models;
+using Synergy.App.Data.Model;
 
-namespace Synergy.App.Data.ViewModels;
+namespace Synergy.App.Data.ViewModel;
 
 public class FormViewModel : BaseModel
 {

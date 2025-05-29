@@ -2,8 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace Synergy.App.Data.Models;
+namespace Synergy.App.Data.Model;
 
+[DisplayColumn("Reference")]
 public class TemplateModel : BaseModel
 {
     [MaxLength(50)] [Required] public string Name { get; set; } = string.Empty;

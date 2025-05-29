@@ -1,4 +1,4 @@
-﻿@model Synergy.App.Data.ViewModels.TemplateViewModel
+﻿@model Synergy.App.Data.ViewModel.TemplateViewModel
 @{
     ViewData["Title"] = "Manage Template";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -60,7 +60,10 @@
     Formio.builder(document.getElementById('templateBuilder'),  @(Model?.Json ?? "{}"),{
         noDefaultSubmitButton: true,
         alwaysConfirmComponentRemoval: true,
-        showFullJsonSchema: true
+        showFullJsonSchema: true,
+        builder:{
+
+        }
     }).then(builder => {
         formio = builder
 

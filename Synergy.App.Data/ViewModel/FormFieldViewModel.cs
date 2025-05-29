@@ -1,4 +1,4 @@
-﻿using Synergy.App.Data.Models;
+﻿using Synergy.App.Data.Model;
 using Synergy.App.Data;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Synergy.App.Data.ViewModels
+namespace Synergy.App.Data.ViewModel
 {
     public class FormFieldViewModel
     {

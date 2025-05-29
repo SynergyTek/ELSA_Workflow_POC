@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Synergy.App.Data.Models;
+using Synergy.App.Data.Model;
 
 namespace Synergy.App.Core.Areas.Identity.Pages.Account
 {

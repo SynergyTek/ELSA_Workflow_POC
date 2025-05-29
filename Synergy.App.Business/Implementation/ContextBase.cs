@@ -3,7 +3,8 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Synergy.App.Business.Interface;
 using Synergy.App.Data;
-using Synergy.App.Data.Models;
+using Synergy.App.Data.Model;
+using Synergy.App.Data.ViewModel;
 
 namespace Synergy.App.Business.Implementation;
 
@@ -186,6 +187,13 @@ public class ContextBase<TV, TD>(
         {
             await CreateMaster(context, baseModel);
             if (!autoCommit) return baseModel.ToViewModel<TVm, TDm>(autoMapper);
+            if (baseModel is ColumnModel columnModel)
+            {
+                context.Table.Attach(columnModel.Table);
+                context.Template.Attach(columnModel.Table.Template);
+            }
+
+
             context.Users.Attach(userContext.User);
             await context.SaveChangesAsync();
 

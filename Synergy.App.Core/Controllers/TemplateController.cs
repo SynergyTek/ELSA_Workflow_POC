@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Synergy.App.Business.Interface;
 using Synergy.App.Data;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.ViewModel;
 
 namespace Synergy.App.Core.Controllers;
 
@@ -9,7 +9,7 @@ public class TemplateController(ApplicationDbContext context, ITemplateBusiness 
 {
     public async Task<IActionResult> Index()
     {
-        var templates = await business.GetList();
+        var templates = await business.GetList(x=>true,y=> y.CreatedBy, y => y.UpdatedBy);
         return View(templates);
     }
 

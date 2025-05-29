@@ -1,4 +1,4 @@
-namespace Synergy.App.Data.ViewModels;
+namespace Synergy.App.Data.ViewModel;
 
 public class ErrorViewModel
 {

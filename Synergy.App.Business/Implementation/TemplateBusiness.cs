@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 using Synergy.App.Business.Interface;
 using Synergy.App.Common;
 using Synergy.App.Data;
-using Synergy.App.Data.Models;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.Model;
+using Synergy.App.Data.ViewModel;
 using static System.String;
 
 namespace Synergy.App.Business.Implementation;
@@ -12,6 +12,7 @@ namespace Synergy.App.Business.Implementation;
 public class TemplateBusiness(
     IContextBase<TemplateViewModel, TemplateModel> repo,
     IContextBase<TableViewModel, TableModel> tableRepo,
+    IContextBase<ColumnViewModel, ColumnModel> columnRepo,
     IUserContext userContext,
     IQueryBase<TableViewModel> tableQueryRepo,
     IServiceProvider sp)
@@ -37,7 +38,6 @@ public class TemplateBusiness(
     private async Task<CommandResult<TableModel>> ManageTemplateTable(
         TemplateViewModel model, bool autoCommit = true)
     {
-
         model.CreatedBy = userContext.User;
         model.UpdatedBy = userContext.User;
         var tableModel = new TableViewModel
@@ -62,7 +62,7 @@ public class TemplateBusiness(
             {
                 var columnModel = new ColumnViewModel
                 {
-                    TableId = tableModel.Id,
+                    Table = tableResultModel,
                     Name = column.label.ToString(),
                     DataType = GetDataType(column.type.ToString()),
                     Alias = column.key.ToString(),
@@ -101,16 +101,26 @@ public class TemplateBusiness(
             return CommandResult<string>.Instance("", false, "No columns provided");
         }
 
+        var columnTasks = new List<Task>();
+
         var columnQueries = new List<string>
         {
             $"\"{nameof(BaseModel.Id)}\" UUID PRIMARY KEY",
             $"\"{nameof(BaseModel.CreatedAt)}\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            $"\"{nameof(BaseModel.UpdatedAt)}\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
             $"\"{nameof(BaseModel.CreatedBy)}Id\" UUID  REFERENCES public.\"User\"(\"Id\")",
+            $"\"{nameof(BaseModel.UpdatedAt)}\" TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
             $"\"{nameof(BaseModel.UpdatedBy)}Id\" UUID  REFERENCES public.\"User\"(\"Id\")",
             $"\"{nameof(BaseModel.IsDeleted)}\" BOOLEAN DEFAULT FALSE"
         };
-        columnQueries.AddRange(columns.Select(column => $"\"{column.Alias}\" {GetDataType(column.DataTypeString)}"));
+
+        foreach (var column in columns)
+        {
+            var task = columnRepo.Create(column);
+            columnTasks.Add(task);
+            columnQueries.Add($"\"{column.Alias}\" {column.DataType}");
+        }
+
+        await Task.WhenAll(columnTasks);
         return CommandResult<string>.Instance(Join(", ", columnQueries), true, "Column created successfully");
     }
 

@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data.Models;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.Model;
+using Synergy.App.Data.ViewModel;
 
 namespace Synergy.App.Business.Implementation;
 
@@ -10,13 +10,14 @@ public class FormBusiness(
     IUserContext userContext,
     ITemplateBusiness templateBusiness,
     ITableBusiness tableBusiness,
+    IWorkflowBusiness workflowBusiness,
     ICmsBusiness cmsBusiness)
     : IFormBusiness
 {
     private readonly IUserContext _userContext = userContext;
 
 
-    public async Task<CommandResult<List<IDictionary<string,object>>>> GetList(string templateCode)
+    public async Task<CommandResult<List<IDictionary<string, object>>>> GetList(string templateCode)
     {
         var table = await tableBusiness.GetSingle(x => x.Template.Reference == templateCode,
             x => x.Template,
@@ -24,13 +25,13 @@ public class FormBusiness(
             x => x.UpdatedBy);
         if (table == null)
         {
-            return CommandResult<List<IDictionary<string,object>>>.Instance(null, false, "Template not found.");
+            return CommandResult<List<IDictionary<string, object>>>.Instance(null, false, "Template not found.");
         }
 
         var query = $"""select * from {table.Schema}."{table.Template.Name}" where not "IsDeleted" """;
 
-        var result = await queryBase.GetRows(query, new{});
-        return CommandResult<List<IDictionary<string,object>>>.Instance(result, true, "Data retrieved successfully.");
+        var result = await queryBase.GetRows(query, new { });
+        return CommandResult<List<IDictionary<string, object>>>.Instance(result, true, "Data retrieved successfully.");
     }
 
     public async Task<CommandResult<dynamic>> GetSingleById(string templateCode, Guid id)
@@ -46,7 +47,23 @@ public class FormBusiness(
 
     public async Task<CommandResult<dynamic>> Create(FormViewModel model)
     {
-        var columns = new List<string>()
+        if (workflowBusiness == null || userContext == null)
+            throw new Exception("WorkflowBusiness or UserContext is not registered in the service provider.");
+        var workflowName = model.Template.Key;
+
+        #region Pre Submission Logic
+
+        await workflowBusiness.StartWorkflow("PRE_" + workflowName, new()
+        {
+            { "Model", model.Data },
+            { "User", userContext },
+        });
+
+        #endregion
+
+        #region Create Logic
+
+        var columns = new List<string>
         {
             $""" "{nameof(model.Id)}" """,
             $""" "{nameof(model.CreatedBy)}Id" """,
@@ -55,7 +72,7 @@ public class FormBusiness(
             $""" "{nameof(model.UpdatedAt)}" """,
             $""" "{nameof(model.IsDeleted)}" """
         };
-        var values = new List<object>()
+        var values = new List<object>
         {
             $"'{Guid.NewGuid()}'",
             $"'{_userContext.User.Id}'",
@@ -70,18 +87,31 @@ public class FormBusiness(
             values.Add($"'{field.Value}'");
         }
 
-        var prms = new
+        var parameters = new
         {
             columns = string.Join(",", columns),
             values = string.Join(",", values)
         };
         var query = $"""
                      INSERT INTO form."{model.Template.Reference}" 
-                     ({prms.columns}) 
-                     VALUES ({prms.values})
+                     ({parameters.columns}) 
+                     VALUES ({parameters.values})
                      """;
-        await queryBase.ExecuteCommand(query, prms);
-        return CommandResult<dynamic>.Instance(null, true, "Form created successfully.");
+        await queryBase.ExecuteCommand(query, parameters);
+
+        #endregion
+
+        #region Post Submission Logic
+
+        await workflowBusiness.StartWorkflow("POST_" + workflowName, new()
+        {
+            { "Model", model.Data },
+            { "User", userContext },
+        });
+
+        #endregion
+
+        return CommandResult<dynamic>.Instance(model,true, "Form created successfully.");
     }
 
 

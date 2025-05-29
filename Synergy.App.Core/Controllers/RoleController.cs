@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Synergy.App.Data;
-using Synergy.App.Data.Models;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.Model;
+using Synergy.App.Data.ViewModel;
 
 namespace Synergy.App.Core.Controllers
 {

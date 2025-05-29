@@ -8,7 +8,7 @@ using Elsa.Workflows.Runtime.Stimuli;
 using Elsa.Workflows.UIHints;
 using Elsa.Workflows.UIHints.Dropdown;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.ViewModel;
 using Workflow = Elsa.Workflows.Activities.Workflow;
 
 

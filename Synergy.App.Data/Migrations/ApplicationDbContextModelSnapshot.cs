@@ -125,7 +125,7 @@ namespace Synergy.App.Data.Migrations
                     b.ToTable("UserToken", (string)null);
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.ColumnModel", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.ColumnModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -144,70 +144,10 @@ namespace Synergy.App.Data.Migrations
                     b.Property<int>("DataType")
                         .HasColumnType("integer");
 
-                    b.Property<string[]>("EditableBy")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<string[]>("EditableContext")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<Guid>("ForeignKeyColumnId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ForeignKeyColumnName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyConstraintName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyDisplayColumnAlias")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("ForeignKeyDisplayColumnDataType")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ForeignKeyDisplayColumnLabelName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyTableAliasName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ForeignKeyTableId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ForeignKeyTableName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ForeignKeyTableSchemaName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("HideForeignKeyTableColumns")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDefaultDisplayColumn")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsForeignKey")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsHiddenColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsLogColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsMultiValueColumn")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsNullable")
@@ -216,27 +156,14 @@ namespace Synergy.App.Data.Migrations
                     b.Property<bool>("IsPrimaryKey")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsReferenceColumn")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsSystemColumn")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsUdfColumn")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsUniqueColumn")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsVirtualColumn")
+                    b.Property<bool>("IsVisible")
                         .HasColumnType("boolean");
-
-                    b.Property<bool>("IsVirtualForeignKey")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LabelName")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -245,30 +172,15 @@ namespace Synergy.App.Data.Migrations
                     b.Property<Guid>("TableId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("UdfUIType")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UpdatedById")
                         .HasColumnType("uuid");
 
-                    b.Property<string[]>("ViewableBy")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<string[]>("ViewableContext")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("ForeignKeyColumnId");
-
-                    b.HasIndex("ForeignKeyTableId");
 
                     b.HasIndex("TableId");
 
@@ -277,7 +189,7 @@ namespace Synergy.App.Data.Migrations
                     b.ToTable("Column");
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.Role", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -304,7 +216,7 @@ namespace Synergy.App.Data.Migrations
                     b.ToTable("Role", (string)null);
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.TableModel", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.TableModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -347,7 +259,7 @@ namespace Synergy.App.Data.Migrations
                     b.ToTable("Table");
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.TemplateModel", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.TemplateModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -401,7 +313,7 @@ namespace Synergy.App.Data.Migrations
                     b.ToTable("Template");
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.User", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -466,7 +378,7 @@ namespace Synergy.App.Data.Migrations
                     b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.WorkflowModel", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.WorkflowModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -487,9 +399,8 @@ namespace Synergy.App.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -516,7 +427,7 @@ namespace Synergy.App.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.Role", null)
+                    b.HasOne("Synergy.App.Data.Model.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -525,7 +436,7 @@ namespace Synergy.App.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.User", null)
+                    b.HasOne("Synergy.App.Data.Model.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -534,7 +445,7 @@ namespace Synergy.App.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.User", null)
+                    b.HasOne("Synergy.App.Data.Model.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -543,13 +454,13 @@ namespace Synergy.App.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.Role", null)
+                    b.HasOne("Synergy.App.Data.Model.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", null)
+                    b.HasOne("Synergy.App.Data.Model.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -558,40 +469,28 @@ namespace Synergy.App.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.User", null)
+                    b.HasOne("Synergy.App.Data.Model.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.ColumnModel", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.ColumnModel", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.User", "CreatedBy")
+                    b.HasOne("Synergy.App.Data.Model.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.ColumnModel", "ForeignKeyColumn")
-                        .WithMany()
-                        .HasForeignKey("ForeignKeyColumnId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.TableModel", "ForeignKeyTable")
-                        .WithMany()
-                        .HasForeignKey("ForeignKeyTableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Synergy.App.Data.Models.TableModel", "Table")
+                    b.HasOne("Synergy.App.Data.Model.TableModel", "Table")
                         .WithMany()
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", "UpdatedBy")
+                    b.HasOne("Synergy.App.Data.Model.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -599,30 +498,26 @@ namespace Synergy.App.Data.Migrations
 
                     b.Navigation("CreatedBy");
 
-                    b.Navigation("ForeignKeyColumn");
-
-                    b.Navigation("ForeignKeyTable");
-
                     b.Navigation("Table");
 
                     b.Navigation("UpdatedBy");
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.TableModel", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.TableModel", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.User", "CreatedBy")
+                    b.HasOne("Synergy.App.Data.Model.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.TemplateModel", "Template")
+                    b.HasOne("Synergy.App.Data.Model.TemplateModel", "Template")
                         .WithMany()
                         .HasForeignKey("TemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", "UpdatedBy")
+                    b.HasOne("Synergy.App.Data.Model.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -635,15 +530,15 @@ namespace Synergy.App.Data.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.TemplateModel", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.TemplateModel", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.User", "CreatedBy")
+                    b.HasOne("Synergy.App.Data.Model.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", "UpdatedBy")
+                    b.HasOne("Synergy.App.Data.Model.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -654,27 +549,27 @@ namespace Synergy.App.Data.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
-            modelBuilder.Entity("Synergy.App.Data.Models.WorkflowModel", b =>
+            modelBuilder.Entity("Synergy.App.Data.Model.WorkflowModel", b =>
                 {
-                    b.HasOne("Synergy.App.Data.Models.User", "AssignedByUser")
+                    b.HasOne("Synergy.App.Data.Model.User", "AssignedByUser")
                         .WithMany()
                         .HasForeignKey("AssignedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", "AssignedToUser")
+                    b.HasOne("Synergy.App.Data.Model.User", "AssignedToUser")
                         .WithMany()
                         .HasForeignKey("AssignedToUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", "CreatedBy")
+                    b.HasOne("Synergy.App.Data.Model.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Synergy.App.Data.Models.User", "UpdatedBy")
+                    b.HasOne("Synergy.App.Data.Model.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
                         .OnDelete(DeleteBehavior.Cascade)

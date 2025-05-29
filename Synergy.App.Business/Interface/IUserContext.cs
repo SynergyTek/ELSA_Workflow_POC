@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
-using Synergy.App.Data.Models;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.Model;
+using Synergy.App.Data.ViewModel;
 
 namespace Synergy.App.Business.Interface
 {

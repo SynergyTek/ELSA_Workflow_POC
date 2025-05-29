@@ -1,6 +1,6 @@
-﻿using Synergy.App.Data.Models;
+﻿using Synergy.App.Data.Model;
 
-namespace Synergy.App.Data.ViewModels;
+namespace Synergy.App.Data.ViewModel;
 
 public class UserViewModel:User
 {

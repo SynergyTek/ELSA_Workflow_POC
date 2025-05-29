@@ -2,8 +2,8 @@
 using Synergy.App.Business.Interface;
 using Synergy.App.Common;
 using Synergy.App.Data;
-using Synergy.App.Data.Models;
-using Synergy.App.Data.ViewModels;
+using Synergy.App.Data.Model;
+using Synergy.App.Data.ViewModel;
 using static System.String;
 
 namespace Synergy.App.Business.Implementation;

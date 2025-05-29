@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Synergy.App.Common;
 
-namespace Synergy.App.Data.Models;
+namespace Synergy.App.Data.Model;
 
 public class TableModel : BaseModel
 {

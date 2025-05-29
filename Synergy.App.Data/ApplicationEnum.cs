@@ -42,27 +42,22 @@ public enum LeaveType
     AnnualLeave = 2,
     CasualLeave = 3,
 }
+
 public enum DataColumnTypeEnum
 {
-    [Description("Text")]
-    Text = 1,
-    [Description("Bool")]
-    Bool = 2,
-    [Description("DateTime")]
-    DateTime = 3,
-    [Description("Integer")]
-    Integer = 4,
-    [Description("Double")]
-    Double = 5,
-    [Description("Long")]
-    Long = 6,
-    [Description("TextArray")]
-    TextArray = 7,
-    [Description("Time")]
-    Time = 8,
-    [Description("Timestamp")]
-    Timestamp = 9,
+    [Description("Text")] Text = 1,
+    [Description("Bool")] Bool = 2,
+    [Description("DateTime")] DateTime = 3,
+    [Description("Integer")] Integer = 4,
+    [Description("Double")] Double = 5,
+    [Description("Long")] Long = 6,
+    [Description("TextArray")] TextArray = 7,
+    [Description("Time")] Time = 8,
+    [Description("Timestamp")] Timestamp = 9,
+    [Description("Json")] Json = 10,
+    [Description("Uuid")] Uuid = 11,
 }
+
 public enum UdfUITypeEnum
 {
     textfield = 1,
@@ -89,8 +84,8 @@ public enum UdfUITypeEnum
     content = 22,
     editgrid = 23,
     button = 24,
-
 }
+
 //public enum NtsActiveUserTypeEnum
 //{
 //    Requester = 1,
@@ -121,11 +116,13 @@ public enum LayoutModeEnum : int
     None = 5,
     Div = 6
 }
+
 public enum OrderByEnum : int
 {
     Ascending = 1,
     Descending = 2
 }
+
 public enum DataActionEnum
 {
     Create = 1,
@@ -135,25 +132,21 @@ public enum DataActionEnum
     None = 5,
     View = 6
 }
+
 public enum StatusEnum
 {
     // Null = 0,
-    [Description("Active")]
-    [Display(Name = "Active")]
+    [Description("Active")] [Display(Name = "Active")]
     Active = 1,
-    [Display(Name = "Inactive")]
-    [Description("Inactive")]
+
+    [Display(Name = "Inactive")] [Description("Inactive")]
     Inactive = 2
 }
 
 public enum ApplicationStatusEnum
 {
-    [Description("Draft")]
-    Draft = 1,
-    [Description("In Progress")]
-    InProgress = 2,
-    [Description("Completed")]
-    Completed = 3,
-    [Description("Cancelled")]
-    Cancelled = 4,
+    [Description("Draft")] Draft = 1,
+    [Description("In Progress")] InProgress = 2,
+    [Description("Completed")] Completed = 3,
+    [Description("Cancelled")] Cancelled = 4,
 }

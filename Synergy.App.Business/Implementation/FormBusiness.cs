@@ -56,7 +56,7 @@ public class FormBusiness(
         await workflowBusiness.StartWorkflow("PRE_" + workflowName, new()
         {
             { "Model", model.Data },
-            { "User", userContext },
+            { "User", userContext.User },
         });
 
         #endregion
@@ -106,7 +106,7 @@ public class FormBusiness(
         await workflowBusiness.StartWorkflow("POST_" + workflowName, new()
         {
             { "Model", model.Data },
-            { "User", userContext },
+            { "User", userContext.User },
         });
 
         #endregion

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Synergy.App.Business.Interface;
+using Synergy.App.Data;
 using Synergy.App.Data.Model;
 using Synergy.App.Data.ViewModel;
 
@@ -11,18 +12,12 @@ public class ElsaBusiness(
     UserManager<User> userManager)
     : BusinessBase<WorkflowViewModel, WorkflowModel>(repo, sp), IElsaBusiness
 {
-    public async Task<WorkflowViewModel> AssignTaskToUser(string title, string email, Guid byUserId)
+    public async Task<WorkflowViewModel> AssignTaskToUser(string title, string email, User byUser)
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user == null)
         {
             throw new Exception($"No user with given email {email} found");
-        }
-
-        var byUser = await userManager.FindByIdAsync(byUserId.ToString());
-        if (byUser == null)
-        {
-            throw new Exception($"No user with given id {byUserId} found");
         }
 
         var reviewModel = new WorkflowViewModel
@@ -39,18 +34,12 @@ public class ElsaBusiness(
         return model.Item;
     }
 
-    public async Task<WorkflowViewModel> AssignTaskToRole(string title, string roleCode, Guid byUserId)
+    public async Task<WorkflowViewModel> AssignTaskToRole(string title, string roleCode, User byUser)
     {
         var user = userManager.GetUsersInRoleAsync(roleCode).Result.First();
         if (user == null)
         {
             throw new Exception($"No user in given role {roleCode} found");
-        }
-
-        var byUser = await userManager.FindByIdAsync(byUserId.ToString());
-        if (byUser == null)
-        {
-            throw new Exception($"No user with given id {byUserId} found");
         }
 
         var reviewModel = new WorkflowViewModel
@@ -59,7 +48,8 @@ public class ElsaBusiness(
             UpdatedBy = byUser,
             AssignedToUser = user,
             AssignedByUser = byUser,
-            Title = title
+            Title = title,
+            Status = WorkflowStatus.Inprogress
         };
 
         var model = await Create(reviewModel);

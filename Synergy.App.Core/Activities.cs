@@ -8,6 +8,8 @@ using Elsa.Workflows.Runtime.Stimuli;
 using Elsa.Workflows.UIHints;
 using Elsa.Workflows.UIHints.Dropdown;
 using Synergy.App.Business.Interface;
+using Synergy.App.Data;
+using Synergy.App.Data.Model;
 using Synergy.App.Data.ViewModel;
 using Workflow = Elsa.Workflows.Activities.Workflow;
 
@@ -54,26 +56,32 @@ public class AssignTaskToUser : Activity
 
     protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
     {
+        var email = Email.Get(context);
+        context.WorkflowInput.TryGetValue("User", out User user);
+
+        var workflowMetaActivity = (Workflow)context.WorkflowExecutionContext.Activity;
+        var title = workflowMetaActivity.WorkflowMetadata.Name ?? "Workflow";
         var elsaBusiness = context.GetService<IElsaBusiness>();
         if (elsaBusiness is null)
         {
             throw new ApplicationException("Workflow business not found");
         }
 
-        var workflowMetaActivity = (Workflow)context.WorkflowExecutionContext.Activity;
-        var title = workflowMetaActivity.WorkflowMetadata.Name ?? "Workflow";
-        var email = Email.Get(context);
-        var user = context.WorkflowInput.TryGetValue("User", out var value)
-            ? (UserViewModel)value
-            : throw new ApplicationException("User not found");
+        var workflow = await elsaBusiness.AssignTaskToUser(title, email, user);
+        if (workflow == null)
+        {
+            throw new Exception("Workflow not found");
+        }
 
-
+        var stimulus = new CreateTaskStimulus(workflow.Id);
         var options = new CreateBookmarkArgs
         {
-            IncludeActivityInstanceId = true,
+            Stimulus = new EventStimulus(workflow.Id.ToString()),
+            IncludeActivityInstanceId = false,
             Callback = OnResumeAsync
         };
         context.CreateBookmark(options);
+        Console.WriteLine($"Assigned task to user: {stimulus.TaskId}");
     }
 
     private async ValueTask OnResumeAsync(ActivityExecutionContext context)
@@ -93,9 +101,7 @@ public class AssignTaskToRole : Activity
     protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
     {
         var role = RoleCode.Get(context);
-        var user = context.WorkflowInput.TryGetValue("User", out var value)
-            ? (UserViewModel)value
-            : throw new ApplicationException("User not found");
+        context.WorkflowInput.TryGetValue("User", out User user);
 
         var workflowMetaActivity = (Workflow)context.WorkflowExecutionContext.Activity;
         var title = workflowMetaActivity.WorkflowMetadata.Name ?? "Workflow";
@@ -105,7 +111,7 @@ public class AssignTaskToRole : Activity
             throw new ApplicationException("Workflow business not found");
         }
 
-        var workflow = await elsaBusiness.AssignTaskToRole(title, role, user.Id);
+        var workflow = await elsaBusiness.AssignTaskToRole(title, role, user);
         if (workflow == null)
         {
             throw new Exception("Workflow not found");

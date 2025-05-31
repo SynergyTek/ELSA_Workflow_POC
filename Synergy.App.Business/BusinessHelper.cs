@@ -12,8 +12,8 @@ public static class BusinessHelper
 {
     public static void RegisterDependency(IServiceCollection services)
     {
-        services.AddScoped<IWorkflowBusiness, WorkflowBusiness>();
         services.AddScoped<IElsaBusiness, ElsaBusiness>();
+        services.AddScoped<IWorkflowBusiness, WorkflowBusiness>();
         services.Add(new ServiceDescriptor(typeof(IContextBase<,>), typeof(ContextBase<,>), ServiceLifetime.Scoped));
         services.Add(new ServiceDescriptor(typeof(IBusinessBase<,>), typeof(BusinessBase<,>), ServiceLifetime.Scoped));
         services.Add(new ServiceDescriptor(typeof(IQueryBase<>), typeof(QueryBase<>), ServiceLifetime.Scoped));

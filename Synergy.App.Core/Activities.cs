@@ -23,8 +23,8 @@ public class CustomDropDownOptionsProvider : DropDownOptionsProviderBase
     {
         var interfaces = new List<Type>
         {
-            typeof(IWorkflowBusiness),
-            typeof(IElsaBusiness)
+            typeof(IElsaBusiness),
+            typeof(IWorkflowBusiness)
         };
         return (from type in interfaces
                 let typeName = type.Name.Replace("`1", "").Replace("`2", "")
@@ -61,7 +61,7 @@ public class AssignTaskToUser : Activity
 
         var workflowMetaActivity = (Workflow)context.WorkflowExecutionContext.Activity;
         var title = workflowMetaActivity.WorkflowMetadata.Name ?? "Workflow";
-        var elsaBusiness = context.GetService<IElsaBusiness>();
+        var elsaBusiness = context.GetService<IWorkflowBusiness>();
         if (elsaBusiness is null)
         {
             throw new ApplicationException("Workflow business not found");
@@ -105,7 +105,7 @@ public class AssignTaskToRole : Activity
 
         var workflowMetaActivity = (Workflow)context.WorkflowExecutionContext.Activity;
         var title = workflowMetaActivity.WorkflowMetadata.Name ?? "Workflow";
-        var elsaBusiness = context.GetService<IElsaBusiness>();
+        var elsaBusiness = context.GetService<IWorkflowBusiness>();
         if (elsaBusiness is null)
         {
             throw new ApplicationException("Workflow business not found");

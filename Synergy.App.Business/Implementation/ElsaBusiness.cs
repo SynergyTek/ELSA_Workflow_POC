@@ -1,60 +1,73 @@
-using Microsoft.AspNetCore.Identity;
+using Elsa.Workflows.Management;
+using Elsa.Workflows.Management.Filters;
+using Elsa.Workflows.Models;
+using Elsa.Workflows.Runtime;
+using Elsa.Workflows.Runtime.Options;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data;
-using Synergy.App.Data.Model;
 using Synergy.App.Data.ViewModel;
 
 namespace Synergy.App.Business.Implementation;
 
 public class ElsaBusiness(
-    IContextBase<WorkflowViewModel, WorkflowModel> repo,
-    IServiceProvider sp,
-    UserManager<User> userManager)
-    : BusinessBase<WorkflowViewModel, WorkflowModel>(repo, sp), IElsaBusiness
+    IQueryBase<WorkflowViewModel?> repo,
+    IWorkflowDefinitionService workflowDefinitionService,
+    IWorkflowStarter workflowStarter,
+    IBookmarkQueue bookmarkQueue)
+    : IElsaBusiness
 {
-    public async Task<WorkflowViewModel> AssignTaskToUser(string title, string email, User byUser)
+    public async Task<CommandResult<bool>> StartWorkflow(string name, Dictionary<string, object> input)
     {
-        var user = await userManager.FindByEmailAsync(email);
-        if (user == null)
+        var preWorkflow = await workflowDefinitionService.FindWorkflowDefinitionAsync(new WorkflowDefinitionFilter
         {
-            throw new Exception($"No user with given email {email} found");
-        }
-
-        var reviewModel = new WorkflowViewModel
+            Name = name
+        });
+        if (preWorkflow == null) return CommandResult<bool>.Instance(false);
+        var request = new StartWorkflowRequest
         {
-            CreatedBy = byUser,
-            UpdatedBy = byUser,
-            AssignedToUser = user,
-            AssignedByUser = byUser,
-            Title = title
+            WorkflowDefinitionHandle = new WorkflowDefinitionHandle
+            {
+                DefinitionId = preWorkflow.DefinitionId
+            },
+            Input = input
         };
+        await workflowStarter.StartWorkflowAsync(request);
 
-        var model = await Create(reviewModel);
-
-        return model.Item;
+        return CommandResult<bool>.Instance(true);
     }
 
-    public async Task<WorkflowViewModel> AssignTaskToRole(string title, string roleCode, User byUser)
+    public async Task<CommandResult<bool>> ResumeWorkflow(string bookmarkId, Dictionary<string, object> input)
     {
-        var userList = await userManager.GetUsersInRoleAsync(roleCode);
-        if (userList == null || !userList.Any())
+        var bookmarkQueueItem = new NewBookmarkQueueItem
         {
-            throw new Exception($"No user in given role {roleCode} found");
-        }
-
-        var user = userList.FirstOrDefault();
-        var reviewModel = new WorkflowViewModel
-        {
-            CreatedBy = byUser,
-            UpdatedBy = byUser,
-            AssignedToUser = user,
-            AssignedByUser = byUser,
-            Title = title,
-            Status = WorkflowStatus.Inprogress
+            BookmarkId = bookmarkId,
+            Options = new ResumeBookmarkOptions
+            {
+                Input = input
+            }
         };
+        await bookmarkQueue.EnqueueAsync(bookmarkQueueItem);
+        return CommandResult<bool>.Instance(false);
+    }
 
-        var model = await Create(reviewModel);
+    public async Task<CommandResult<List<WorkflowViewModel>>> GetInstances()
+    {
+        var query = """
+                    select wi."Status" WorkflowStatus, wi."SubStatus" InstanceStatus, b."Id" BookmarkId 
+                    from "Elsa"."Bookmarks" b
+                    left join "Elsa"."WorkflowInstances" wi on b."WorkflowInstanceId" = wi."Id"
+                    """;
+        var result = await repo.ExecuteQueryList(query, new { });
+        return CommandResult<List<WorkflowViewModel>>.Instance(result);
+    }
 
-        return model.Item;
+    public async Task<CommandResult<WorkflowViewModel>> GetInstanceById(string id)
+    {
+        var query = """
+                    select wi."Status", wi."SubStatus", b."Id" from "Elsa"."Bookmarks" b
+                    left join "Elsa"."WorkflowInstances" wi on b."WorkflowInstanceId" = wi."Id"
+                    where wi."Id"== @id
+                    """;
+        var result = await repo.ExecuteQuerySingle(query, new { id });
+        return CommandResult<WorkflowViewModel>.Instance(result);
     }
 }

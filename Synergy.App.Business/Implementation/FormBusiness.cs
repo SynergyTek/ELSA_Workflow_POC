@@ -10,7 +10,7 @@ public class FormBusiness(
     IUserContext userContext,
     ITemplateBusiness templateBusiness,
     ITableBusiness tableBusiness,
-    IWorkflowBusiness workflowBusiness,
+    IElsaBusiness elsaBusiness,
     ICmsBusiness cmsBusiness)
     : IFormBusiness
 {
@@ -47,13 +47,13 @@ public class FormBusiness(
 
     public async Task<CommandResult<dynamic>> Create(FormViewModel model)
     {
-        if (workflowBusiness == null || userContext == null)
+        if (elsaBusiness == null || userContext == null)
             throw new Exception("WorkflowBusiness or UserContext is not registered in the service provider.");
         var workflowName = model.Template.Key;
 
         #region Pre Submission Logic
 
-        await workflowBusiness.StartWorkflow("PRE_" + workflowName, new()
+        await elsaBusiness.StartWorkflow("PRE_" + workflowName, new()
         {
             { "Model", model.Data },
             { "User", userContext.User },
@@ -103,7 +103,7 @@ public class FormBusiness(
 
         #region Post Submission Logic
 
-        await workflowBusiness.StartWorkflow("POST_" + workflowName, new()
+        await elsaBusiness.StartWorkflow("POST_" + workflowName, new()
         {
             { "Model", model.Data },
             { "User", userContext.User },

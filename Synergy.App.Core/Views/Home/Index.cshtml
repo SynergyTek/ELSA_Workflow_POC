@@ -39,18 +39,21 @@
 							<td>
 								<a asp-action="CompleteTask"
 								   asp-controller="Home"
+								   asp-route-model="@task"
 								   class="btn btn-sm btn-success"
 								   title="Complete Task">
 									<i class="bi bi-check-circle"></i>
 								</a>
 								<a asp-action="RejectTask"
 								   asp-controller="Home"
+								   asp-route-model="@task"
 								   class="btn btn-sm btn-danger"
 								   title="Reject Task">
 									<i class="bi bi-x-circle"></i>
 								</a>
 								<a asp-action="CancelTask"
 								   asp-controller="Home"
+								   asp-route-model="@task"
 								   class="btn btn-sm btn-secondary"
 								   title="Cancel Task">
 									<i class="bi bi-slash-circle"></i>

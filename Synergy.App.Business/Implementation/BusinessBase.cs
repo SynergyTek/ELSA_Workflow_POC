@@ -81,7 +81,7 @@ public class BusinessBase<TV, TD>(IContextBase<TV, TD> repo, IServiceProvider sp
         where TVm : BaseModel
         where TDm : BaseModel
     {
-        var workflowBusiness = sp.GetService<IWorkflowBusiness>();
+        var workflowBusiness = sp.GetService<IElsaBusiness>();
         var userContext = sp.GetService<IUserContext>();
 
         if (workflowBusiness == null || userContext == null)

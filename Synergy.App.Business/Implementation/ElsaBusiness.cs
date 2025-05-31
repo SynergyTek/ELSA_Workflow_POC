@@ -36,12 +36,13 @@ public class ElsaBusiness(
 
     public async Task<WorkflowViewModel> AssignTaskToRole(string title, string roleCode, User byUser)
     {
-        var user = userManager.GetUsersInRoleAsync(roleCode).Result.First();
-        if (user == null)
+        var userList = await userManager.GetUsersInRoleAsync(roleCode);
+        if (userList == null || !userList.Any())
         {
             throw new Exception($"No user in given role {roleCode} found");
         }
 
+        var user = userList.FirstOrDefault();
         var reviewModel = new WorkflowViewModel
         {
             CreatedBy = byUser,

@@ -187,10 +187,16 @@ public class ContextBase<TV, TD>(
         {
             await CreateMaster(context, baseModel);
             if (!autoCommit) return baseModel.ToViewModel<TVm, TDm>(autoMapper);
-            if (baseModel is ColumnModel columnModel)
+            switch (baseModel)
             {
-                context.Table.Attach(columnModel.Table);
-                context.Template.Attach(columnModel.Table.Template);
+                case ColumnModel columnModel:
+                    context.Table.Attach(columnModel.Table);
+                    context.Template.Attach(columnModel.Table.Template);
+                    break;
+                case WorkflowModel workflowModel:
+                    context.Users.Attach(workflowModel.AssignedByUser);
+                    context.Users.Attach(workflowModel.AssignedToUser);
+                    break;
             }
 
 

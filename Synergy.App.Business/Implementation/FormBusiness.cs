@@ -28,7 +28,7 @@ public class FormBusiness(
             return CommandResult<List<IDictionary<string, object>>>.Instance(null, false, "Template not found.");
         }
 
-        var query = $"""select * from {table.Schema}."{table.Template.Name}" where not "IsDeleted" """;
+        var query = $"""select * from {table.Schema}."{table.Template.Reference}" where not "IsDeleted" """;
 
         var result = await queryBase.GetRows(query, new { });
         return CommandResult<List<IDictionary<string, object>>>.Instance(result, true, "Data retrieved successfully.");

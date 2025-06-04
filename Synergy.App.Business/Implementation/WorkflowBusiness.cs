@@ -50,7 +50,8 @@ public class WorkflowBusiness(
             AssignedToUser = user,
             AssignedByUser = byUser,
             Title = title,
-            Status = WorkflowStatus.Inprogress
+            Status = WorkflowStatus.Inprogress,
+
         };
 
         var model = await Create(reviewModel);

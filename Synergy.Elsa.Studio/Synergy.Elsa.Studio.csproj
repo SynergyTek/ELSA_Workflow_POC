@@ -1,26 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Synergy.Elsa.Studio</RootNamespace>
+    <RootNamespace>ElsaStudio</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-
-    <PackageReference Include="Elsa.Api.Client" Version="3.3.5" />
-    <PackageReference Include="Elsa.Studio" Version="3.3.5" />
-    <PackageReference Include="Elsa.Studio.Core.BlazorWasm" Version="3.3.5" />
-    <PackageReference Include="Elsa.Studio.Login.BlazorWasm" Version="3.3.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.15" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.15" PrivateAssets="all" />
+    <PackageReference Include="Elsa.Api.Client" Version="3.4.0" />
+    <PackageReference Include="Elsa.Studio" Version="3.4.0" />
+    <PackageReference Include="Elsa.Studio.Core.BlazorWasm" Version="3.4.0" />
+    <PackageReference Include="Elsa.Studio.Login.BlazorWasm" Version="3.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.5" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\css\app.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\sample-data\weather.json" />
+    <_ContentIncludedByDefault Remove="Pages\Counter.razor" />
+    <_ContentIncludedByDefault Remove="Pages\Home.razor" />
+    <_ContentIncludedByDefault Remove="Pages\Index.razor" />
+    <_ContentIncludedByDefault Remove="Pages\Weather.razor" />
   </ItemGroup>
-
-
 
 </Project>

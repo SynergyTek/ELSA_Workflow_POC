@@ -13,19 +13,20 @@ public class HomeController : Controller
 {
     private readonly IUserContext _userContext;
     private readonly IContextBase<WorkflowViewModel, WorkflowModel> _workflowContext;
-    private readonly IElsaBusiness _elsaBusiness;
+    // private readonly IElsaBusiness _elsaBusiness;
     private readonly IWorkflowBusiness _workflowBusiness;
 
 
     public HomeController(IUserContext userContext,
         IContextBase<WorkflowViewModel, WorkflowModel> workflowContext,
-        IWorkflowBusiness workflowBusiness,
-        IElsaBusiness elsaBusiness)
+        IWorkflowBusiness workflowBusiness
+        // IElsaBusiness elsaBusiness
+        )
     {
         _userContext = userContext;
         _workflowContext = workflowContext;
-        _elsaBusiness = elsaBusiness;
         _workflowBusiness = workflowBusiness;
+        // _elsaBusiness = elsaBusiness;
     }
 
     [Authorize]
@@ -47,11 +48,11 @@ public class HomeController : Controller
 
     public async Task<IActionResult> CompleteTask(WorkflowViewModel model)
     {
-        var status = await _elsaBusiness.ResumeWorkflow(model.Id.toString(), new()
-        {
-            { "Status", "Approved" }
-        });
-        if (!status.IsSuccess) return RedirectToAction("Index");
+        // var status = await _elsaBusiness.ResumeWorkflow(model.Id.toString(), new()
+        // {
+        //     { "Status", "Approved" }
+        // });
+        // if (!status.IsSuccess) return RedirectToAction("Index");
         model.Status = WorkflowStatus.Completed;
         await _workflowBusiness.Edit(model);
 
@@ -60,11 +61,11 @@ public class HomeController : Controller
 
     public async Task<IActionResult> RejectTask(WorkflowViewModel model)
     {
-        var status = await _elsaBusiness.ResumeWorkflow(model.Id.toString(), new()
-        {
-            { "Status", "Approved" }
-        });
-        if (!status.IsSuccess) return RedirectToAction("Index");
+        // var status = await _elsaBusiness.ResumeWorkflow(model.Id.toString(), new()
+        // {
+        //     { "Status", "Approved" }
+        // });
+        // if (!status.IsSuccess) return RedirectToAction("Index");
         model.Status = WorkflowStatus.Completed;
         await _workflowBusiness.Edit(model);
         return RedirectToAction("Index");
@@ -72,11 +73,11 @@ public class HomeController : Controller
 
     public async Task<IActionResult> CancelTask(WorkflowViewModel model)
     {
-        var status = await _elsaBusiness.ResumeWorkflow(model.Id.toString(), new()
-        {
-            { "Status", "Approved" }
-        });
-        if (!status.IsSuccess) return RedirectToAction("Index");
+        // var status = await _elsaBusiness.ResumeWorkflow(model.Id.toString(), new()
+        // {
+        //     { "Status", "Approved" }
+        // });
+        // if (!status.IsSuccess) return RedirectToAction("Index");
         model.Status = WorkflowStatus.Completed;
         await _workflowBusiness.Edit(model);
         return RedirectToAction("Index");
@@ -103,12 +104,12 @@ public class HomeController : Controller
             UserName = _userContext.UserName,
             Email = _userContext.Email
         };
-        var a = await _elsaBusiness.StartWorkflow("POST_LEAVE", new Dictionary<string, object>
-        {
-            {
-                "User", user
-            }
-        });
+        // var a = await _elsaBusiness.StartWorkflow("POST_LEAVE", new Dictionary<string, object>
+        // {
+        //     {
+        //         "User", user
+        //     }
+        // });
         return Json(new { Success = true });
     }
 

@@ -8,13 +8,11 @@ using Elsa.Workflows.Runtime.Stimuli;
 using Elsa.Workflows.UIHints;
 using Elsa.Workflows.UIHints.Dropdown;
 using Synergy.App.Business.Interface;
-using Synergy.App.Data;
 using Synergy.App.Data.Model;
-using Synergy.App.Data.ViewModel;
 using Workflow = Elsa.Workflows.Activities.Workflow;
 
 
-namespace Synergy.App.Core;
+namespace Synergy.Elsa.Server;
 
 public class CustomDropDownOptionsProvider : DropDownOptionsProviderBase
 {
@@ -23,7 +21,6 @@ public class CustomDropDownOptionsProvider : DropDownOptionsProviderBase
     {
         var interfaces = new List<Type>
         {
-            typeof(IElsaBusiness),
             typeof(IWorkflowBusiness)
         };
         return (from type in interfaces

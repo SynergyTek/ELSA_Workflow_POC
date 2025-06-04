@@ -12,12 +12,11 @@ public static class BusinessHelper
 {
     public static void RegisterDependency(IServiceCollection services)
     {
-        services.AddScoped<IElsaBusiness, ElsaBusiness>();
-        services.AddScoped<IWorkflowBusiness, WorkflowBusiness>();
         services.Add(new ServiceDescriptor(typeof(IContextBase<,>), typeof(ContextBase<,>), ServiceLifetime.Scoped));
         services.Add(new ServiceDescriptor(typeof(IBusinessBase<,>), typeof(BusinessBase<,>), ServiceLifetime.Scoped));
         services.Add(new ServiceDescriptor(typeof(IQueryBase<>), typeof(QueryBase<>), ServiceLifetime.Scoped));
 		services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped<IWorkflowBusiness, WorkflowBusiness>();
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<ICmsBusiness, CmsBusiness>();
 		services.AddScoped<ITemplateBusiness, TemplateBusiness>();

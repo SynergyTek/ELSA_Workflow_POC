@@ -81,20 +81,20 @@ public class BusinessBase<TV, TD>(IContextBase<TV, TD> repo, IServiceProvider sp
         where TVm : BaseModel
         where TDm : BaseModel
     {
-        var workflowBusiness = sp.GetService<IElsaBusiness>();
+        // var workflowBusiness = sp.GetService<IElsaBusiness>();
         var userContext = sp.GetService<IUserContext>();
-
-        if (workflowBusiness == null || userContext == null)
-            throw new Exception("WorkflowBusiness or UserContext is not registered in the service provider.");
+        //
+        // if (workflowBusiness == null || userContext == null)
+        //     throw new Exception("WorkflowBusiness or UserContext is not registered in the service provider.");
         var workflowName = typeof(TDm).Name.ToUpper();
 
         #region Pre Submission Logic
 
-        await workflowBusiness.StartWorkflow("PRE_" + workflowName, new()
-        {
-            { "Model", model },
-            { "User", userContext },
-        });
+        // await workflowBusiness.StartWorkflow("PRE_" + workflowName, new()
+        // {
+        //     { "Model", model },
+        //     { "User", userContext },
+        // });
 
         #endregion
 
@@ -108,11 +108,11 @@ public class BusinessBase<TV, TD>(IContextBase<TV, TD> repo, IServiceProvider sp
 
         #region Post Submission Logic
 
-        await workflowBusiness.StartWorkflow("POST_" + workflowName, new()
-        {
-            { "Model", model },
-            { "User", userContext },
-        });
+        // await workflowBusiness.StartWorkflow("POST_" + workflowName, new()
+        // {
+        //     { "Model", model },
+        //     { "User", userContext },
+        // });
 
         #endregion
 
